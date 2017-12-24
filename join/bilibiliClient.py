@@ -141,7 +141,6 @@ class bilibiliClient():
                 while num != 0 and num != 1:
                     for j in range(0,num):
                         raffleid = response.json()['data'][j]['raffleId']
-                        print(raffleid)
                         headers = {
                             'Accept': 'application/json, text/plain, */*',
                             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
