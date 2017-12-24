@@ -41,6 +41,9 @@ pip install aiohttp
 因为登陆的流程还没有写好，所以access_key和cookies需要自己获得,这里提供一个大佬的两个网站，方便用户获取这两个参数
 
 https://api.kaaass.net/biliapi/docs/?file=03-%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B3/001-Bilibili%E7%99%BB%E5%BD%95%EF%BC%88access_key%EF%BC%89
+
+
+
 https://api.kaaass.net/biliapi/docs/?file=03-%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B3/004-%E7%94%B1access_key%E7%94%9F%E6%88%90%E4%B8%BB%E7%AB%99cookie
 (右上角有个测试接口看到了吗23333)
 
