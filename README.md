@@ -49,7 +49,6 @@ https://api.kaaass.net/biliapi/docs/?file=03-%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B
 
 引用代码作者github:https://github.com/lyyyuna
 
-然后代码（应该）会在一周内传上来（先开个坑2333），我先改改功能....
 
 因为作者十分的菜，所以希望有大佬改进代码，不然只能自己瞎鸡儿用了...目前还是单文件单功能的样子呢
 
