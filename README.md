@@ -22,8 +22,21 @@
     pc端登陆
     应援团自动签到
     
-	
+    
 
+环境:python3.6
+
+第三方库配置:
+
+
+pip install requests
+
+
+pip install aiohttp
+
+使用 python xxx.py 运行
+
+抽奖的脚本使用python main.py 执行
 
 
 引用代码作者github:https://github.com/lyyyuna
