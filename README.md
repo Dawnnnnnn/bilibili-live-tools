@@ -18,12 +18,15 @@
     分享直播间任务
     app端登陆
     pc端登陆
+    节奏风暴领取
+
     
 目前未完成：
 
 
     应援团自动签到
     参与抽奖的断线问题
+    ban ip
     
     
 
@@ -43,7 +46,7 @@ pip install aiohttp
 
 access_key和cookies的值要自己填啊朋友们，记事本打开代码前几行有示例的
 
-因为登陆的流程还没有写好，所以access_key和cookies需要自己获得,这里提供一个大佬的两个网站，方便用户获取这两个参数
+登陆的流程早就写好了但是作者太懒了还没放出来，所以access_key和cookies还是需要自己获得,这里提供一个大佬的两个网站，方便用户获取这两个参数
 
 https://api.kaaass.net/biliapi/docs/?file=03-%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B3/001-Bilibili%E7%99%BB%E5%BD%95%EF%BC%88access_key%EF%BC%89
 
