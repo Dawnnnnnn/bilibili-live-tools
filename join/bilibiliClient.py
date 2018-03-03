@@ -150,7 +150,7 @@ class bilibiliClient():
                             'cookie': cookies,
                             'referer': text2
                         }
-                        temp_params = 'access_key='+access_key+'&actionKey='+actionKey+'&appkey='+appkey+'&build='+build+'&device='+device+'&event_type=openfire-' + str(
+                        temp_params = 'access_key='+access_key+'&actionKey='+actionKey+'&appkey='+appkey+'&build='+build+'&device='+device+'&event_type=newspring-' + str(
                             raffleid) + '&mobi_app='+mobi_app+'&platform='+platform+'&room_id=' + str(
                             text1) + '&ts=' + CurrentTime()
                         params = temp_params + '560c52ccd288fed045859ed18bffd973'
@@ -160,7 +160,20 @@ class bilibiliClient():
                             hash.hexdigest())
                         pc_url = 'http://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
                             text1) + '&raffleId=' + str(raffleid)
-                        response1 = requests.get(true_url, headers=headers)
+                        params ={'access_key' : access_key,
+                            'actionKey' : actionKey ,
+                            'appkey' : appkey ,
+                            'build' :build ,
+                            'device':device,
+                            'event_type':'newspring-%s' %(str(raffleid)) ,
+                            'mobi_app': mobi_app ,
+                            'platform' :platform ,
+                            'room_id' : str(text1) ,
+                            'ts' : CurrentTime(),
+                            'sign':hash.hexdigest(),#md5加密后数据
+                        }
+                        true_url = 'http://api.live.bilibili.com/YunYing/roomEvent'#加入相关的数据并且加入sign
+                        response1 = requests.get(true_url,params=params, headers=headers)
                         pc_response = requests.get(pc_url, headers=headers)
                         try:
                             print("app端活动抽奖状态：", response1.json()['message'])
