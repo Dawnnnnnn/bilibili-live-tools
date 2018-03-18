@@ -165,7 +165,7 @@ class bilibiliClient():
                             'appkey' : appkey ,
                             'build' :build ,
                             'device':device,
-                            'event_type':'newspring-%s' %(str(raffleid)) ,
+                            'event_type':'flower_rain-%s' %(str(raffleid)) ,
                             'mobi_app': mobi_app ,
                             'platform' :platform ,
                             'room_id' : str(text1) ,
