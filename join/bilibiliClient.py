@@ -150,13 +150,13 @@ class bilibiliClient():
                             'cookie': cookies,
                             'referer': text2
                         }
-                        temp_params = 'access_key='+access_key+'&actionKey='+actionKey+'&appkey='+appkey+'&build='+build+'&device='+device+'&event_type=newspring-' + str(
+                        temp_params = 'access_key='+access_key+'&actionKey='+actionKey+'&appkey='+appkey+'&build='+build+'&device='+device+'&event_type=flower_rain-' + str(
                             raffleid) + '&mobi_app='+mobi_app+'&platform='+platform+'&room_id=' + str(
                             text1) + '&ts=' + CurrentTime()
                         params = temp_params + '560c52ccd288fed045859ed18bffd973'
                         hash = hashlib.md5()
                         hash.update(params.encode('utf-8'))
-                        true_url = 'http://api.live.bilibili.com//YunYing/roomEvent?' + temp_params + '&sign=' + str(
+                        true_url = 'http://api.live.bilibili.com/YunYing/roomEvent?' + temp_params + '&sign=' + str(
                             hash.hexdigest())
                         pc_url = 'http://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
                             text1) + '&raffleId=' + str(raffleid)
@@ -194,13 +194,13 @@ class bilibiliClient():
                     'cookie': cookies,
                     'referer': text2
                 }
-                temp_params = 'access_key=' + access_key + '&actionKey=' + actionKey + '&appkey=' + appkey + '&build=' + build + '&device=' + device + '&event_type=openfire-' + str(
+                temp_params = 'access_key=' + access_key + '&actionKey=' + actionKey + '&appkey=' + appkey + '&build=' + build + '&device=' + device + '&event_type=flower_rain-' + str(
                     raffleid) + '&mobi_app=' + mobi_app + '&platform=' + platform + '&room_id=' + str(
                     text1) + '&ts=' + CurrentTime()
                 params = temp_params + '560c52ccd288fed045859ed18bffd973'
                 hash = hashlib.md5()
                 hash.update(params.encode('utf-8'))
-                true_url = 'http://api.live.bilibili.com//YunYing/roomEvent?' + temp_params + '&sign=' + str(
+                true_url = 'http://api.live.bilibili.com/YunYing/roomEvent?' + temp_params + '&sign=' + str(
                     hash.hexdigest())
                 pc_url = 'http://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
                     text1) + '&raffleId=' + str(raffleid)
