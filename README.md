@@ -26,10 +26,13 @@ pip install requests
 pip install rsa
 pip install aiohttp
 
+使用方法：
+    python run.py
+    然后输入好几遍账号密码就行了233333
 
 引用代码作者github:https://github.com/lyyyuna
 
-
+本项目采用MIT开源协议
 
 
 
