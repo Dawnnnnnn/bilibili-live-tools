@@ -1,4 +1,4 @@
-from login import Login
+from bilibili import bilibili
 import hashlib
 import datetime
 import requests
@@ -6,14 +6,16 @@ import time
 import asyncio
 
 
-class Tasks(Login):
+class Tasks(bilibili):
 
     # 获取每日包裹奖励
     def Daily_bag(self):
         url = 'http://api.live.bilibili.com/gift/v2/live/receive_daily_bag'
         response = requests.get(url, headers=self.pcheaders)
         try:
-            print("获得----" + response.json()['data']['bag_list'][0]['bag_name'] + "----成功")
+            print("获得-" + response.json()['data']['bag_list'][0]['bag_name'] + "-成功")
+            print("获得-" + response.json()['data']['bag_list'][1]['bag_name'] + "-成功")
+            print("获得-" + response.json()['data']['bag_list'][2]['bag_name'] + "-成功")
         except:
             pass
 
@@ -26,7 +28,7 @@ class Tasks(Login):
         url = 'https://api.live.bilibili.com/sign/doSign'
         response = requests.get(url, headers=self.pcheaders)
         temp = response.json()
-        print(temp['msg'])
+        print("签到状态:",temp['msg'])
 
     # 领取每日任务奖励
     def Daily_Task(self):

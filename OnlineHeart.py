@@ -1,4 +1,4 @@
-from login import Login
+from bilibili import bilibili
 import requests
 import hashlib
 import time
@@ -6,7 +6,7 @@ import datetime
 import asyncio
 
 
-class OnlineHeart(Login):
+class OnlineHeart(bilibili):
 
     # 发送pc心跳包 //好像有点bug？？？
     def pcpost_heartbeat(self):
@@ -18,12 +18,12 @@ class OnlineHeart(Login):
     def apppost_heartbeat(self):
         time = self.CurrentTime()
         temp_params = 'access_key=' + self.access_key + '&actionKey=' + self.actionKey + '&appkey=' + self.appkey + '&build=' + self.build + '&device=' + self.device + '&mobi_app=' + self.mobi_app + '&platform=' + self.platform + '&ts=' + time
-        params = temp_params + self.app_secret
+        params = temp_params + bilibili.app_secret
         hash = hashlib.md5()
         hash.update(params.encode('utf-8'))
         url = 'https://api.live.bilibili.com/mobile/userOnlineHeart?' + temp_params + '&sign=' + str(hash.hexdigest())
         payload = {'roomid': 23058, 'scale': 'xhdpi'}
-        response = requests.post(url, data=payload, headers=self.appheaders)
+        response = requests.post(url, data=payload, headers=bilibili.appheaders)
         #print("app端心跳状态：" + response.json()['message'])
 
     # 心跳礼物   //测试功能
@@ -39,10 +39,11 @@ class OnlineHeart(Login):
 
     # 因为休眠时间差不多,所以放到这里,此为实验性功能
     def draw_lottery(self):
-        for i in range(60,100):
+        for i in range(60,80):
             url = "https://api.live.bilibili.com/lottery/v1/box/getStatus?aid="+str(i)
             response = requests.get(url,headers=self.pcheaders)
             res = response.json()
+            #print(res)
             if res['code'] == 0:
                 temp = response.json()['data']['title']
                 if "测试" in temp:
@@ -73,3 +74,5 @@ class OnlineHeart(Login):
             self.heart_gift()
             self.draw_lottery()
             await asyncio.sleep(300)
+
+
