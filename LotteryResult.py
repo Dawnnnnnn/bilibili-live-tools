@@ -40,11 +40,12 @@ class LotteryResult(bilibili):
                         'cookie': self.cookie,
                     }
                     response = requests.get(url, headers=headers)
-                    try:
-                        print("房间 %s 小电视抽奖结果:" %(self.TV_roomid_list[0]),(response.json()['data']['gift_name'])+"x"+str(response.json()['data']['gift_num']))
-                        del self.TV_roomid_list[0]
-                        del self.TV_raffleid_list[0]
-                        del self.TV_time_list[0]
-                    except:
-                        pass
+                    if response.json()['data']['gift_name'] != "":
+                        try:
+                            print("房间 %s 小电视抽奖结果:" %(self.TV_roomid_list[0]),(response.json()['data']['gift_name'])+"x"+str(response.json()['data']['gift_num']))
+                            del self.TV_roomid_list[0]
+                            del self.TV_raffleid_list[0]
+                            del self.TV_time_list[0]
+                        except:
+                            pass
             await asyncio.sleep(150)
