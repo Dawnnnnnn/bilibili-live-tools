@@ -28,13 +28,14 @@
 
 3.21:
         
-        实物抽奖为实验性功能，只过滤了“测试”关键字，功能默认开启，风险在pull requests中有说明,
-        如不想打开本功能，请用记事本编辑OnlineHeart.py文件的最后几行，将“self.draw_lottery()“这行删掉即可
+    实物抽奖为实验性功能，只过滤了“测试”关键字，功能默认开启，风险在pull requests中有说明,
+    如不想打开本功能，请用记事本编辑OnlineHeart.py文件的最后几行，将“self.draw_lottery()“这行删掉即可
 
 3.22:
         
-        在 [Shadow-D](https://github.com/Shadow-D)大佬的指导下，重新写了父类，实现了输入一次账密通用cookie的功能，
-        同时加上了获取pc端抽奖结果的功能
+>   在 [Shadow-D](https://github.com/Shadow-D)大佬的指导下，重新写了父类，实现了输入一次账密通用cookie的功能，
+    同时加上了获取pc端抽奖结果的功能
+    
   
 
 
