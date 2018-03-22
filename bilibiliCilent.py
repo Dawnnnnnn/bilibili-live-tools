@@ -114,6 +114,7 @@ class bilibiliClient(bilibili):
                 num = len(checklen)
                 while num != 0:
                     for j in range(0,num):
+                        time.sleep(1)
                         resttime = response.json()['data'][j]['time']
                         raffleid = response.json()['data'][j]['raffleId']
                         bilibili.activity_raffleid_list.append(raffleid)
@@ -174,6 +175,7 @@ class bilibiliClient(bilibili):
                 num = len(checklen)
                 while num != 0:
                     for j in range(0,num):
+                        time.sleep(1)
                         resttime = response.json()['data'][j]['time']
                         raffleid = response.json()['data'][j]['raffleId']
                         self.TV_raffleid_list.append(raffleid)
