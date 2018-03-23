@@ -28,6 +28,7 @@ class Login(bilibili):
         pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode())
         password = base64.b64encode(rsa.encrypt((Hash + password).encode('utf-8'), pubkey))
         password = parse.quote_plus(password)
+        username = parse.quote_plus(username)
         # url = 'https://passport.bilibili.com/api/oauth2/login'   //旧接口
         url = "https://passport.bilibili.com/api/v2/oauth2/login"
         temp_params = 'appkey=' + self.appkey + '&password=' + password + '&username=' + username
@@ -38,6 +39,7 @@ class Login(bilibili):
         headers = {"Content-type": "application/x-www-form-urlencoded"}
         payload = "appkey=" + self.appkey + "&password=" + password + "&username=" + username + "&sign=" + sign
         response = requests.post(url, data=payload, headers=headers)
+        print(response.json())
         access_key = response.json()['data']['token_info']['access_token']
         cookie = (response.json()['data']['cookie_info']['cookies'])
         cookie_format = ""
