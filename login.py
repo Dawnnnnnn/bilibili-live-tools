@@ -39,7 +39,6 @@ class Login(bilibili):
         headers = {"Content-type": "application/x-www-form-urlencoded"}
         payload = "appkey=" + self.appkey + "&password=" + password + "&username=" + username + "&sign=" + sign
         response = requests.post(url, data=payload, headers=headers)
-        print(response.json())
         access_key = response.json()['data']['token_info']['access_token']
         cookie = (response.json()['data']['cookie_info']['cookies'])
         cookie_format = ""
