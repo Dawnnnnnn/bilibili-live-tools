@@ -48,4 +48,4 @@ class LotteryResult(bilibili):
                             del self.TV_time_list[0]
                         except:
                             pass
-            await asyncio.sleep(150)
+            await asyncio.sleep(60)
