@@ -140,11 +140,11 @@ class bilibiliClient(bilibili):
                             response1 = requests.get(true_url,params=params, headers=headers)
                             pc_response = requests.get(pc_url, headers=headers)
                             try:
-                                print("app端活动抽奖结果:", response1.json()['data']['gift_desc'])
+                                print("移动端活动抽奖结果:", response1.json()['data']['gift_desc'])
                             except:
                                 pass
                             try:
-                                print("pc端活动抽奖状态:", pc_response.json()['message'])
+                                print("网页端活动抽奖状态:", pc_response.json()['message'])
                             except:
                                 pass
                     break
