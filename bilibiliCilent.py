@@ -108,7 +108,7 @@ class bilibiliClient(bilibili):
                 text2 = dic['url']
                 url = 'http://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
                 print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-                print("检测到房间", str(text1).ljust(9), "的活动抽奖")
+                print("检测到房间", str(text1).center(10), "的活动抽奖")
                 response = requests.get(url, headers=headers)
                 checklen = response.json()['data']
                 num = len(checklen)
@@ -168,7 +168,7 @@ class bilibiliClient(bilibili):
                 check_url = 'https://api.live.bilibili.com/AppSmallTV/index?' + temp_params + '&sign=' + str(
                             hash.hexdigest())
                 print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-                print("检测到房间", str(real_roomid).ljust(9), "的小电视抽奖")
+                print("检测到房间", str(real_roomid).center(10), "的小电视抽奖")
                 # headers = {
                 #     'Accept': 'application/json, text/plain, */*',
                 #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
