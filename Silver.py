@@ -29,7 +29,7 @@ class Silver(bilibili):
         temp = response.json()
         # print (temp['code'])    #宝箱领完返回的code为-10017
         if temp['code'] == -10017:
-            print("宝箱状态:今天的瓜子领完了")
+            print("# 今日宝箱领取完毕")            
         else:
             time_start = temp['data']['time_start']
             return str(time_start)
@@ -71,14 +71,14 @@ class Silver(bilibili):
 
     async def run(self):
         while 1:
+            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检查宝箱状态")
             temp = self.GetAward()
             if temp == None or temp == -10017:
-                print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-                print("宝箱状态:半小时后检测一次是否到第二天了")
+                print("# 半小时后检测是否第二天了")               
                 await asyncio.sleep(1800)
             elif temp == 0:
-                print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+                print("# 打开了宝箱")
                 self.GetAward()
             else:
-                print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+                print("# 继续等待宝箱冷却...")
                 await asyncio.sleep(181)

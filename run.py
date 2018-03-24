@@ -16,7 +16,7 @@ tasks = [
     task.run(),
     task1.run(),
     task2.run(),
-	danmuji.connectServer() ,
+    danmuji.connectServer(),
     danmuji.HeartbeatLoop(),
     task3.query()
 ]
