@@ -1,6 +1,7 @@
 from bilibili import bilibili
 import requests
 import asyncio
+import time
 
 
 class LotteryResult(bilibili):
@@ -9,6 +10,7 @@ class LotteryResult(bilibili):
         while 1:
             #print(self.activity_raffleid_list)
             if self.activity_raffleid_list != None:
+                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检查抽奖结果")
                 for i in range(0,len(self.activity_roomid_list)):
                     url = "http://api.live.bilibili.com/activity/v1/Raffle/notice?roomid="+str(self.activity_roomid_list[0])+"&raffleId="+str(self.activity_raffleid_list[0])
                     headers = {
@@ -21,7 +23,7 @@ class LotteryResult(bilibili):
                     }
                     response = requests.get(url, headers=headers)
                     try:
-                        print("房间", str(self.activity_roomid_list[0]).center(10), "网页端活动抽奖结果:", response.json()['data']['gift_name']+"x"+str(response.json()['data']['gift_num']))
+                        print("#房间", str(self.activity_roomid_list[0]).center(9), "网页端活动抽奖结果:", response.json()['data']['gift_name']+"x"+str(response.json()['data']['gift_num']))
                         del self.activity_roomid_list[0]
                         del self.activity_raffleid_list[0]
                         del self.activity_time_list[0]
@@ -42,7 +44,7 @@ class LotteryResult(bilibili):
                     response = requests.get(url, headers=headers)
                     if response.json()['data']['gift_name'] != "":
                         try:
-                            print("房间", str(self.TV_roomid_list[0]).center(10), "小电视道具抽奖结果:", (response.json()['data']['gift_name'])+"x"+str(response.json()['data']['gift_num']))
+                            print("#房间", str(self.TV_roomid_list[0]).center(9), "小电视道具抽奖结果:", (response.json()['data']['gift_name'])+"x"+str(response.json()['data']['gift_num']))
                             del self.TV_roomid_list[0]
                             del self.TV_raffleid_list[0]
                             del self.TV_time_list[0]

@@ -23,7 +23,7 @@ class bilibiliClient(bilibili):
         self._writer = writer
         if (await self.SendJoinChannel(self._roomId) == True):
             self.connected = True
-            print('连接弹幕服务器成功!')
+            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '连接弹幕服务器成功!')
             await self.ReceiveMessageLoop()
 
     async def HeartbeatLoop(self):
@@ -107,8 +107,7 @@ class bilibiliClient(bilibili):
                 text1 = dic['real_roomid']
                 text2 = dic['url']
                 url = 'http://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
-                print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-                print("检测到房间", str(text1).center(10), "的活动抽奖")
+                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检测到房间", str(text1).center(9), "的活动抽奖")
                 response = requests.get(url, headers=headers)
                 checklen = response.json()['data']
                 num = len(checklen)
@@ -118,6 +117,7 @@ class bilibiliClient(bilibili):
                         resttime = response.json()['data'][j]['time']
                         raffleid = response.json()['data'][j]['raffleId']
                         if raffleid not in bilibili.activity_raffleid_list:
+                            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "参与了房间", str(text1).center(9), "的活动抽奖")
                             bilibili.activity_raffleid_list.append(raffleid)
                             bilibili.activity_roomid_list.append(text1)
                             bilibili.activity_time_list.append(resttime)
@@ -140,11 +140,11 @@ class bilibiliClient(bilibili):
                             response1 = requests.get(true_url,params=params, headers=headers)
                             pc_response = requests.get(pc_url, headers=headers)
                             try:
-                                print("移动端活动抽奖结果:", response1.json()['data']['gift_desc'])
+                                print("#移动端活动抽奖结果:", response1.json()['data']['gift_desc'])
                             except:
                                 pass
                             try:
-                                print("网页端活动抽奖状态:", pc_response.json()['message'])
+                                print("#网页端活动抽奖状态:", pc_response.json()['message'])
                             except:
                                 pass
                     break
@@ -167,8 +167,7 @@ class bilibiliClient(bilibili):
                 hash.update(params.encode('utf-8'))
                 check_url = 'https://api.live.bilibili.com/AppSmallTV/index?' + temp_params + '&sign=' + str(
                             hash.hexdigest())
-                print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-                print("检测到房间", str(real_roomid).center(10), "的小电视抽奖")
+                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "监测到房间", str(real_roomid).center(9), "的小电视抽奖")
                 # headers = {
                 #     'Accept': 'application/json, text/plain, */*',
                 #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
@@ -186,6 +185,7 @@ class bilibiliClient(bilibili):
                         resttime = response.json()['data']['unjoin'][j]['dtime']
                         raffleid = response.json()['data']['unjoin'][j]['id']
                         if raffleid not in bilibili.TV_raffleid_list:
+                            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "参与了房间", str(real_roomid).center(9), "的小电视抽奖")
                             bilibili.TV_raffleid_list.append(raffleid)
                             bilibili.TV_roomid_list.append(real_roomid)
                             bilibili.TV_time_list.append(resttime)
@@ -211,7 +211,7 @@ class bilibiliClient(bilibili):
                             #     real_roomid) + '&raffleId=' + str(raffleid)
                             # #response1 = requests.get(url1, headers=headers)
                             response2 = requests.get(true_url,headers=self.appheaders)
-                            print("小电视抽奖状态:",response2.json()['msg'])
+                            print("#小电视道具抽奖状态:",response2.json()['msg'])
                     break
 
             except:

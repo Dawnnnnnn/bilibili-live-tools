@@ -68,7 +68,7 @@ class OnlineHeart(bilibili):
 
     async def run(self):
         while 1:
-            print("❤️ 当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "心跳")
             self.apppost_heartbeat()
             self.pcpost_heartbeat()
             self.heart_gift()
