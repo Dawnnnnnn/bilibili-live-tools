@@ -4,6 +4,7 @@ import rsa
 import base64
 from urllib import parse
 from bilibili import bilibili
+import time
 
 
 class Login(bilibili):
@@ -66,5 +67,6 @@ class Login(bilibili):
             "Host": "api.live.bilibili.com",
             'cookie': cookie_format
         }
+        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登陆成功")
         #return access_key, cookie_format
 
