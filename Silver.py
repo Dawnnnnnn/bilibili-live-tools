@@ -74,7 +74,7 @@ class Silver(bilibili):
             print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检查宝箱状态")
             temp = self.GetAward()
             if temp == None or temp == -10017:
-                print("# 半小时后检测是否第二天了")               
+                #print("# 半小时后检测是否第二天了")               
                 await asyncio.sleep(1800)
             elif temp == 0:
                 print("# 打开了宝箱")
