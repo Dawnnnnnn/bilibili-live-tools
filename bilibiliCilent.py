@@ -23,7 +23,7 @@ class bilibiliClient(bilibili):
         self._writer = writer
         if (await self.SendJoinChannel(self._roomId) == True):
             self.connected = True
-            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '连接弹幕服务器成功!')
+            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '连接弹幕服务器成功')
             await self.ReceiveMessageLoop()
 
     async def HeartbeatLoop(self):
@@ -140,11 +140,11 @@ class bilibiliClient(bilibili):
                             response1 = requests.get(true_url,params=params, headers=headers)
                             pc_response = requests.get(pc_url, headers=headers)
                             try:
-                                print("#移动端活动抽奖结果:", response1.json()['data']['gift_desc'])
+                                print("# 移动端活动抽奖结果:", response1.json()['data']['gift_desc'])
                             except:
                                 pass
                             try:
-                                print("#网页端活动抽奖状态:", pc_response.json()['message'])
+                                print("# 网页端活动抽奖状态:", pc_response.json()['message'])
                             except:
                                 pass
                     break
@@ -211,7 +211,7 @@ class bilibiliClient(bilibili):
                             #     real_roomid) + '&raffleId=' + str(raffleid)
                             # #response1 = requests.get(url1, headers=headers)
                             response2 = requests.get(true_url,headers=self.appheaders)
-                            print("#小电视道具抽奖状态:",response2.json()['msg'])
+                            print("# 小电视道具抽奖状态:",response2.json()['msg'])
                     break
 
             except:

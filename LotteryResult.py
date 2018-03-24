@@ -23,7 +23,7 @@ class LotteryResult(bilibili):
                     }
                     response = requests.get(url, headers=headers)
                     try:
-                        print("#房间", str(self.activity_roomid_list[0]).center(9), "网页端活动抽奖结果:", response.json()['data']['gift_name']+"x"+str(response.json()['data']['gift_num']))
+                        print("# 房间", str(self.activity_roomid_list[0]).center(9), "网页端活动抽奖结果:", response.json()['data']['gift_name']+"x"+str(response.json()['data']['gift_num']))
                         del self.activity_roomid_list[0]
                         del self.activity_raffleid_list[0]
                         del self.activity_time_list[0]
@@ -44,7 +44,7 @@ class LotteryResult(bilibili):
                     response = requests.get(url, headers=headers)
                     if response.json()['data']['gift_name'] != "":
                         try:
-                            print("#房间", str(self.TV_roomid_list[0]).center(9), "小电视道具抽奖结果:", (response.json()['data']['gift_name'])+"x"+str(response.json()['data']['gift_num']))
+                            print("# 房间", str(self.TV_roomid_list[0]).center(9), "小电视道具抽奖结果:", (response.json()['data']['gift_name'])+"x"+str(response.json()['data']['gift_num']))
                             del self.TV_roomid_list[0]
                             del self.TV_raffleid_list[0]
                             del self.TV_time_list[0]
