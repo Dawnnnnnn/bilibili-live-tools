@@ -5,7 +5,10 @@ from Tasks import Tasks
 from bilibiliCilent import bilibiliClient
 from login import Login
 import asyncio
+from API import API
 login = Login().success()
+API.user_info()
+API.get_bag_list()
 task = OnlineHeart()
 task1 = Silver()
 task2 = Tasks()
