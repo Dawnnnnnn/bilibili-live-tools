@@ -19,8 +19,8 @@ class API(bilibili):
             "csrf_token": csrf_token
             }
         url = "https://api.live.bilibili.com/room/v1/Room/room_entry_action"
-        requests.post(url, data=data, headers=bilibili.pcheaders)
-        # print(response.json())
+        response = requests.post(url, data=data, headers=bilibili.pcheaders)
+        #print(response.json())
         return 0
             
     def get_bag_list():

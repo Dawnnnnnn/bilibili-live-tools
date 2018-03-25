@@ -45,7 +45,7 @@ class Login(bilibili):
         cookie_format = ""
         for i in range(0, len(cookie)):
             cookie_format = cookie_format + cookie[i]['name'] + "=" + cookie[i]['value'] + ";"
-
+        bilibili.csrf = cookie[0]['value']
         bilibili.access_key = access_key
         bilibili.cookie = cookie_format
         bilibili.pcheaders = {

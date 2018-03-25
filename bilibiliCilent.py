@@ -1,4 +1,5 @@
 from bilibili import bilibili
+from API import API
 import asyncio
 import random
 from struct import *
@@ -75,7 +76,7 @@ class bilibiliClient(bilibili):
                         messages = tmp.decode('utf-8')
                     except:
                         continue
-                    self.parseDanMu(messages)
+                    await self.parseDanMu(messages)
                     continue
                 elif num == 5 or num == 6 or num == 7:
                     tmp = await self._reader.read(num2)
@@ -86,7 +87,7 @@ class bilibiliClient(bilibili):
                     else:
                         continue
 
-    def parseDanMu(self, messages):
+    async def parseDanMu(self, messages):
 
         try:
             dic = json.loads(messages)
@@ -106,6 +107,8 @@ class bilibiliClient(bilibili):
                 }
                 text1 = dic['real_roomid']
                 text2 = dic['url']
+                await asyncio.sleep(random.uniform(3, 5))
+                API.post_watching_history(bilibili.csrf,text1)
                 url = 'http://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
                 print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检测到房间", str(text1).center(9), "的活动抽奖")
                 response = requests.get(url, headers=headers)
@@ -113,7 +116,7 @@ class bilibiliClient(bilibili):
                 num = len(checklen)
                 while num != 0:
                     for j in range(0,num):
-                        time.sleep(0.5)
+                        await asyncio.sleep(random.uniform(0.5, 1))
                         resttime = response.json()['data'][j]['time']
                         raffleid = response.json()['data'][j]['raffleId']
                         if raffleid not in bilibili.activity_raffleid_list:
@@ -165,6 +168,8 @@ class bilibiliClient(bilibili):
                 params = temp_params + self.app_secret
                 hash = hashlib.md5()
                 hash.update(params.encode('utf-8'))
+                await asyncio.sleep(random.uniform(3, 5))
+                API.post_watching_history(bilibili.csrf,real_roomid)
                 check_url = 'https://api.live.bilibili.com/AppSmallTV/index?' + temp_params + '&sign=' + str(
                             hash.hexdigest())
                 print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "监测到房间", str(real_roomid).center(9), "的小电视抽奖")
@@ -181,7 +186,7 @@ class bilibiliClient(bilibili):
                 num = len(checklen)
                 while num != 0:
                     for j in range(0,num):
-                        time.sleep(0.5)
+                        await asyncio.sleep(random.uniform(0.5, 1))
                         resttime = response.json()['data']['unjoin'][j]['dtime']
                         raffleid = response.json()['data']['unjoin'][j]['id']
                         if raffleid not in bilibili.TV_raffleid_list:
