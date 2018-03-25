@@ -8,6 +8,7 @@ class bilibili():
     app_secret = '560c52ccd288fed045859ed18bffd973'
     access_key = ""
     cookie = ""
+    csrf = ""
     pcheaders = {
         'Accept': 'application/json, text/plain, */*',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
