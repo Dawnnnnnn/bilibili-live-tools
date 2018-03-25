@@ -1,5 +1,7 @@
 from bilibili import bilibili
 import requests
+import datetime
+import time
 
 
 class API(bilibili):
@@ -11,7 +13,20 @@ class API(bilibili):
             "room_id": room_id,
             "csrf_token": csrf_token
             }
-        ulr = "https://api.live.bilibili.com/room/v1/Room/room_entry_action"
-        response = requests.post(ulr, data=data, headers=bilibili.pcheaders)
+        url = "https://api.live.bilibili.com/room/v1/Room/room_entry_action"
+        requests.post(url, data=data, headers=bilibili.pcheaders)
         # print(response.json())
         return 0
+        
+    def CurrentTime():
+        currenttime = str(int(time.mktime(datetime.datetime.now().timetuple())))
+        return currenttime
+    
+    def get_bag_list():
+        url = "https://api.live.bilibili.com/gift/v2/gift/m_bag_list?" + 'access_key='+bilibili.access_key+'&actionKey='+bilibili.actionKey+'&appkey='+bilibili.appkey+'&build='+bilibili.build+'&device='+bilibili.device + '&mobi_app='+bilibili.mobi_app+'&platform='+bilibili.platform + '&ts=' + API.CurrentTime()
+        response = requests.get(url, headers=bilibili.pcheaders)
+        for i in range(len(response.json()['data'])):
+            gift_name = response.json()['data'][i]['gift_name']
+            gift_num = str(response.json()['data'][i]['gift_num']).center(4)
+            expireat = str(round(int(response.json()['data'][i]['expireat']) / 86400, 1)).center(6)
+            print(gift_name, 'X', gift_num, '(在', expireat, '天后过期)')
