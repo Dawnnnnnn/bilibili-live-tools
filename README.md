@@ -71,7 +71,8 @@
              自行按照百度配置python运行环境,并安装所需第三方库,最后执行python run.py
        第二种:
              下载release中的exe版本,双击运行
-             
+       
+       备注：由于yjqiang开发者使用ios pythonista，所以优先适配ios，但是其他平台的适配也会加入      
          
         
     
