@@ -14,6 +14,26 @@ def CurrentTime():
     currenttime = str(int(time.mktime(datetime.datetime.now().timetuple())))
     return currenttime
 
+def danmu_msg(dic):
+    info = dic['info']
+    #print(dic)
+    tmp = dic['info'][2][1] + ':' + dic['info'][1]
+    if info[7] == 3:
+        print('舰', end=' ')
+    else:
+        if info[2][3] == 1:
+            # tmp = '爷 ' + tmp
+            print('爷', end=' ')
+        if info[2][2] == 1:
+            print('房管', end=' ')
+        # 勋章
+        if info[3]:
+            print(info[3][1] + '|' + str(info[3][0]), end=' ')
+        # 等级
+        if not info[5]:
+            print('UL' + str(info[4][0]), end=' ')
+    print(tmp)
+
 
 class bilibiliClient(bilibili):
 
@@ -95,6 +115,8 @@ class bilibiliClient(bilibili):
             return
         cmd = dic['cmd']
 
+        if cmd == 'DANMU_MSG':
+            danmu_msg(dic)           
         if cmd == 'SYS_GIFT':
             try:
                 headers = {

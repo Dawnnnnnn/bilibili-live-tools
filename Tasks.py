@@ -33,13 +33,13 @@ class Tasks(bilibili):
     # 领取每日任务奖励
     def Daily_Task(self):
         url = 'https://api.live.bilibili.com/activity/v1/task/receive_award'
-        payload1 = {'task_id': 'single_watch_task'}
-        response1 = requests.post(url, data=payload1, headers=self.appheaders)
+        #payload1 = {'task_id': 'single_watch_task'}
+        #response1 = requests.post(url, data=payload1, headers=self.appheaders)
         payload2 = {'task_id': 'double_watch_task'}
         response2 = requests.post(url, data=payload2, headers=self.appheaders)
-        payload3 = {'task_id': 'share_task'}
-        response3 = requests.post(url, data=payload3, headers=self.appheaders)
-        print("# 今日每日任务已完成")
+        #payload3 = {'task_id': 'share_task'}
+        #response3 = requests.post(url, data=payload3, headers=self.appheaders)
+        print("# 双端观看直播:", response2.json()["msg"])
 
     # 应援团签到
     def link_sign(self):

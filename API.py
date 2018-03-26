@@ -31,7 +31,7 @@ class API(bilibili):
             gift_name = response.json()['data'][i]['gift_name']
             gift_num = str(response.json()['data'][i]['gift_num']).center(4)
             expireat = str(round(int(response.json()['data'][i]['expireat']) / 86400, 1)).center(6)
-            print("#", gift_name, 'X', gift_num, '(在', expireat, '天后过期)')
+            print("# " + gift_name + 'X' + gift_num, '(在' + expireat + '天后过期)')
     
     def user_info():
         url = "https://api.live.bilibili.com/User/getUserInfo?ts=" + CurrentTime()
