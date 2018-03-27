@@ -44,6 +44,7 @@ class Tasks(bilibili):
     # 应援团签到
     def link_sign(self):
         url = "https://api.vc.bilibili.com/link_group/v1/member/my_groups"
+        self.pcheaders['Host'] = "api.vc.bilibili.com"
         response = requests.get(url,headers=self.pcheaders)
         check = len(response.json()['data']['list'])
         group_id_list = []
@@ -59,17 +60,15 @@ class Tasks(bilibili):
             hash = hashlib.md5()
             hash.update(params.encode('utf-8'))
             url = "https://api.vc.bilibili.com/link_setting/v1/link_setting/sign_in?"+temp_params+"&sign="+str(hash.hexdigest())
+            self.appheaders['Host'] = "api.vc.bilibili.com"
             response = requests.get(url,headers=self.appheaders)
-            if (response.json()['data']['status']) == 1:
-                print("# 应援团 %s 已应援过"  %(i1) )
-            if (response.json()['data']['status']) == 0:
-                print("# 应援团 %s 应援成功,获得 %s 点亲密度"  %(i1, response.json()['data']['add_num']))
-
-    # 扭蛋币
-    def redleaf(self):
-        url ="http://live.bilibili.com/redLeaf/kingMoneyGift"
-        response = requests.get(url,headers=self.pcheaders)
-        print("# 扭蛋币:",response.json()['msg'])
+            if response.json()['code'] == 0:
+                if (response.json()['data']['status']) == 1:
+                    print("# 应援团 %s 已应援过"  %(i1) )
+                if (response.json()['data']['status']) == 0:
+                    print("# 应援团 %s 应援成功,获得 %s 点亲密度"  %(i1, response.json()['data']['add_num']))
+            else:
+                print("# 应援团 %s 应援失败" %(i1))
 
     async def run(self):
         while 1:
@@ -77,6 +76,6 @@ class Tasks(bilibili):
             self.DoSign()
             self.Daily_bag()
             self.Daily_Task()
-            self.redleaf()
             self.link_sign()
+
             await asyncio.sleep(21600)
