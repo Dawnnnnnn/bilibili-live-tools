@@ -8,14 +8,19 @@ import datetime
 import time
 import hashlib
 import requests
-from printf import printf
+from printer import Printer
+
 
 def CurrentTime():
     currenttime = str(int(time.mktime(datetime.datetime.now().timetuple())))
     return currenttime
 
 
-class bilibiliClient(bilibili, printf):
+class bilibiliClient(bilibili):
+    
+        
+    def __init__(self, printer):
+        self.printer = printer 
 
     async def connectServer(self):
 
@@ -97,7 +102,7 @@ class bilibiliClient(bilibili, printf):
 
         if cmd == 'DANMU_MSG':
             # print(dic)
-            #self.print_danmu_msg(dic)
+            self.printer.print_danmu_msg(dic)
             pass
         if cmd == 'SYS_GIFT':
             try:

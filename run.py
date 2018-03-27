@@ -6,6 +6,10 @@ from login import Login
 from connect import connect
 import asyncio
 from API import API
+from configloader import ConfigLoader
+from printer import Printer
+
+printer = Printer(ConfigLoader("color.conf", "user.conf"))
 
 
 login = Login().success()
@@ -15,7 +19,7 @@ task = OnlineHeart()
 task1 = Silver()
 task2 = Tasks()
 task3 = LotteryResult()
-task4 = connect()
+task4 = connect(printer)
 
 tasks = [
     task.run(),
