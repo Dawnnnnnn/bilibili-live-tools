@@ -8,7 +8,6 @@ import datetime
 import time
 import hashlib
 import requests
-import console
 from printf import printf
 
 def CurrentTime():
