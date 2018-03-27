@@ -1,4 +1,6 @@
 from bilibili import bilibili
+import hashlib
+import random
 import requests
 import datetime
 import time
@@ -8,11 +10,26 @@ def CurrentTime():
     currenttime = str(int(time.mktime(datetime.datetime.now().timetuple())))
     return currenttime
 
+def calculate_sign(str):
+    #value = self.GetHash()
+   # key = value['key']
+    #Hash = str(value['hash'])
+   # pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode())
+   # password = base64.b64encode(rsa.encrypt((Hash + password).encode('utf-8'), pubkey))
+  #  password = parse.quote_plus(password)
+   # username = parse.quote_plus(username)
+    hash = hashlib.md5()
+    hash.update(str.encode('utf-8'))
+    sign = hash.hexdigest()
+    return sign
         
 class API(bilibili):
     # 本函数只是实现了直播观看历史里的提交，与正常观看仍有区别！！
     # 其实csrf_token就是用了token，我懒得再提出来了
     # 就是Login函数里面的cookie[0]['value']
+
+        
+
     def post_watching_history(csrf_token, room_id):
         data = {
             "room_id": room_id,
@@ -64,3 +81,70 @@ class API(bilibili):
             process_bar = '[' + '>' * arrow + '-' * line + ']' + '%.2f' % percent + '%'
             print(process_bar)
             print('# 等级榜', user_level_rank)
+
+    def send_danmu_msg_andriod(msg, roomId):
+        url = 'https://api.live.bilibili.com/api/sendmsg?'
+        # page ??
+        sign = calculate_sign("access_key=" + bilibili.access_key +"&appkey=" + bilibili.appkey + "&aid=&page=1&build=" + bilibili.build)
+        url = url + "access_key=" + bilibili.access_key +"&appkey=" + bilibili.appkey + "&sign=" + sign + "&aid=&page=1&build=" + bilibili.build
+        
+        data = {
+            'access_key': bilibili.access_key,
+            'actionKey': "appkey",
+            'appkey':  bilibili.appkey,
+            'build':  bilibili.build,
+            # 房间号
+            'cid':  roomId,
+            # 颜色
+            'color':  '16777215',
+            'device':  bilibili.device,
+            # 字体大小
+            'fontsize': '25',
+            # 实际上并不需要包含 mid 就可以正常发送弹幕, 但是真实的 Android 客户端确实发送了 mid
+            # 自己的用户 ID!!!!
+            'from': '',
+            #'mid': '1008****'
+            'mobi_app':  bilibili.mobi_app,
+            # 弹幕模式
+            # 1 普通  4 底端  5 顶端 6 逆向  7 特殊   9 高级
+            # 一些模式需要 VIP
+            'mode': '1',
+            # 内容
+            "msg":  msg,
+            'platform':  bilibili.platform      , 
+            # 播放时间
+            'playTime': '0.0',
+            # 弹幕池  尚且只见过为 0 的情况
+            'pool': '0',
+            #random   随机数
+            # 在 web 端发送弹幕, 该字段是固定的, 为用户进入直播页面的时间的时间戳. 但是在 Android 端, 这是一个随机数
+            # 该随机数不包括符号位有 9 位
+            #  '1367301983632698015'  
+            'rnd': str((int)(1000000000000000000.0 + 2000000000000000000.0 * random.random())),
+            "screen_state": '',
+            'sign':  bilibili.sign,
+            'ts':  CurrentTime(),
+            # 必须为 "json"
+            'type': "json"
+        }
+        print(data)
+        response = requests.post(url, headers=bilibili.appheaders, data=data)
+        print(response.json())
+    
+    def send_danmu_msg_web(msg, roomId):
+        url = 'https://api.live.bilibili.com/msg/send'
+        data = {
+            'color' : '16777215',
+            'fontsize' : '25',
+            'mode' : '1',
+            'msg' : msg,
+            'rnd' : '0',
+            'roomid' : roomId,
+            'csrf_token' :bilibili.csrf
+        }
+
+
+        response = requests.post(url, headers=bilibili.pcheaders, data=data)
+        print(response.json())
+    
+     
