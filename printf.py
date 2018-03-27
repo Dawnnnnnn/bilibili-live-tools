@@ -25,8 +25,8 @@ class printf:
 
         # "255 255 255"
     def rgb_print(self, rgb_str, str, end=' '):
-        # print(str)
-        color = webcolors.rgb_to_rgb_percent(rgb_str)
+        #print(str)
+        color = webcolors.rgb_to_rgb_percent(map(int,rgb_str.split()))
         console.set_color(*[float(i.strip('%'))/100.0 for i in color])
         print(str, end=end)
         console.set_color()
@@ -43,7 +43,7 @@ class printf:
                     color = self.configparser.get('others', 'vip')
                     self.rgb_print(color, '爷')
                 else:
-                    color = self.configparser.get('others', 'vip')
+                    color = self.configparser.get('others', 'svip')
                     self.rgb_print(color, '爷')
             if info[2][2] == 1:
                 color = self.configparser.get('others', 'admin')
@@ -86,7 +86,7 @@ class printf:
         print(tmp)
         
     def print_danmu_msg(self, dic):
-        if (self.platform == 'ios_pythonsta'):
+        if (self.platform == 'ios_pythonista'):
             self.print_danmu_msg_ios(dic)
         else:
             self.print_danmu_msg_other(dic)
