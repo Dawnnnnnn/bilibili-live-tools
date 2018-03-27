@@ -36,7 +36,7 @@ class bilibili():
     connected = False
     _UserCount = 0
     _ChatHost = 'livecmt-2.bilibili.com'
-    _roomId = int(3108569)
+    roomid = 23058
     activity_raffleid_list = []
     activity_roomid_list = []
     activity_time_list = []
