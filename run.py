@@ -6,9 +6,12 @@ from login import Login
 from connect import connect
 import asyncio
 from API import API
+
+
 login = Login().success()
 API.user_info()
 API.get_bag_list()
+API.send_danmu_msg_web("我是弹幕测试呀", roomid)
 task = OnlineHeart()
 task1 = Silver()
 task2 = Tasks()
