@@ -29,7 +29,7 @@ class connect(bilibili):
                     print ('# 重新连接直播间 %s' % roomid)
                     with open("log.txt","a+")as f:
                         f.write("reconnect success!!!!!")
-                    danmuji = bilibiliClient()
+                    danmuji = bilibiliClient(self.printer)
                     task11 = asyncio.ensure_future(danmuji.connectServer())
                     task22 = asyncio.ensure_future(danmuji.HeartbeatLoop())
                     self.tasks[roomid] = [task11, task22]
