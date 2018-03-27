@@ -1,10 +1,17 @@
 import asyncio
 from bilibiliCilent import bilibiliClient
 from bilibili import bilibili
+from printer import Printer
+
+
 class connect(bilibili):
     tasks = {}
+    
+    def __init__(self, printer):
+        self.printer = printer 
+        
     async def connect(self):
-        danmuji = bilibiliClient()
+        danmuji = bilibiliClient(self.printer)
         task1 = asyncio.ensure_future(danmuji.connectServer())
         task2 = asyncio.ensure_future(danmuji.HeartbeatLoop())
         self.tasks[bilibili.roomid] = [task1, task2]
