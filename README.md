@@ -51,6 +51,9 @@
 3.25:
 
     美化输出，设定延迟，加入查询功能，采用一定措施防止被封。
+    
+3.2x:
+    记不住了修的bug太多了。
 
 环境:
 ------  
@@ -82,9 +85,12 @@
 修bug群:473195880
 
 
-引用代码作者github:https://github.com/lyyyuna
-感谢：https://github.com/lkeme/BiliHelper
-感谢：https://github.com/czp3009/bilibili-api
+感谢:https://github.com/lyyyuna
+
+感谢:https://github.com/lkeme/BiliHelper
+
+感谢:https://github.com/czp3009/bilibili-api
+
 
 本项目采用MIT开源协议
 
