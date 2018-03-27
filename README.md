@@ -62,6 +62,7 @@
         pip install requests
         pip install rsa
         pip install aiohttp
+        pip install webcolors
 
 
 使用方法：
@@ -78,6 +79,7 @@
          
         
     
+修bug群:473195880
 
 
 引用代码作者github:https://github.com/lyyyuna
