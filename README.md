@@ -83,6 +83,8 @@
 
 
 引用代码作者github:https://github.com/lyyyuna
+感谢：https://github.com/lkeme/BiliHelper
+感谢：https://github.com/czp3009/bilibili-api
 
 本项目采用MIT开源协议
 
