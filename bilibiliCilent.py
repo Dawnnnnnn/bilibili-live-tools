@@ -22,7 +22,7 @@ class bilibiliClient(bilibili, printf):
         reader, writer = await asyncio.open_connection(self._ChatHost, self._ChatPort)
         self._reader = reader
         self._writer = writer
-        if (await self.SendJoinChannel(self._roomId) == True):
+        if (await self.SendJoinChannel(bilibili.roomid) == True):
             self.connected = True
             print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '连接弹幕服务器成功')
             await self.ReceiveMessageLoop()
@@ -97,7 +97,7 @@ class bilibiliClient(bilibili, printf):
 
         if cmd == 'DANMU_MSG':
             # print(dic)
-            self.print_danmu_msg(dic)
+            #self.print_danmu_msg(dic)
             pass
         if cmd == 'SYS_GIFT':
             try:

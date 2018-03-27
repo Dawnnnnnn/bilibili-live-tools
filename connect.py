@@ -1,13 +1,13 @@
 import asyncio
 from bilibiliCilent import bilibiliClient
-class connect():
+from bilibili import bilibili
+class connect(bilibili):
     tasks = {}
     async def connect(self):
-        roomid = 23058
         danmuji = bilibiliClient()
         task1 = asyncio.ensure_future(danmuji.connectServer())
         task2 = asyncio.ensure_future(danmuji.HeartbeatLoop())
-        self.tasks[roomid] = [task1, task2]
+        self.tasks[bilibili.roomid] = [task1, task2]
         while True:
             await asyncio.sleep(10)
             for roomid in self.tasks:

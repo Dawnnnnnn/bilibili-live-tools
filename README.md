@@ -20,7 +20,7 @@
         领取每日包裹奖励
         应援团签到
         实物抽奖(实验性)
-        获取心跳礼物(实验性)
+        获取心跳礼物
         节奏风暴领取(单文件实验性)
         
 更新说明
@@ -51,6 +51,11 @@
 3.25:
 
     美化输出，设定延迟，加入查询功能，采用一定措施防止被封。
+    
+3.2x:
+
+    记不住了修的bug太多了。
+    然后插播一条重要消息，因为代码进行了比较大的变动，导致打包成exe后无法连接到弹幕服务器(玄学)，所以暂时停止release的发布，请尝试搭建python环境
 
 环境:
 ------  
@@ -69,9 +74,9 @@
 ------
 
        第一种:
-             自行按照百度配置python运行环境,并安装所需第三方库,最后执行python run.py
+             自行按照百度配置python运行环境（要把那个pip的勾上!）,并安装所需第三方库,最后执行python run.py
        第二种:
-             下载release中的exe版本,双击运行
+             下载release中的exe版本,双击运行(暂时停止)
        第三种:
              推荐使用ios pythonsta 工具（http://omz-software.com/pythonista/）
              （yjqiang没收广告费）
@@ -82,9 +87,12 @@
 修bug群:473195880
 
 
-引用代码作者github:https://github.com/lyyyuna
-感谢：https://github.com/lkeme/BiliHelper
-感谢：https://github.com/czp3009/bilibili-api
+感谢:https://github.com/lyyyuna
+
+感谢:https://github.com/lkeme/BiliHelper
+
+感谢:https://github.com/czp3009/bilibili-api
+
 
 本项目采用MIT开源协议
 
