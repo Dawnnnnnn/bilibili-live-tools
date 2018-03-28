@@ -102,7 +102,7 @@ class bilibiliClient(bilibili):
 
         if cmd == 'DANMU_MSG':
             # print(dic)
-            self.printer.print_danmu_msg(dic)
+            # self.printer.print_danmu_msg(dic)
             pass
         if cmd == 'SYS_GIFT':
             try:
