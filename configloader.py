@@ -84,9 +84,8 @@ class ConfigLoader():
     def load_user(self, file):
         cf_user = configparser.ConfigParser()
         cf_user.read(file)
-        
         # print(cf_user._sections['platform']['platform'])
         return cf_user._sections
         
-        
+
 # configloader = ConfigLoader("color.conf", "user.conf", "bilibili.conf")

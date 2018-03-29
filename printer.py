@@ -88,4 +88,3 @@ class Printer():
         else:
             self.print_danmu_msg_other(dic)
 
-

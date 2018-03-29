@@ -133,7 +133,7 @@ class API():
         response = requests.post(url, headers=self.bilibili.appheaders, data=data)
         print(response.json())
     
-    def send_danmu_msg_web(msg, roomId):
+    def send_danmu_msg_web(self,msg, roomId):
         url = 'https://api.live.bilibili.com/msg/send'
         data = {
             'color' : '16777215',
@@ -148,5 +148,3 @@ class API():
 
         response = requests.post(url, headers=self.bilibili.pcheaders, data=data)
         print(response.json())
-    
-     
