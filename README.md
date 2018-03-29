@@ -64,6 +64,7 @@
 
 3.29:
 >  感谢[yjqiang](https://github.com/yjqiang)大佬再次重构
+   恢复exe版本的提供
 
 环境:
 ------  
@@ -84,7 +85,7 @@
        第一种:
              自行按照百度配置python运行环境（要把那个pip的勾上!）,并安装所需第三方库,最后执行python run.py
        第二种:
-             下载release中的exe版本,双击运行(暂时停止)
+             下载release中的exe版本,双击运行(已恢复)
        第三种:
              推荐使用ios pythonsta 工具（http://omz-software.com/pythonista/）
              （yjqiang没收广告费）
