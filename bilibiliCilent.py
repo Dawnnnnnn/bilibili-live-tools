@@ -1,12 +1,14 @@
+# from bilibili import bilibili
+from API import API
 import asyncio
 import random
 from struct import *
 import json
 import datetime
 import time
-import re
 import hashlib
 import requests
+# from printer import Printer
 import sys
 
 def CurrentTime():
@@ -23,7 +25,11 @@ class bilibiliClient():
         self.api = api
 
     async def connectServer(self):
-        reader, writer =await asyncio.open_connection(self.bilibili._ChatHost, self.bilibili._ChatPort)
+        try:
+            reader, writer =await asyncio.open_connection(self.bilibili._ChatHost, self.bilibili._ChatPort)
+        except :
+            print("# 连接无法建立，请检查本地网络状况")
+            return 
         self.bilibili._reader = reader
         self.bilibili._writer = writer
         #print("writer and reader are ready")
@@ -42,7 +48,6 @@ class bilibiliClient():
             await self.SendSocketData(0, 16, self.bilibili._protocolversion, 2, 1, "")
             await asyncio.sleep(30)
             
-        print('heart stop')
 
     async def SendJoinChannel(self, channelId):
         self.bilibili._uid = (int)(100000000000000.0 + 200000000000000.0 * random.random())
@@ -70,7 +75,12 @@ class bilibiliClient():
     async def ReceiveMessageLoop(self):
         while self.bilibili.connected == True:
             tmp = await self.bilibili._reader.read(4)
+            if not tmp:
+                print("# 网络连接中断或服务器主动断开，请检查本地网络状况，稍后将尝试重连")
+                self.bilibili.connected = False
+                break
             expr, = unpack('!I', tmp)
+            # print(expr)
             tmp = await self.bilibili._reader.read(2)
             tmp = await self.bilibili._reader.read(2)
             tmp = await self.bilibili._reader.read(4)
