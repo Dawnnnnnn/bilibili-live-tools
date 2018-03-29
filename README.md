@@ -66,6 +66,8 @@
 >  感谢[yjqiang](https://github.com/yjqiang)大佬再次重构
    恢复exe版本的提供
 
+>  实现从user.conf中读取账号密码,并默认记住账号密码
+
 环境:
 ------  
         python3.6
