@@ -8,7 +8,7 @@ class LotteryResult(bilibili):
 
     async def query(self):
         while 1:           
-            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检查抽奖结果")
+            # print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检查抽奖结果")
             # print(self.activity_raffleid_list)
             if self.activity_raffleid_list:               
                 for i in range(0,len(self.activity_roomid_list)):

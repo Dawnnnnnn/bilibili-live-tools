@@ -96,70 +96,88 @@ class bilibiliClient(bilibili):
 
         try:
             dic = json.loads(messages)
+            # print(dic)
         except:
             return
         cmd = dic['cmd']
 
         if cmd == 'DANMU_MSG':
-            # print(dic)
-            self.printer.print_danmu_msg(dic)
+            #self.printer.print_danmu_msg(dic)
             pass
         if cmd == 'SYS_GIFT':
             try:
-                headers = {
-                    'Accept': 'application/json, text/plain, */*',
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
-                    'Accept-Language': 'zh-CN,zh;q=0.9',
-                    'accept-encoding': 'gzip, deflate',
-                    'Host': 'api.live.bilibili.com',
-                    'cookie': self.cookie,
-                }
-                text1 = dic['real_roomid']
-                text2 = dic['url']
-                await asyncio.sleep(random.uniform(3, 5))
-                API.post_watching_history(bilibili.csrf,text1)
-                url = 'http://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
-                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检测到房间", str(text1).center(9), "的活动抽奖")
-                response = requests.get(url, headers=headers)
-                checklen = response.json()['data']
-                num = len(checklen)
-                while num != 0:
-                    for j in range(0,num):
-                        await asyncio.sleep(random.uniform(0.5, 1))
-                        resttime = response.json()['data'][j]['time']
-                        raffleid = response.json()['data'][j]['raffleId']
-                        if raffleid not in bilibili.activity_raffleid_list:
-                            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "参与了房间", str(text1).center(9), "的活动抽奖")
-                            bilibili.activity_raffleid_list.append(raffleid)
-                            bilibili.activity_roomid_list.append(text1)
-                            bilibili.activity_time_list.append(resttime)
-                            headers = {
-                                'Accept': 'application/json, text/plain, */*',
-                                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
-                                'cookie': self.cookie,
-                                'referer': text2
-                            }
-                            temp_params = 'access_key='+self.access_key+'&actionKey='+self.actionKey+'&appkey='+self.appkey+'&build='+self.build+'&device='+self.device+'&event_type=flower_rain-' + str(
-                                raffleid) + '&mobi_app='+self.mobi_app+'&platform='+self.platform+'&room_id=' + str(
-                                text1) + '&ts=' + CurrentTime()
-                            params = temp_params + self.app_secret
-                            hash = hashlib.md5()
-                            hash.update(params.encode('utf-8'))
-                            true_url = 'http://api.live.bilibili.com/YunYing/roomEvent?' + temp_params + '&sign=' + str(
-                                hash.hexdigest())
-                            pc_url = 'http://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
-                                text1) + '&raffleId=' + str(raffleid)
-                            response1 = requests.get(true_url,params=params, headers=headers)
-                            pc_response = requests.get(pc_url, headers=headers)
-                            try:
-                                print("# 移动端活动抽奖结果:", response1.json()['data']['gift_desc'])
-                            except:
-                                pass
-                            try:
-                                print("# 网页端活动抽奖状态:", pc_response.json()['message'])
-                            except:
-                                pass
-                    break
+                if dic['giftId'] != 39:
+                    headers = {
+                        'Accept': 'application/json, text/plain, */*',
+                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+                        'Accept-Language': 'zh-CN,zh;q=0.9',
+                        'accept-encoding': 'gzip, deflate',
+                        'Host': 'api.live.bilibili.com',
+                        'cookie': self.cookie,
+                    }
+                    text1 = dic['real_roomid']
+                    text2 = dic['url']
+                    await asyncio.sleep(random.uniform(3, 5))
+                    API.post_watching_history(bilibili.csrf,text1)
+                    url = 'http://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
+                    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检测到房间", str(text1).center(9), "的活动抽奖")
+                    response = requests.get(url, headers=headers)
+                    checklen = response.json()['data']
+                    num = len(checklen)
+                    while num != 0:
+                        for j in range(0,num):
+                            await asyncio.sleep(random.uniform(0.5, 1))
+                            resttime = response.json()['data'][j]['time']
+                            raffleid = response.json()['data'][j]['raffleId']
+                            if raffleid not in bilibili.activity_raffleid_list:
+                                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "参与了房间", str(text1).center(9), "的活动抽奖")
+                                bilibili.activity_raffleid_list.append(raffleid)
+                                bilibili.activity_roomid_list.append(text1)
+                                bilibili.activity_time_list.append(resttime)
+                                headers = {
+                                    'Accept': 'application/json, text/plain, */*',
+                                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+                                    'cookie': self.cookie,
+                                    'referer': text2
+                                }
+                                temp_params = 'access_key='+self.access_key+'&actionKey='+self.actionKey+'&appkey='+self.appkey+'&build='+self.build+'&device='+self.device+'&event_type=flower_rain-' + str(
+                                    raffleid) + '&mobi_app='+self.mobi_app+'&platform='+self.platform+'&room_id=' + str(
+                                    text1) + '&ts=' + CurrentTime()
+                                params = temp_params + self.app_secret
+                                hash = hashlib.md5()
+                                hash.update(params.encode('utf-8'))
+                                true_url = 'http://api.live.bilibili.com/YunYing/roomEvent?' + temp_params + '&sign=' + str(
+                                    hash.hexdigest())
+                                pc_url = 'http://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
+                                    text1) + '&raffleId=' + str(raffleid)
+                                response1 = requests.get(true_url,params=params, headers=headers)
+                                pc_response = requests.get(pc_url, headers=headers)
+                                try:
+                                    print("# 移动端活动抽奖结果:", response1.json()['data']['gift_desc'])
+                                except:
+                                    pass
+                                try:
+                                    print("# 网页端活动抽奖状态:", pc_response.json()['message'])
+                                except:
+                                    pass
+                        break
+                else:
+                    try:
+                        roomid = dic['roomid']
+                        get_url = "http://api.live.bilibili.com/lottery/v1/Storm/check?roomid="+str(roomid)
+                        response = requests.get(get_url, headers=self.pcheaders)
+                        temp = response.json()
+                        check = len(temp['data'])
+                        if check != 0 and temp['data']['hasJoin'] != 1:
+                            id = temp['data']['id']
+                            storm_url = 'http://api.live.bilibili.com/lottery/v1/Storm/join'
+                            payload = {"id": id, "color": "16777215", "captcha_token": "", "captcha_phrase": "", "token": "",
+                                   "csrf_token": self.csrf}
+                            response1 = requests.post(storm_url, data=payload, headers=self.pcheaders, timeout=2)
+                            print(response1.json())
+                    except:
+                        pass
+
 
             except:
                 pass
