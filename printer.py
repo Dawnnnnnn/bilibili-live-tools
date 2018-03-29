@@ -66,13 +66,9 @@ class Printer():
                 list_color.append([])
             # print(info)
         except :
-            print("弹幕风暴")
+            print("# 小电视降临本直播间")
             list_msg.append(info[2][1])    
             list_color.append([])
-            
-            # !!!!!!!
-            list_msg.append(':' + info[1])
-            self.concole_print(list_msg)
             
         list_msg.append(':' + info[1])
         list_color.append([])
