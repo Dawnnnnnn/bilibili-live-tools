@@ -12,7 +12,7 @@ class LotteryResult():
     async def query(self):
         while 1:           
             print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检查抽奖结果")
-            print(self.bilibili.activity_raffleid_list)
+            # print(self.bilibili.activity_raffleid_list)
             if self.bilibili.activity_raffleid_list:               
                 for i in range(0,len(self.bilibili.activity_roomid_list)):
                     url = "http://api.live.bilibili.com/activity/v1/Raffle/notice?roomid="+str(self.bilibili.activity_roomid_list[0])+"&raffleId="+str(self.bilibili.activity_raffleid_list[0])
@@ -33,7 +33,7 @@ class LotteryResult():
                     except:
                         pass
 
-            print(self.bilibili.TV_raffleid_list)
+            # print(self.bilibili.TV_raffleid_list)
             if self.bilibili.TV_raffleid_list:
                 for i in range(0, len(self.bilibili.TV_roomid_list)):
                     url="http://api.live.bilibili.com/gift/v2/smalltv/notice?roomid="+str(self.bilibili.TV_roomid_list[0])+"&raffleId="+str(self.bilibili.TV_raffleid_list[0])
