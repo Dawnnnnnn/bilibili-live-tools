@@ -8,18 +8,23 @@ import asyncio
 from API import API
 from configloader import ConfigLoader
 from printer import Printer
+from bilibili import bilibili
 
-printer = Printer(ConfigLoader("color.conf", "user.conf"))
+cf = ConfigLoader("color.conf", "user.conf", "bilibili.conf")
+printer = Printer(cf)
+bilibili = bilibili(cf)
+login = Login(bilibili)
+login.success()
 
-
-login = Login().success()
-API.user_info()
-API.get_bag_list()
-task = OnlineHeart()
-task1 = Silver()
-task2 = Tasks()
-task3 = LotteryResult()
-task4 = connect(printer)
+bilibili = login.return_bilibili()
+api = API(bilibili)
+api.user_info()
+api.get_bag_list()
+task = OnlineHeart(bilibili)
+task1 = Silver(bilibili)
+task2 = Tasks(bilibili)
+task3 = LotteryResult(bilibili)
+task4 = connect(printer, bilibili, api)
 
 tasks = [
     task.run(),

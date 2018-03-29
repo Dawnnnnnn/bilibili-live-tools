@@ -23,26 +23,28 @@ def calculate_sign(str):
     sign = hash.hexdigest()
     return sign
         
-class API(bilibili):
+class API():
+    def __init__(self, bilibili):
+        self.bilibili = bilibili
     # 本函数只是实现了直播观看历史里的提交，与正常观看仍有区别！！
     # 其实csrf_token就是用了token，我懒得再提出来了
     # 就是Login函数里面的cookie[0]['value']
 
         
 
-    def post_watching_history(csrf_token, room_id):
+    def post_watching_history(self,csrf_token, room_id):
         data = {
             "room_id": room_id,
             "csrf_token": csrf_token
             }
         url = "https://api.live.bilibili.com/room/v1/Room/room_entry_action"
-        response = requests.post(url, data=data, headers=bilibili.pcheaders)
+        response = requests.post(url, data=data, headers=self.bilibili.pcheaders)
         #print(response.json())
         return 0
             
-    def get_bag_list():
-        url = "https://api.live.bilibili.com/gift/v2/gift/m_bag_list?" + 'access_key='+bilibili.access_key+'&actionKey='+bilibili.actionKey+'&appkey='+bilibili.appkey+'&build='+bilibili.build+'&device='+bilibili.device + '&mobi_app='+bilibili.mobi_app+'&platform='+bilibili.platform + '&ts=' + CurrentTime()
-        response = requests.get(url, headers=bilibili.pcheaders)
+    def get_bag_list(self):
+        url = "https://api.live.bilibili.com/gift/v2/gift/m_bag_list?" + 'access_key='+self.bilibili.access_key+'&actionKey='+self.bilibili.actionKey+'&appkey='+self.bilibili.appkey+'&build='+self.bilibili.build+'&device='+self.bilibili.device + '&mobi_app='+self.bilibili.mobi_app+'&platform='+self.bilibili.platform + '&ts=' + CurrentTime()
+        response = requests.get(url, headers=self.bilibili.pcheaders)
         print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询可用礼物')
         for i in range(len(response.json()['data'])):
             gift_name = response.json()['data'][i]['gift_name']
@@ -50,9 +52,9 @@ class API(bilibili):
             expireat = str(round(int(response.json()['data'][i]['expireat']) / 86400, 1)).center(6)
             print("# " + gift_name + 'X' + gift_num, '(在' + expireat + '天后过期)')
     
-    def user_info():
+    def user_info(self):
         url = "https://api.live.bilibili.com/User/getUserInfo?ts=" + CurrentTime()
-        response = requests.get(url, headers=bilibili.pcheaders)
+        response = requests.get(url, headers=self.bilibili.pcheaders)
         json = response.json()
         print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询用户信息')
         if(json['code'] == 'REPONSE_OK'):
@@ -82,36 +84,36 @@ class API(bilibili):
             print(process_bar)
             print('# 等级榜', user_level_rank)
 
-    def send_danmu_msg_andriod(msg, roomId):
+    def send_danmu_msg_andriod(self, msg, roomId):
         url = 'https://api.live.bilibili.com/api/sendmsg?'
         # page ??
-        sign = calculate_sign("access_key=" + bilibili.access_key +"&appkey=" + bilibili.appkey + "&aid=&page=1&build=" + bilibili.build)
-        url = url + "access_key=" + bilibili.access_key +"&appkey=" + bilibili.appkey + "&sign=" + sign + "&aid=&page=1&build=" + bilibili.build
+        sign = calculate_sign("access_key=" + self.bilibili.access_key +"&appkey=" + self.bilibili.appkey + "&aid=&page=1&build=" + self.bilibili.build)
+        url = url + "access_key=" + self.bilibili.access_key +"&appkey=" + self.bilibili.appkey + "&sign=" + sign + "&aid=&page=1&build=" + self.bilibili.build
         
         data = {
-            'access_key': bilibili.access_key,
+            'access_key': self.bilibili.access_key,
             'actionKey': "appkey",
-            'appkey':  bilibili.appkey,
-            'build':  bilibili.build,
+            'appkey':  self.bilibili.appkey,
+            'build':  self.bilibili.build,
             # 房间号
             'cid':  roomId,
             # 颜色
             'color':  '16777215',
-            'device':  bilibili.device,
+            'device':  self.bilibili.device,
             # 字体大小
             'fontsize': '25',
             # 实际上并不需要包含 mid 就可以正常发送弹幕, 但是真实的 Android 客户端确实发送了 mid
             # 自己的用户 ID!!!!
             'from': '',
             #'mid': '1008****'
-            'mobi_app':  bilibili.mobi_app,
+            'mobi_app':  self.bilibili.mobi_app,
             # 弹幕模式
             # 1 普通  4 底端  5 顶端 6 逆向  7 特殊   9 高级
             # 一些模式需要 VIP
             'mode': '1',
             # 内容
             "msg":  msg,
-            'platform':  bilibili.platform      , 
+            'platform':  self.bilibili.platform      , 
             # 播放时间
             'playTime': '0.0',
             # 弹幕池  尚且只见过为 0 的情况
@@ -122,13 +124,13 @@ class API(bilibili):
             #  '1367301983632698015'  
             'rnd': str((int)(1000000000000000000.0 + 2000000000000000000.0 * random.random())),
             "screen_state": '',
-            'sign':  bilibili.sign,
+            'sign':  self.bilibili.sign,
             'ts':  CurrentTime(),
             # 必须为 "json"
             'type': "json"
         }
         print(data)
-        response = requests.post(url, headers=bilibili.appheaders, data=data)
+        response = requests.post(url, headers=self.bilibili.appheaders, data=data)
         print(response.json())
     
     def send_danmu_msg_web(msg, roomId):
@@ -140,11 +142,11 @@ class API(bilibili):
             'msg' : msg,
             'rnd' : '0',
             'roomid' : roomId,
-            'csrf_token' :bilibili.csrf
+            'csrf_token' :self.bilibili.csrf
         }
 
 
-        response = requests.post(url, headers=bilibili.pcheaders, data=data)
+        response = requests.post(url, headers=self.bilibili.pcheaders, data=data)
         print(response.json())
     
      
