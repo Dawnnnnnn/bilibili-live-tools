@@ -6,12 +6,15 @@ import time
 import asyncio
 
 
-class Tasks(bilibili):
+class Tasks():
+    
+    def __init__(self, bilibili):
+        self.bilibili = bilibili
 
     # 获取每日包裹奖励
     def Daily_bag(self):
         url = 'http://api.live.bilibili.com/gift/v2/live/receive_daily_bag'
-        response = requests.get(url, headers=self.pcheaders)
+        response = requests.get(url, headers=self.bilibili.pcheaders)
         try:
             print("# 获得-" + response.json()['data']['bag_list'][0]['bag_name'] + "-成功")
             print("# 获得-" + response.json()['data']['bag_list'][1]['bag_name'] + "-成功")
@@ -26,7 +29,7 @@ class Tasks(bilibili):
     # 签到功能
     def DoSign(self):
         url = 'https://api.live.bilibili.com/sign/doSign'
-        response = requests.get(url, headers=self.pcheaders)
+        response = requests.get(url, headers=self.bilibili.pcheaders)
         temp = response.json()
         print("# 签到状态:",temp['msg'])
 
@@ -36,7 +39,7 @@ class Tasks(bilibili):
         #payload1 = {'task_id': 'single_watch_task'}
         #response1 = requests.post(url, data=payload1, headers=self.appheaders)
         payload2 = {'task_id': 'double_watch_task'}
-        response2 = requests.post(url, data=payload2, headers=self.appheaders)
+        response2 = requests.post(url, data=payload2, headers=self.bilibili.appheaders)
         #payload3 = {'task_id': 'share_task'}
         #response3 = requests.post(url, data=payload3, headers=self.appheaders)
         print("# 双端观看直播:", response2.json()["msg"])
@@ -44,8 +47,9 @@ class Tasks(bilibili):
     # 应援团签到
     def link_sign(self):
         url = "https://api.vc.bilibili.com/link_group/v1/member/my_groups"
-        self.pcheaders['Host'] = "api.vc.bilibili.com"
-        response = requests.get(url,headers=self.pcheaders)
+        pcheaders = self.bilibili.pcheaders.copy()
+        pcheaders['Host'] = "api.vc.bilibili.com"
+        response = requests.get(url,headers=pcheaders)
         check = len(response.json()['data']['list'])
         group_id_list = []
         owner_uid_list = []
@@ -55,13 +59,13 @@ class Tasks(bilibili):
             group_id_list.append(group_id)
             owner_uid_list.append(owner_uid)
         for (i1,i2) in zip(group_id_list,owner_uid_list):
-            temp_params = "_device="+self.device+"&_hwid=SX1NL0wuHCsaKRt4BHhIfRguTXxOfj5WN1BkBTdLfhstTn9NfUouFiUV&access_key="+self.access_key+"&appkey="+self.appkey+"&build="+self.build+"&group_id="+str(i1)+"&mobi_app="+self.mobi_app+"&owner_id="+str(i2)+"&platform="+self.platform+"&src=xiaomi&trace_id=20171224024300024&ts="+self.CurrentTime()+"&version=5.20.1.520001"
-            params = temp_params + self.app_secret
+            temp_params = "_device="+self.bilibili.device+"&_hwid=SX1NL0wuHCsaKRt4BHhIfRguTXxOfj5WN1BkBTdLfhstTn9NfUouFiUV&access_key="+self.bilibili.access_key+"&appkey="+self.bilibili.appkey+"&build="+self.bilibili.build+"&group_id="+str(i1)+"&mobi_app="+self.bilibili.mobi_app+"&owner_id="+str(i2)+"&platform="+self.bilibili.platform+"&src=xiaomi&trace_id=20171224024300024&ts="+self.CurrentTime()+"&version=5.20.1.520001"
+            params = temp_params + self.bilibili.app_secret
             hash = hashlib.md5()
             hash.update(params.encode('utf-8'))
             url = "https://api.vc.bilibili.com/link_setting/v1/link_setting/sign_in?"+temp_params+"&sign="+str(hash.hexdigest())
-            self.appheaders['Host'] = "api.vc.bilibili.com"
-            response = requests.get(url,headers=self.appheaders)
+            self.bilibili.appheaders['Host'] = "api.vc.bilibili.com"
+            response = requests.get(url,headers=self.bilibili.appheaders)
             if response.json()['code'] == 0:
                 if (response.json()['data']['status']) == 1:
                     print("# 应援团 %s 已应援过"  %(i1) )

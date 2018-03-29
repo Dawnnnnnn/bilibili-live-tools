@@ -5,7 +5,10 @@ import datetime
 import time
 import asyncio
 
-class Silver(bilibili):
+class Silver():
+    
+    def __init__(self, bilibili):
+        self.bilibili = bilibili
     # 获取当前系统时间的unix时间戳
     def CurrentTime(self):
         currenttime = str(int(time.mktime(datetime.datetime.now().timetuple())))
@@ -19,13 +22,13 @@ class Silver(bilibili):
     # 领瓜子时判断领取周期的参数
     def time_start(self):
         time = self.CurrentTime()
-        temp_params = 'access_key=' + self.access_key + '&actionKey=' + self.actionKey + '&appkey=' + self.appkey + '&build=' + self.build + '&device=' + self.device + '&mobi_app=' + self.mobi_app + '&platform=' + self.platform + '&ts=' + time
-        params = temp_params + self.app_secret
+        temp_params = 'access_key=' + self.bilibili.access_key + '&actionKey=' + self.bilibili.actionKey + '&appkey=' + self.bilibili.appkey + '&build=' + self.bilibili.build + '&device=' + self.bilibili.device + '&mobi_app=' + self.bilibili.mobi_app + '&platform=' + self.bilibili.platform + '&ts=' + time
+        params = temp_params + self.bilibili.app_secret
         hash = hashlib.md5()
         hash.update(params.encode('utf-8'))
         GetTask_url = 'https://api.live.bilibili.com/mobile/freeSilverCurrentTask?' + temp_params + '&sign=' + str(
             hash.hexdigest())
-        response = requests.get(GetTask_url,headers=self.appheaders)
+        response = requests.get(GetTask_url,headers=self.bilibili.appheaders)
         temp = response.json()
         # print (temp['code'])    #宝箱领完返回的code为-10017
         if temp['code'] == -10017:
@@ -38,13 +41,13 @@ class Silver(bilibili):
     def time_end(self):
         try:
             time = self.CurrentTime()
-            temp_params = 'access_key=' + self.access_key + '&actionKey=' + self.actionKey + '&appkey=' + self.appkey + '&build=' + self.build + '&device=' + self.device + '&mobi_app=' + self.mobi_app + '&platform=' + self.platform + '&ts=' + time
-            params = temp_params + self.app_secret
+            temp_params = 'access_key=' + self.bilibili.access_key + '&actionKey=' + self.bilibili.actionKey + '&appkey=' + self.bilibili.appkey + '&build=' + self.bilibili.build + '&device=' + self.bilibili.device + '&mobi_app=' + self.bilibili.mobi_app + '&platform=' + self.bilibili.platform + '&ts=' + time
+            params = temp_params + self.bilibili.app_secret
             hash = hashlib.md5()
             hash.update(params.encode('utf-8'))
             GetTask_url = 'https://api.live.bilibili.com/mobile/freeSilverCurrentTask?' + temp_params + '&sign=' + str(
                 hash.hexdigest())
-            response = requests.get(GetTask_url, headers=self.appheaders)
+            response = requests.get(GetTask_url, headers=self.bilibili.appheaders)
             temp = response.json()
             time_end = temp['data']['time_end']
             return str(time_end)
@@ -57,13 +60,13 @@ class Silver(bilibili):
             time = self.CurrentTime()
             timeend = self.time_end()
             timestart = self.time_start()
-            temp_params = 'access_key=' + self.access_key + '&actionKey=' + self.actionKey + '&appkey=' + self.appkey + '&build=' + self.build + '&device=' + self.device + '&mobi_app=' + self.mobi_app + '&platform=' + self.platform + '&time_end=' + timeend + '&time_start=' + timestart + '&ts=' + time
-            params = temp_params + self.app_secret
+            temp_params = 'access_key=' + self.bilibili.access_key + '&actionKey=' + self.bilibili.actionKey + '&appkey=' + self.bilibili.appkey + '&build=' + self.bilibili.build + '&device=' + self.bilibili.device + '&mobi_app=' + self.bilibili.mobi_app + '&platform=' + self.bilibili.platform + '&time_end=' + timeend + '&time_start=' + timestart + '&ts=' + time
+            params = temp_params + self.bilibili.app_secret
             hash = hashlib.md5()
             hash.update(params.encode('utf-8'))
             url = 'https://api.live.bilibili.com/mobile/freeSilverAward?' + temp_params + '&sign=' + str(
                 hash.hexdigest())
-            response = requests.get(url, headers=self.appheaders)
+            response = requests.get(url, headers=self.bilibili.appheaders)
             #print(response.json())
             return response.json()['code']
         except:

@@ -7,15 +7,17 @@ from bilibili import bilibili
 import time
 
 
-class Login(bilibili):
+class Login():
+    def __init__(self, bilibili):
+        self.bilibili = bilibili
 
     def GetHash(self):
         url = 'https://passport.bilibili.com/api/oauth2/getKey'
-        temp_params = 'appkey=' + self.appkey + self.app_secret
+        temp_params = 'appkey=' + self.bilibili.appkey + self.bilibili.app_secret
         hash = hashlib.md5()
         hash.update(temp_params.encode('utf-8'))
         sign = hash.hexdigest()
-        params = {'appkey': self.appkey, 'sign': sign}
+        params = {'appkey': self.bilibili.appkey, 'sign': sign}
         response = requests.post(url, data=params)
         value = response.json()['data']
         return value
@@ -32,13 +34,13 @@ class Login(bilibili):
         username = parse.quote_plus(username)
         # url = 'https://passport.bilibili.com/api/oauth2/login'   //旧接口
         url = "https://passport.bilibili.com/api/v2/oauth2/login"
-        temp_params = 'appkey=' + self.appkey + '&password=' + password + '&username=' + username
-        params = temp_params + self.app_secret
+        temp_params = 'appkey=' + self.bilibili.appkey + '&password=' + password + '&username=' + username
+        params = temp_params + self.bilibili.app_secret
         hash = hashlib.md5()
         hash.update(params.encode('utf-8'))
         sign = hash.hexdigest()
         headers = {"Content-type": "application/x-www-form-urlencoded"}
-        payload = "appkey=" + self.appkey + "&password=" + password + "&username=" + username + "&sign=" + sign
+        payload = "appkey=" + self.bilibili.appkey + "&password=" + password + "&username=" + username + "&sign=" + sign
         response = requests.post(url, data=payload, headers=headers)
         try:
             access_key = response.json()['data']['token_info']['access_token']
@@ -46,10 +48,10 @@ class Login(bilibili):
             cookie_format = ""
             for i in range(0, len(cookie)):
                 cookie_format = cookie_format + cookie[i]['name'] + "=" + cookie[i]['value'] + ";"
-            bilibili.csrf = cookie[0]['value']
-            bilibili.access_key = access_key
-            bilibili.cookie = cookie_format
-            bilibili.pcheaders = {
+            self.bilibili.csrf = cookie[0]['value']
+            self.bilibili.access_key = access_key
+            self.bilibili.cookie = cookie_format
+            self.bilibili.pcheaders = {
                 'Accept': 'application/json, text/plain, */*',
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
                 'Accept-Language': 'zh-CN,zh;q=0.9',
@@ -57,7 +59,7 @@ class Login(bilibili):
                 'Host': 'api.live.bilibili.com',
                 'cookie': cookie_format
             }
-            bilibili.appheaders = {
+            self.bilibili.appheaders = {
                 "User-Agent": "bili-universal/6570 CFNetwork/894 Darwin/17.4.0",
                 "Accept-encoding": "gzip",
                 "Buvid": "000ce0b9b9b4e342ad4f421bcae5e0ce",
@@ -71,5 +73,8 @@ class Login(bilibili):
             print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登陆成功")
         except:
             print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登录失败,错误信息为:",response.json()['message'])
+            
+    def return_bilibili(self):
+        return self.bilibili
 
 
