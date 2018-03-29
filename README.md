@@ -34,7 +34,7 @@
 
 3.22:
         
->   在 [Shadow-D](https://github.com/Shadow-D)大佬的指导下，重新写了父类，实现了输入一次账密通用cookie的功能，
+>   在[Shadow-D](https://github.com/Shadow-D)大佬的指导下，重新写了父类，实现了输入一次账密通用cookie的功能，
     同时加上了获取pc端抽奖结果的功能
     
 3.23:
@@ -43,7 +43,7 @@
     修复邮箱登录异常的bug
     过滤重复抽奖，一定程度上避免ban ip
 3.24:
->  今天 [yjqiang](https://github.com/yjqiang)大佬更新了一大堆的东西,格式更加美观了,还发现了一个bug(有空就修了(flag))(见鬼,大佬们都不睡觉的吗.jpg)
+>  今天[yjqiang](https://github.com/yjqiang)大佬更新了一大堆的东西,格式更加美观了,还发现了一个bug(有空就修了(flag))(见鬼,大佬们都不睡觉的吗.jpg)
    
 >  特别提醒：
         最近b站在检测脚本挂机,请慎重考虑是否继续使用该软件,因使用脚本造成封号黑号的请自行承担后果。
@@ -61,6 +61,10 @@
 3.28:
     
     加入20倍节奏风暴自动领取功能
+
+3.29:
+>  感谢[yjqiang](https://github.com/yjqiang)大佬再次重构
+   恢复exe版本的提供
 
 环境:
 ------  
@@ -81,7 +85,7 @@
        第一种:
              自行按照百度配置python运行环境（要把那个pip的勾上!）,并安装所需第三方库,最后执行python run.py
        第二种:
-             下载release中的exe版本,双击运行(暂时停止)
+             下载release中的exe版本,双击运行(已恢复)
        第三种:
              推荐使用ios pythonsta 工具（http://omz-software.com/pythonista/）
              （yjqiang没收广告费）
