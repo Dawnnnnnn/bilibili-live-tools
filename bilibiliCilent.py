@@ -75,19 +75,23 @@ class bilibiliClient():
 
     async def ReceiveMessageLoop(self):
         while self.bilibili.connected == True:
-            tmp = await self.bilibili._reader.read(4)
+        tmp = await self.bilibili._reader.read(16)
             if not tmp:
                 print("# 网络连接中断或服务器主动断开，请检查本地网络状况，稍后将尝试重连")
                 self.bilibili.connected = False
                 break
-            expr, = unpack('!I', tmp)
+            if len(tmp) < 16:
+                print("中奖了，赶快联系开发者。。。")
+                print(tmp)
+            expr, = unpack('!I', tmp[:4])
             # print(expr)
-            tmp = await self.bilibili._reader.read(2)
-            tmp = await self.bilibili._reader.read(2)
-            tmp = await self.bilibili._reader.read(4)
-            num, = unpack('!I', tmp)
-            tmp = await self.bilibili._reader.read(4)
+            #tmp = await self.bilibili._reader.read(2)
+            #tmp = await self.bilibili._reader.read(2)
+            #tmp = await self.bilibili._reader.read(4)
+            num, = unpack('!I', tmp[8:12])
+            #tmp = await self.bilibili._reader.read(4)
             num2 = expr - 16
+
 
             if num2 != 0:
                 num -= 1
