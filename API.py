@@ -87,9 +87,12 @@ class API():
     def send_danmu_msg_andriod(self, msg, roomId):
         url = 'https://api.live.bilibili.com/api/sendmsg?'
         # page ??
-        sign = calculate_sign("access_key=" + self.bilibili.access_key +"&appkey=" + self.bilibili.appkey + "&aid=&page=1&build=" + self.bilibili.build)
-        url = url + "access_key=" + self.bilibili.access_key +"&appkey=" + self.bilibili.appkey + "&sign=" + sign + "&aid=&page=1&build=" + self.bilibili.build
-        
+        time = CurrentTime()
+        list_url = ["access_key=" + self.bilibili.access_key, "appkey=" + self.bilibili.appkey,  'aid=', 'page=1', "build=" + self.bilibili.build]
+        sign = calculate_sign('&'.join(sorted(list_url))+self.bilibili.app_secret)
+                
+        url = url + '&'.join(list_url[:3] + ['sign='+sign] + list_url[3:])
+        # print(url)
         data = {
             'access_key': self.bilibili.access_key,
             'actionKey': "appkey",
@@ -105,33 +108,35 @@ class API():
             # 实际上并不需要包含 mid 就可以正常发送弹幕, 但是真实的 Android 客户端确实发送了 mid
             # 自己的用户 ID!!!!
             'from': '',
-            #'mid': '1008****'
+            # 'mid': '1008****'
             'mobi_app':  self.bilibili.mobi_app,
             # 弹幕模式
             # 1 普通  4 底端  5 顶端 6 逆向  7 特殊   9 高级
             # 一些模式需要 VIP
             'mode': '1',
             # 内容
-            "msg":  msg,
-            'platform':  self.bilibili.platform      , 
+            "msg": msg,
+            'platform': self.bilibili.platform,
             # 播放时间
             'playTime': '0.0',
             # 弹幕池  尚且只见过为 0 的情况
             'pool': '0',
-            #random   随机数
+            # random   随机数
             # 在 web 端发送弹幕, 该字段是固定的, 为用户进入直播页面的时间的时间戳. 但是在 Android 端, 这是一个随机数
             # 该随机数不包括符号位有 9 位
-            #  '1367301983632698015'  
+            # '1367301983632698015'
             'rnd': str((int)(1000000000000000000.0 + 2000000000000000000.0 * random.random())),
             "screen_state": '',
-            'sign':  self.bilibili.sign,
-            'ts':  CurrentTime(),
+            # 反正不管用 没实现的
+            'sign':  sign,
+            'ts':  time,
             # 必须为 "json"
             'type': "json"
         }
-        print(data)
+        # print(data)
         response = requests.post(url, headers=self.bilibili.appheaders, data=data)
         print(response.json())
+
     
     def send_danmu_msg_web(self,msg, roomId):
         url = 'https://api.live.bilibili.com/msg/send'
