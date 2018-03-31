@@ -10,7 +10,7 @@ from configloader import ConfigLoader
 from printer import Printer
 from bilibili import bilibili
 
-cf = ConfigLoader("color.conf", "user.conf", "bilibili.conf")
+cf = ConfigLoader("conf/color.conf", "conf/user.conf", "conf/bilibili.conf")
 printer = Printer(cf)
 bilibili = bilibili(cf)
 login = Login(bilibili,cf)
