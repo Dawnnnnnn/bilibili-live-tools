@@ -1,6 +1,6 @@
 import configparser
 import webcolors
-
+import codecs
 
 # "#969696"
 def hex_to_rgb_percent(hex_str):
@@ -32,7 +32,8 @@ class ConfigLoader():
     def load_bilibili(self, file):
         cf_bilibili = configparser.ConfigParser()
         cf_bilibili.optionxform = str
-        cf_bilibili.read(file)
+        # cf_bilibili.read(file)
+        cf_bilibili.read_file(codecs.open(file, "r", "utf8"))
         dic_bilibili = cf_bilibili._sections
         # print(dic_bilibili)
                 
@@ -68,7 +69,9 @@ class ConfigLoader():
         
     def load_color(self, file):
         cf_color = configparser.ConfigParser()
-        cf_color.read(file)
+        # cf_color.read(file)
+        cf_color.read_file(codecs.open(file, "r", "utf8"))
+
         dic_color = cf_color._sections
         for i in dic_color.values():
             for j in i.keys():
@@ -83,7 +86,8 @@ class ConfigLoader():
         
     def load_user(self, file):
         cf_user = configparser.ConfigParser()
-        cf_user.read(file)
+        # cf_user.read(file)
+        cf_user.read_file(codecs.open(file, "r", "utf8"))
         # print(cf_user._sections['platform']['platform'])
         return cf_user._sections
         
