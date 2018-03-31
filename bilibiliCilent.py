@@ -128,6 +128,21 @@ class bilibiliClient():
                         pass
                     else:
                         continue
+    def get_gift_of_storm(self, dic):
+        roomid = dic['roomid']
+        get_url = "http://api.live.bilibili.com/lottery/v1/Storm/check?roomid="+str(roomid)
+        response = requests.get(get_url, headers=self.bilibili.pcheaders)
+        temp = response.json()
+        check = len(temp['data'])
+        if check != 0 and temp['data']['hasJoin'] != 1:
+            id = temp['data']['id']
+            storm_url = 'http://api.live.bilibili.com/lottery/v1/Storm/join'
+            payload = {"id": id, "color": "16777215", "captcha_token": "", "captcha_phrase": "", "token": "",
+                   "csrf_token": self.bilibili.csrf}
+            response1 = requests.post(storm_url, data=payload, headers=self.bilibili.pcheaders, timeout=2)
+            print(response1.json())
+            
+
 
     async def parseDanMu(self, messages):
 
@@ -142,8 +157,10 @@ class bilibiliClient():
             # self.printer.print_danmu_msg(dic)
             pass
         if cmd == 'SYS_GIFT':
-            try:
-                if dic['giftId'] != 39:
+            if 'giftId' in dic.keys():
+                
+                if str(dic['giftId']) in self.bilibili.giftids_raffle.keys():
+                    print(self.bilibili.giftids_raffle[str(dic['giftId'])])
                     headers = {
                         'Accept': 'application/json, text/plain, */*',
                         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
@@ -202,26 +219,19 @@ class bilibiliClient():
                                     except:
                                         pass
                             break
+                elif dic['giftId'] == 39:
+                    print("节奏风暴")
+                    self.get_prensent_of_storm(dic)
                 else:
-                    try:
-                        roomid = dic['roomid']
-                        get_url = "http://api.live.bilibili.com/lottery/v1/Storm/check?roomid="+str(roomid)
-                        response = requests.get(get_url, headers=self.bilibili.pcheaders)
-                        temp = response.json()
-                        check = len(temp['data'])
-                        if check != 0 and temp['data']['hasJoin'] != 1:
-                            id = temp['data']['id']
-                            storm_url = 'http://api.live.bilibili.com/lottery/v1/Storm/join'
-                            payload = {"id": id, "color": "16777215", "captcha_token": "", "captcha_phrase": "", "token": "",
-                                   "csrf_token": self.bilibili.csrf}
-                            response1 = requests.post(storm_url, data=payload, headers=self.bilibili.pcheaders, timeout=2)
-                            print(response1.json())
-                    except:
-                        pass
-
-
-            except:
+                    print(dic)
+                    print("请联系开发者")
+            else:
+                #print("礼物提示")
+               # print(dic["msg_text"])
                 pass
+
+
+            
             return
 
         if cmd == 'SYS_MSG':
