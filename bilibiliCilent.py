@@ -75,29 +75,43 @@ class bilibiliClient():
 
     async def ReceiveMessageLoop(self):
         while self.bilibili.connected == True:
-            tmp = await self.bilibili._reader.read(4)
+            tmp = await self.bilibili._reader.read(16)
+            num0 = 16
+            while num0 != len(tmp) and tmp:
+                tmp += await self.bilibili._reader.read(num0-len(tmp))
+                #print("妈蛋运营商，切劳资包")
             if not tmp:
                 print("# 网络连接中断或服务器主动断开，请检查本地网络状况，稍后将尝试重连")
                 self.bilibili.connected = False
                 break
-            expr, = unpack('!I', tmp)
+            expr, = unpack('!I', tmp[:4])
             # print(expr)
-            tmp = await self.bilibili._reader.read(2)
-            tmp = await self.bilibili._reader.read(2)
-            tmp = await self.bilibili._reader.read(4)
-            num, = unpack('!I', tmp)
-            tmp = await self.bilibili._reader.read(4)
+            #tmp = await self.bilibili._reader.read(2)
+            #tmp = await self.bilibili._reader.read(2)
+            #tmp = await self.bilibili._reader.read(4)
+            num, = unpack('!I', tmp[8:12])
+            #tmp = await self.bilibili._reader.read(4)
             num2 = expr - 16
+            
+            tmp = await self.bilibili._reader.read(num2)
+            while num2 != len(tmp) and tmp:
+                tmp += await self.bilibili._reader.read(num2-len(tmp))
+                #print("妈蛋运营商，切劳资包")
+            if not tmp and num2 !=0:
+                print("# 网络连接中断或服务器主动断开，请检查本地网络状况，稍后将尝试重连....")
+                self.bilibili.connected = False
+                break
+
 
             if num2 != 0:
                 num -= 1
                 if num == 0 or num == 1 or num == 2:
-                    tmp = await self.bilibili._reader.read(4)
+                    #tmp = await self.bilibili._reader.read(4)
                     num3, = unpack('!I', tmp)
                     self.bilibili._UserCount = num3
                     continue
                 elif num == 3 or num == 4:
-                    tmp = await self.bilibili._reader.read(num2)
+                    #tmp = await self.bilibili._reader.read(num2)
                     # strbytes, = unpack('!s', tmp)
                     try:
                         messages = tmp.decode('utf-8')
@@ -106,11 +120,12 @@ class bilibiliClient():
                     await self.parseDanMu(messages)
                     continue
                 elif num == 5 or num == 6 or num == 7:
-                    tmp = await self.bilibili._reader.read(num2)
+                   # tmp = await self.bilibili._reader.read(num2)
                     continue
                 else:
                     if num != 16:
-                        tmp = await self.bilibili._reader.read(num2)
+                        #tmp = await self.bilibili._reader.read(num2)
+                        pass
                     else:
                         continue
 
@@ -124,7 +139,7 @@ class bilibiliClient():
 
         if cmd == 'DANMU_MSG':
             # print(dic)
-            # self.printer.print_danmu_msg(dic)
+            self.printer.print_danmu_msg(dic)
             pass
         if cmd == 'SYS_GIFT':
             try:
