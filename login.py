@@ -32,10 +32,10 @@ class Login():
             username = input("输入用户名:")
             password = input("输入密码:")
             config = configparser.ConfigParser()
-            config.read("user.conf")
+            config.read("conf/user.conf")
             config.set('account','username',username)
             config.set('account','password',password)
-            config.write(open("user.conf", "w+"))
+            config.write(open("conf/user.conf", "w+"))
         if username != "":
             value = self.GetHash()
             key = value['key']
