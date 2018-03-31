@@ -139,7 +139,7 @@ class bilibiliClient():
 
         if cmd == 'DANMU_MSG':
             # print(dic)
-            self.printer.print_danmu_msg(dic)
+            # self.printer.print_danmu_msg(dic)
             pass
         if cmd == 'SYS_GIFT':
             try:
@@ -295,6 +295,7 @@ class bilibiliClient():
                 pass
         if cmd == 'GUARD_MSG':
             try:
+                print(dic)
                 a = re.compile(r"(?<=在主播 )\S+(?= 的直播间开通了总督)")
                 res = a.findall(dic)
                 search_url = "https://search.bilibili.com/api/search?search_type=live&keyword=" + str(res[0])
