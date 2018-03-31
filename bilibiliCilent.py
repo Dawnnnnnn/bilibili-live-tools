@@ -145,48 +145,52 @@ class bilibiliClient():
                     text2 = dic['url']
                     await asyncio.sleep(random.uniform(3, 5))
                     self.api.post_watching_history(self.bilibili.csrf,text1)
-                    url = 'http://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
-                    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检测到房间", str(text1).center(9), "的活动抽奖")
-                    response = requests.get(url, headers=headers)
-                    checklen = response.json()['data']
-                    num = len(checklen)
-                    while num != 0:
-                        for j in range(0,num):
-                            await asyncio.sleep(random.uniform(0.5, 1))
-                            resttime = response.json()['data'][j]['time']
-                            raffleid = response.json()['data'][j]['raffleId']
-                            if raffleid not in self.bilibili.activity_raffleid_list:
-                                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "参与了房间", str(text1).center(9), "的活动抽奖")
-                                self.bilibili.activity_raffleid_list.append(raffleid)
-                                self.bilibili.activity_roomid_list.append(text1)
-                                self.bilibili.activity_time_list.append(resttime)
-                                headers = {
-                                    'Accept': 'application/json, text/plain, */*',
-                                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
-                                    'cookie': self.bilibili.cookie,
-                                    'referer': text2
-                                }
-                                temp_params = 'access_key='+self.bilibili.access_key+'&actionKey='+self.bilibili.actionKey+'&appkey='+self.bilibili.appkey+'&build='+self.bilibili.build+'&device='+self.bilibili.device+'&event_type=flower_rain-' + str(
-                                    raffleid) + '&mobi_app='+self.bilibili.mobi_app+'&platform='+self.bilibili.platform+'&room_id=' + str(
-                                    text1) + '&ts=' + CurrentTime()
-                                params = temp_params + self.bilibili.app_secret
-                                hash = hashlib.md5()
-                                hash.update(params.encode('utf-8'))
-                                true_url = 'http://api.live.bilibili.com/YunYing/roomEvent?' + temp_params + '&sign=' + str(
-                                    hash.hexdigest())
-                                pc_url = 'http://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
-                                    text1) + '&raffleId=' + str(raffleid)
-                                response1 = requests.get(true_url,params=params, headers=headers)
-                                pc_response = requests.get(pc_url, headers=headers)
-                                try:
-                                    print("# 移动端活动抽奖结果:", response1.json()['data']['gift_desc'])
-                                except:
-                                    pass
-                                try:
-                                    print("# 网页端活动抽奖状态:", pc_response.json()['message'])
-                                except:
-                                    pass
-                        break
+                    result = self.api.check_room_true(text1)
+                    if True in result:
+                        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),"WARNING:检测到房间",str(text1).center(9),"的钓鱼操作")
+                    else:
+                        url = 'http://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
+                        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检测到房间", str(text1).center(9), "的活动抽奖")
+                        response = requests.get(url, headers=headers)
+                        checklen = response.json()['data']
+                        num = len(checklen)
+                        while num != 0:
+                            for j in range(0,num):
+                                await asyncio.sleep(random.uniform(0.5, 1))
+                                resttime = response.json()['data'][j]['time']
+                                raffleid = response.json()['data'][j]['raffleId']
+                                if raffleid not in self.bilibili.activity_raffleid_list:
+                                    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "参与了房间", str(text1).center(9), "的活动抽奖")
+                                    self.bilibili.activity_raffleid_list.append(raffleid)
+                                    self.bilibili.activity_roomid_list.append(text1)
+                                    self.bilibili.activity_time_list.append(resttime)
+                                    headers = {
+                                        'Accept': 'application/json, text/plain, */*',
+                                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+                                        'cookie': self.bilibili.cookie,
+                                        'referer': text2
+                                    }
+                                    temp_params = 'access_key='+self.bilibili.access_key+'&actionKey='+self.bilibili.actionKey+'&appkey='+self.bilibili.appkey+'&build='+self.bilibili.build+'&device='+self.bilibili.device+'&event_type=flower_rain-' + str(
+                                        raffleid) + '&mobi_app='+self.bilibili.mobi_app+'&platform='+self.bilibili.platform+'&room_id=' + str(
+                                        text1) + '&ts=' + CurrentTime()
+                                    params = temp_params + self.bilibili.app_secret
+                                    hash = hashlib.md5()
+                                    hash.update(params.encode('utf-8'))
+                                    true_url = 'http://api.live.bilibili.com/YunYing/roomEvent?' + temp_params + '&sign=' + str(
+                                        hash.hexdigest())
+                                    pc_url = 'http://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
+                                        text1) + '&raffleId=' + str(raffleid)
+                                    response1 = requests.get(true_url,params=params, headers=headers)
+                                    pc_response = requests.get(pc_url, headers=headers)
+                                    try:
+                                        print("# 移动端活动抽奖结果:", response1.json()['data']['gift_desc'])
+                                    except:
+                                        pass
+                                    try:
+                                        print("# 网页端活动抽奖状态:", pc_response.json()['message'])
+                                    except:
+                                        pass
+                            break
                 else:
                     try:
                         roomid = dic['roomid']
@@ -223,53 +227,58 @@ class bilibiliClient():
                 hash.update(params.encode('utf-8'))
                 await asyncio.sleep(random.uniform(3, 5))
                 self.api.post_watching_history(self.bilibili.csrf,real_roomid)
-                check_url = 'https://api.live.bilibili.com/AppSmallTV/index?' + temp_params + '&sign=' + str(hash.hexdigest())
-                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "监测到房间", str(real_roomid).center(9), "的小电视抽奖")
-                # headers = {
-                #     'Accept': 'application/json, text/plain, */*',
-                #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
-                #     'Accept-Language': 'zh-CN,zh;q=0.9',
-                #     'accept-encoding': 'gzip, deflate',
-                #     'Host': 'api.live.bilibili.com',
-                #     'cookie': self.cookie,
-                # }
-                response = requests.get(check_url, headers=self.bilibili.appheaders)
-                checklen = response.json()['data']['unjoin']
-                num = len(checklen)
-                while num != 0:
-                    for j in range(0,num):
-                        await asyncio.sleep(random.uniform(0.5, 1))
-                        resttime = response.json()['data']['unjoin'][j]['dtime']
-                        raffleid = response.json()['data']['unjoin'][j]['id']
-                        if raffleid not in self.bilibili.TV_raffleid_list:
-                            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "参与了房间", str(real_roomid).center(9), "的小电视抽奖")
-                            self.bilibili.TV_raffleid_list.append(raffleid)
-                            self.bilibili.TV_roomid_list.append(real_roomid)
-                            self.bilibili.TV_time_list.append(resttime)
-                            #url = "https://api.live.bilibili.com/AppSmallTV/join?access_key=&actionKey=appkey&appkey=1d8b6e7d45233436&build=5230003&device=android&id=41581&mobi_app=android&platform=android&roomid=3566261&ts=1521731305&sign=ae3d61f496c66069bcfd299fe7ce1792"
-                            temp_params = 'access_key='+self.bilibili.access_key+'&actionKey='+self.bilibili.actionKey+'&appkey='+self.bilibili.appkey+'&build='+self.bilibili.build+'&device='+self.bilibili.device+'&id=' + str(
-                                raffleid) + '&mobi_app='+self.bilibili.mobi_app+'&platform='+self.bilibili.platform+'&roomid=' + str(
-                                real_roomid) + '&ts=' + CurrentTime()
-                            params = temp_params + self.bilibili.app_secret
-                            hash = hashlib.md5()
-                            hash.update(params.encode('utf-8'))
-                            true_url = 'http://api.live.bilibili.com/AppSmallTV/join?' + temp_params + '&sign=' + str(
-                                hash.hexdigest())
-                            # headers = {
-                            #     'Accept': 'application/json, text/plain, */*',
-                            #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
-                            #     'Accept-Language': 'zh-CN,zh;q=0.9',
-                            #     'accept-encoding': 'gzip, deflate',
-                            #     'Host': 'api.live.bilibili.com',
-                            #     'cookie': self.cookie,
-                            #     'referer': TV_url
-                            # }
-                            # url1 = 'http://api.live.bilibili.com/gift/v2/smalltv/join?roomid=' + str(
-                            #     real_roomid) + '&raffleId=' + str(raffleid)
-                            # #response1 = requests.get(url1, headers=headers)
-                            response2 = requests.get(true_url,headers=self.bilibili.appheaders)
-                            print("# 小电视道具抽奖状态:",response2.json()['msg'])
-                    break
+                result = self.api.check_room_true(real_roomid)
+                if True in result:
+                    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "WARNING:检测到房间",
+                          str(real_roomid).center(9), "的钓鱼操作")
+                else:
+                    check_url = 'https://api.live.bilibili.com/AppSmallTV/index?' + temp_params + '&sign=' + str(hash.hexdigest())
+                    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检测到房间", str(real_roomid).center(9), "的小电视抽奖")
+                    # headers = {
+                    #     'Accept': 'application/json, text/plain, */*',
+                    #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+                    #     'Accept-Language': 'zh-CN,zh;q=0.9',
+                    #     'accept-encoding': 'gzip, deflate',
+                    #     'Host': 'api.live.bilibili.com',
+                    #     'cookie': self.cookie,
+                    # }
+                    response = requests.get(check_url, headers=self.bilibili.appheaders)
+                    checklen = response.json()['data']['unjoin']
+                    num = len(checklen)
+                    while num != 0:
+                        for j in range(0,num):
+                            await asyncio.sleep(random.uniform(0.5, 1))
+                            resttime = response.json()['data']['unjoin'][j]['dtime']
+                            raffleid = response.json()['data']['unjoin'][j]['id']
+                            if raffleid not in self.bilibili.TV_raffleid_list:
+                                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "参与了房间", str(real_roomid).center(9), "的小电视抽奖")
+                                self.bilibili.TV_raffleid_list.append(raffleid)
+                                self.bilibili.TV_roomid_list.append(real_roomid)
+                                self.bilibili.TV_time_list.append(resttime)
+                                #url = "https://api.live.bilibili.com/AppSmallTV/join?access_key=&actionKey=appkey&appkey=1d8b6e7d45233436&build=5230003&device=android&id=41581&mobi_app=android&platform=android&roomid=3566261&ts=1521731305&sign=ae3d61f496c66069bcfd299fe7ce1792"
+                                temp_params = 'access_key='+self.bilibili.access_key+'&actionKey='+self.bilibili.actionKey+'&appkey='+self.bilibili.appkey+'&build='+self.bilibili.build+'&device='+self.bilibili.device+'&id=' + str(
+                                    raffleid) + '&mobi_app='+self.bilibili.mobi_app+'&platform='+self.bilibili.platform+'&roomid=' + str(
+                                    real_roomid) + '&ts=' + CurrentTime()
+                                params = temp_params + self.bilibili.app_secret
+                                hash = hashlib.md5()
+                                hash.update(params.encode('utf-8'))
+                                true_url = 'http://api.live.bilibili.com/AppSmallTV/join?' + temp_params + '&sign=' + str(
+                                    hash.hexdigest())
+                                # headers = {
+                                #     'Accept': 'application/json, text/plain, */*',
+                                #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+                                #     'Accept-Language': 'zh-CN,zh;q=0.9',
+                                #     'accept-encoding': 'gzip, deflate',
+                                #     'Host': 'api.live.bilibili.com',
+                                #     'cookie': self.cookie,
+                                #     'referer': TV_url
+                                # }
+                                # url1 = 'http://api.live.bilibili.com/gift/v2/smalltv/join?roomid=' + str(
+                                #     real_roomid) + '&raffleId=' + str(raffleid)
+                                # #response1 = requests.get(url1, headers=headers)
+                                response2 = requests.get(true_url,headers=self.bilibili.appheaders)
+                                print("# 小电视道具抽奖状态:",response2.json()['msg'])
+                        break
 
             except:
                 pass

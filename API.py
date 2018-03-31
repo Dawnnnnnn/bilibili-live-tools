@@ -41,7 +41,16 @@ class API():
         response = requests.post(url, data=data, headers=self.bilibili.pcheaders)
         #print(response.json())
         return 0
-            
+    def check_room_true(self,roomid):
+        url = "https://api.live.bilibili.com/room/v1/Room/room_init?id="+str(roomid)
+        response = requests.get(url,headers=self.bilibili.pcheaders)
+        if response.json()['code'] == 0:
+            param1 = response.json()['data']['is_hidden']
+            param2 = response.json()['data']['is_locked']
+            param3 = response.json()['data']['encrypted']
+            return param1,param2,param3
+
+
     def get_bag_list(self):
         url = "https://api.live.bilibili.com/gift/v2/gift/m_bag_list?" + 'access_key='+self.bilibili.access_key+'&actionKey='+self.bilibili.actionKey+'&appkey='+self.bilibili.appkey+'&build='+self.bilibili.build+'&device='+self.bilibili.device + '&mobi_app='+self.bilibili.mobi_app+'&platform='+self.bilibili.platform + '&ts=' + CurrentTime()
         response = requests.get(url, headers=self.bilibili.pcheaders)
