@@ -3,7 +3,7 @@ try:
 except ImportError:
     pass
 import webcolors
-
+import asyncio
 
 # "#969696"
 def hex_to_rgb_percent(hex_str):
@@ -11,9 +11,18 @@ def hex_to_rgb_percent(hex_str):
     # print([float(i.strip('%'))/100.0 for i in color])
     return [float(i.strip('%'))/100.0 for i in color]
  
+
+    
+def level(str):
+    if str == "user":
+        return 0
+    if str == "debug":
+        return 1
+    
 class Printer():
     def __init__(self, configloader):
         self.configloader = configloader
+        self.printlist=[]
     def concole_print(self, msg, color=[]):
         if color:
             for i, j in zip(msg, color):
@@ -22,8 +31,56 @@ class Printer():
             print()
             console.set_color()
         else:
-            print(''.join(msg))    
-    
+            print(''.join(msg))  
+              
+    def printlist_append(self, dic):
+        tag = False
+        dic_printcontrol = self.configloader.dic_user['print_control']
+        if dic[0] in dic_printcontrol.keys():
+            if dic_printcontrol[dic[0]] >= level(dic[2]):
+                tag = True
+                if dic[1] in dic_printcontrol.keys():
+                    tag = dic_printcontrol[dic[1]]
+        if tag:
+            if dic[1] == '弹幕':
+                list_msg, list_color = self.print_danmu_msg(dic[3]) 
+                self.printlist.append([0, list_msg, list_color])
+                return 
+            
+            if isinstance(dic[3], list):
+              #  print(dic[3])
+                # [[list]]
+                self.printlist.append([dic[3]])
+            else:
+               # print(dic[3:])
+                # [ss, ss]
+                self.printlist.append(dic[3:])
+        
+    async def clean_printlist(self):
+        
+        while True:
+           # if self.printlist:
+              #  print(self.printlist)
+            for i in self.printlist:
+                if i[0] == 0:
+                    if (self.configloader.dic_user['platform']['platform'] == 'ios_pythonista'):
+                        self.concole_print(i[1], i[2])
+                    else:
+                        self.concole_print(i[1])
+        
+                    
+                elif isinstance(i[0], list):
+                    #print("qqqqqq")
+                  #  print(i)
+                    for j in i[0]:
+                        print(j)
+                else:
+                    print(' '.join(i))
+            self.printlist=[]
+            await asyncio.sleep(0.5)
+                        
+            
+            
         
     def print_danmu_msg(self, dic):
         info = dic['info']
@@ -72,10 +129,12 @@ class Printer():
             
         list_msg.append(':' + info[1])
         list_color.append([])
-        if (self.configloader.dic_user['platform']['platform'] == 'ios_pythonista'):
-            self.concole_print(list_msg, list_color)
-        else:
-            self.concole_print(list_msg)
+        return list_msg, list_color
+            
+       # if (self.configloader.dic_user['platform']['platform'] == 'ios_pythonista'):
+     #       self.concole_print(list_msg, list_color)
+      #  else:
+           # self.concole_print(list_msg)
         
         
         
