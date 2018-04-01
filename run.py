@@ -31,7 +31,8 @@ tasks = [
     task1.run(),
     task2.run(),
     task4.connect(),
-    task3.query()
+    task3.query(),
+    printer.clean_printlist()
 ]
 
 loop = asyncio.get_event_loop()
