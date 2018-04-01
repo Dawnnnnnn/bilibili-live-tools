@@ -236,6 +236,79 @@ class bilibiliClient():
                     self.get_gift_of_storm(dic)
                 else:
                     self.printer.printlist_append(['join_lottery', '', 'debug', [dic, "请联系开发者"]])
+                    try:
+                        headers = {
+                            'Accept': 'application/json, text/plain, */*',
+                            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+                            'Accept-Language': 'zh-CN,zh;q=0.9',
+                            'accept-encoding': 'gzip, deflate',
+                            'Host': 'api.live.bilibili.com',
+                            'cookie': self.bilibili.cookie,
+                        }
+                        text1 = dic['real_roomid']
+                        text2 = dic['url']
+                        await asyncio.sleep(random.uniform(3, 5))
+                        self.api.post_watching_history(self.bilibili.csrf, text1)
+                        result = self.api.check_room_true(text1)
+                        if True in result:
+                            self.printer.printlist_append(['join_lottery', '钓鱼提醒', 'user',
+                                                           time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
+                                                           "WARNING:检测到房间", str(text1).center(9), "的钓鱼操作"])
+                        else:
+                            url = 'http://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
+                            self.printer.printlist_append(['join_lottery', '', 'user',
+                                                           time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
+                                                           "检测到房间", str(text1).center(9),
+                                                           "的" + "活动抽奖"])
+                            response = requests.get(url, headers=headers)
+                            checklen = response.json()['data']
+                            num = len(checklen)
+                            while num != 0:
+                                for j in range(0, num):
+                                    await asyncio.sleep(random.uniform(0.5, 1))
+                                    resttime = response.json()['data'][j]['time']
+                                    raffleid = response.json()['data'][j]['raffleId']
+                                    if raffleid not in self.bilibili.activity_raffleid_list:
+                                        self.printer.printlist_append(['join_lottery', '', 'user',
+                                                                       time.strftime('%Y-%m-%d %H:%M:%S',
+                                                                                     time.localtime(time.time())), "参与了房间",
+                                                                       str(text1).center(9),
+                                                                       "的" + "活动抽奖"])
+                                        self.bilibili.activity_raffleid_list.append(raffleid)
+                                        self.bilibili.activity_roomid_list.append(text1)
+                                        self.bilibili.activity_time_list.append(resttime)
+                                        headers = {
+                                            'Accept': 'application/json, text/plain, */*',
+                                            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+                                            'cookie': self.bilibili.cookie,
+                                            'referer': text2
+                                        }
+                                        temp_params = 'access_key=' + self.bilibili.access_key + '&actionKey=' + self.bilibili.actionKey + '&appkey=' + self.bilibili.appkey + '&build=' + self.bilibili.build + '&device=' + self.bilibili.device + '&event_type=flower_rain-' + str(
+                                            raffleid) + '&mobi_app=' + self.bilibili.mobi_app + '&platform=' + self.bilibili.platform + '&room_id=' + str(
+                                            text1) + '&ts=' + CurrentTime()
+                                        params = temp_params + self.bilibili.app_secret
+                                        hash = hashlib.md5()
+                                        hash.update(params.encode('utf-8'))
+                                        true_url = 'http://api.live.bilibili.com/YunYing/roomEvent?' + temp_params + '&sign=' + str(
+                                            hash.hexdigest())
+                                        pc_url = 'http://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
+                                            text1) + '&raffleId=' + str(raffleid)
+                                        response1 = requests.get(true_url, params=params, headers=headers)
+                                        pc_response = requests.get(pc_url, headers=headers)
+                                        try:
+                                            self.printer.printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
+                                                                           response1.json()['data']['gift_desc']])
+                                        except:
+                                            pass
+                                        try:
+                                            self.printer.printlist_append(
+                                                ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
+                                        except:
+                                            pass
+                                break
+                    except :
+                        pass
+                    
             else:
                 pass
                 #self.printer.printlist_append(['join_lottery', '普通送礼提示', 'user', ['普通送礼提示', dic['msg_text']]])
