@@ -86,7 +86,7 @@ class ConfigLoader():
         
     def load_user(self, file):
         cf_user = configparser.ConfigParser()
-        # cf_user.read(file)
+        #cf_user.read(file)
         cf_user.read_file(codecs.open(file, "r", "utf8"))
         # print(cf_user._sections['platform']['platform'])
         dic_user = cf_user._sections

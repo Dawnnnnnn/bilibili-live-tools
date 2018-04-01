@@ -5,6 +5,7 @@ import base64
 import configparser
 from urllib import parse
 import time
+import codecs
 
 
 class Login():
@@ -32,10 +33,10 @@ class Login():
             username = input("输入用户名:")
             password = input("输入密码:")
             config = configparser.ConfigParser()
-            config.read("conf/user.conf")
+            config.read_file(codecs.open("conf/user.conf", "r", "utf8"))
             config.set('account','username',username)
             config.set('account','password',password)
-            config.write(open("conf/user.conf", "w+"))
+            config.write(codecs.open("conf/user.conf", "w+","utf8"))
         if username != "":
             value = self.GetHash()
             key = value['key']
