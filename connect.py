@@ -34,8 +34,6 @@ class connect():
                         # print('仅task1断线')
                         task2.cancel()
                     print('# 重新连接直播间 %s' % roomid)
-                    with open("log.txt","a+")as f:
-                        f.write("reconnect success!!!!!")
                     danmuji = bilibiliClient(self.printer, self.bilibili, self.api)
                     task11 = asyncio.ensure_future(danmuji.connectServer())
                     task22 = asyncio.ensure_future(danmuji.HeartbeatLoop())
