@@ -156,7 +156,7 @@ class bilibiliClient():
 
         if cmd == 'DANMU_MSG':
             # print(dic)
-            self.printer.printlist_append(['danmu', '弹幕', 'user', dic])
+            # self.printer.printlist_append(['danmu', '弹幕', 'user', dic])
             pass
         if cmd == 'SYS_GIFT':
             if 'giftId' in dic.keys():
