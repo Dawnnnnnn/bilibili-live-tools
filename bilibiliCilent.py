@@ -304,9 +304,8 @@ class bilibiliClient():
                 self.printer.printlist_append(['join_lottery','小电视','user', "# error", response.json()])
         if cmd == 'GUARD_MSG':
             try:
-                print(dic)
                 a = re.compile(r"(?<=在主播 )\S+(?= 的直播间开通了总督)")
-                res = a.findall(dic)
+                res = a.findall(str(dic))
                 search_url = "https://search.bilibili.com/api/search?search_type=live&keyword=" + str(res[0])
                 response = requests.get(search_url)
                 roomid = response.json()['result']['live_user'][0]['roomid']
