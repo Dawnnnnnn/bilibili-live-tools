@@ -74,11 +74,12 @@ class Tasks():
         if self.configloader.dic_user['gift']['on/off'] == "1":
             try:
                 argvs = self.api.get_bag_list()
-                giftID = argvs[0][0]
-                giftNum = argvs[0][1]
-                bagID = argvs[0][2]
-                roomID = self.configloader.dic_user['gift']['send_to_room']
-                self.api.send_bag_gift_web(roomID,giftID,giftNum,bagID)
+                for i in range(0,len(argvs)):
+                    giftID = argvs[i][0]
+                    giftNum = argvs[i][1]
+                    bagID = argvs[i][2]
+                    roomID = self.configloader.dic_user['gift']['send_to_room']
+                    self.api.send_bag_gift_web(roomID,giftID,giftNum,bagID)
             except:
                 print("# 没有将要过期的礼物~")
 
