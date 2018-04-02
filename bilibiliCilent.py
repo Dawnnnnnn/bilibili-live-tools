@@ -379,41 +379,27 @@ class bilibiliClient():
                 except:
                     pass
         if cmd == 'GUARD_MSG':
+            print(dic)
             try:
                 a = re.compile(r"(?<=在主播 )\S+(?= 的直播间开通了总督)")
                 res = a.findall(str(dic))
                 search_url = "https://search.bilibili.com/api/search?search_type=live&keyword=" + str(res[0])
                 response = requests.get(search_url)
                 roomid = response.json()['result']['live_user'][0]['roomid']
-                temp_params = 'access_key=' + self.bilibili.access_key + '&actionKey=' + self.bilibili.actionKey + '&appkey=' + self.bilibili.appkey + '&build=' + self.bilibili.build + '&device=' + self.bilibili.device + \
-                              '&mobi_app=' + self.bilibili.mobi_app + '&platform=' + self.bilibili.platform + '&roomid=' + str(
-                    roomid) + '&ts=' + CurrentTime() + "&type=guard"
-                params = temp_params + self.bilibili.app_secret
-                hash = hashlib.md5()
-                hash.update(params.encode('utf-8'))
-                true_url = 'https://api.live.bilibili.com/lottery/v1/lottery/check?' + temp_params + '&sign=' + str(
-                    hash.hexdigest())
-                response1 = requests.get(true_url, headers=self.bilibili.appheaders)
+                print(roomid)
+                true_url = 'https://api.live.bilibili.com/lottery/v1/lottery/check?roomid=' + str(roomid)
+                response1 = requests.get(true_url)
+                print(response1.json())
                 num = len(response1.json()['data']['guard'])
                 for i in range(0, num):
-                    ts = CurrentTime()
                     id = response1.json()['data']['guard'][i]['id']
-                    temp_params = 'access_key=' + self.bilibili.access_key + '&actionKey=' + self.bilibili.actionKey + '&appkey=' + self.bilibili.appkey + '&build=' + self.bilibili.build + '&device=' + self.bilibili.device + '&id=' + str(
-                        id) + '&mobi_app=' + self.bilibili.mobi_app + '&platform=' + self.bilibili.platform + '&roomid=' + str(
-                        roomid) + '&ts=' + ts + "&type=guard"
-                    params = temp_params + self.bilibili.app_secret
-                    hash = hashlib.md5()
-                    hash.update(params.encode('utf-8'))
+                    print(id)
                     join_url = "https://api.live.bilibili.com/lottery/v1/lottery/join"
-                    payload = {"access_key": self.bilibili.access_key, "actionKey": self.bilibili.actionKey,
-                               "appkey": self.bilibili.appkey, "build": self.bilibili.build,
-                               "device": self.bilibili.device,
-                               "id": id, "mobi_app": self.bilibili.mobi_app, "platform": self.bilibili.platform,
-                               "roomid": roomid,
-                               "ts": ts, "type": "guard", "sign": hash.hexdigest()}
-                    response2 = requests.post(join_url, data=payload, headers=self.bilibili.appheaders)
-                    print("# 获取到某个总督的奖励:", response2.json()['data']['message'])
+                    payload = {"roomid": roomid, "id": id, "type": "guard", "csrf_token": self.bilibili.csrf}
+                    print(payload)
+                    response2 = requests.post(join_url, data=payload, headers=self.bilibili.pcheaders)
+                    print(response2.json())
 
             except:
-                self.printer.printlist_append(['join_lotter', '', 'develop', "# 没领取到奖励,请联系开发者"])
+                self.printer.printlist_append(['join_lotter', '', 'user', "# 没领取到奖励,请联系开发者"])
             return
