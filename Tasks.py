@@ -1,23 +1,23 @@
-from API import API
 from bilibili import bilibili
 import hashlib
 import datetime
 import requests
 import time
 import asyncio
-
+import os
+import configloader
 
 class Tasks():
     
-    def __init__(self, bilibili, configloader,api):
-        self.bilibili = bilibili
-        self.configloader = configloader
-        self.api = api
-
+    
+    def __init__(self):
+        fileDir = os.path.dirname(os.path.realpath('__file__'))
+        file_user = fileDir + "/conf/user.conf"
+        self.dic_user = configloader.load_user(file_user)
+    
     # 获取每日包裹奖励
     def Daily_bag(self):
-        url = 'http://api.live.bilibili.com/gift/v2/live/receive_daily_bag'
-        response = requests.get(url, headers=self.bilibili.pcheaders)
+        response = bilibili().get_dailybag()
         for i in range(0,len(response.json()['data']['bag_list'])):
             print("# 获得-" + response.json()['data']['bag_list'][i]['bag_name'] + "-成功")
 
@@ -28,24 +28,19 @@ class Tasks():
 
     # 签到功能
     def DoSign(self):
-        url = 'https://api.live.bilibili.com/sign/doSign'
-        response = requests.get(url, headers=self.bilibili.pcheaders)
+        response = bilibili().get_dosign()
         temp = response.json()
         print("# 签到状态:",temp['msg'])
 
     # 领取每日任务奖励
     def Daily_Task(self):
-        url = 'https://api.live.bilibili.com/activity/v1/task/receive_award'
-        payload2 = {'task_id': 'double_watch_task'}
-        response2 = requests.post(url, data=payload2, headers=self.bilibili.appheaders)
+        response2 = bilibili().get_dailytask()
+        # print(response2.json())
         print("# 双端观看直播:", response2.json()["msg"])
 
     # 应援团签到
     def link_sign(self):
-        url = "https://api.vc.bilibili.com/link_group/v1/member/my_groups"
-        pcheaders = self.bilibili.pcheaders.copy()
-        pcheaders['Host'] = "api.vc.bilibili.com"
-        response = requests.get(url,headers=pcheaders)
+        response = bilibili().get_grouplist()
         check = len(response.json()['data']['list'])
         group_id_list = []
         owner_uid_list = []
@@ -55,13 +50,7 @@ class Tasks():
             group_id_list.append(group_id)
             owner_uid_list.append(owner_uid)
         for (i1,i2) in zip(group_id_list,owner_uid_list):
-            temp_params = "_device="+self.bilibili.device+"&_hwid=SX1NL0wuHCsaKRt4BHhIfRguTXxOfj5WN1BkBTdLfhstTn9NfUouFiUV&access_key="+self.bilibili.access_key+"&appkey="+self.bilibili.appkey+"&build="+self.bilibili.build+"&group_id="+str(i1)+"&mobi_app="+self.bilibili.mobi_app+"&owner_id="+str(i2)+"&platform="+self.bilibili.platform+"&src=xiaomi&trace_id=20171224024300024&ts="+self.CurrentTime()+"&version=5.20.1.520001"
-            params = temp_params + self.bilibili.app_secret
-            hash = hashlib.md5()
-            hash.update(params.encode('utf-8'))
-            url = "https://api.vc.bilibili.com/link_setting/v1/link_setting/sign_in?"+temp_params+"&sign="+str(hash.hexdigest())
-            self.bilibili.appheaders['Host'] = "api.vc.bilibili.com"
-            response = requests.get(url,headers=self.bilibili.appheaders)
+            response = bilibili().assign_group(i1, i2)
             if response.json()['code'] == 0:
                 if (response.json()['data']['status']) == 1:
                     print("# 应援团 %s 已应援过"  %(i1) )
@@ -71,21 +60,20 @@ class Tasks():
                 print("# 应援团 %s 应援失败" %(i1))
 
     def send_gift(self):
-        if self.configloader.dic_user['gift']['on/off'] == "1":
+        if self.dic_user['gift']['on/off'] == '1':
             try:
-                argvs = self.api.get_bag_list()
-                for i in range(0,len(argvs)):
-                    giftID = argvs[i][0]
-                    giftNum = argvs[i][1]
-                    bagID = argvs[i][2]
-                    roomID = self.configloader.dic_user['gift']['send_to_room']
-                    self.api.send_bag_gift_web(roomID,giftID,giftNum,bagID)
+                argvs = bilibili().get_bag_list()
+                giftID = argvs[0][0]
+                giftNum = argvs[0][1]
+                bagID = argvs[0][2]
+                roomID = self.dic_user['gift']['send_to_room']
+                bilibili().send_bag_gift_web(roomID,giftID,giftNum,bagID)
             except:
                 print("# 没有将要过期的礼物~")
 
     def sliver2coin(self):
-        if self.configloader.dic_user['coin']['on/off'] == "1":
-            self.api.silver2coin()
+        if self.dic_user['coin']['on/off'] == '1':
+            bilibili().silver2coin()
 
     async def run(self):
         while 1:
@@ -96,4 +84,5 @@ class Tasks():
             self.Daily_bag()
             self.Daily_Task()
             self.link_sign()
+            # print('Tasks over.')
             await asyncio.sleep(21600)
