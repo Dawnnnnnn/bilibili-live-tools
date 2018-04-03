@@ -4,6 +4,8 @@ except ImportError:
     pass
 import webcolors
 import asyncio
+import os
+import configloader
 
 # "#969696"
 def hex_to_rgb_percent(hex_str):
@@ -20,8 +22,12 @@ def level(str):
 
 
 class Printer():
-    def __init__(self, configloader):
-        self.configloader = configloader
+    def __init__(self):
+        fileDir = os.path.dirname(os.path.realpath('__file__'))
+        file_color = fileDir + "/conf/color.conf"
+        self.dic_color = configloader.load_color(file_color)
+        file_user = fileDir + "/conf/user.conf"
+        self.dic_user = configloader.load_user(file_user)
         self.printlist=[]
     def concole_print(self, msg, color=[]):
         if color:
@@ -35,7 +41,7 @@ class Printer():
               
     def printlist_append(self, dic):
         tag = False
-        dic_printcontrol = self.configloader.dic_user['print_control']
+        dic_printcontrol = self.dic_user['print_control']
         if dic[0] in dic_printcontrol.keys():
             if dic_printcontrol[dic[0]] >= level(dic[2]):
                 tag = True
@@ -61,7 +67,7 @@ class Printer():
         while True:
             for i in self.printlist:
                 if i[0] == 0:
-                    if (self.configloader.dic_user['platform']['platform'] == 'ios_pythonista'):
+                    if (self.dic_user['platform']['platform'] == 'ios_pythonista'):
                         self.concole_print(i[1], i[2])
                     else:
                         self.concole_print(i[1])
@@ -73,7 +79,7 @@ class Printer():
                 else:
                     print(' '.join(i))
             self.printlist=[]
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
                         
             
             
@@ -90,25 +96,22 @@ class Printer():
         else:
             if info[2][3] == 1:
                 if info[2][4] == 0:
-                    # self.rgbprint(self.configloader.dic_color['others']['vip'], '爷')
                     list_msg.append('爷 ')
-                    list_color.append(self.configloader.dic_color['others']['vip'])
+                    list_color.append(self.dic_color['others']['vip'])
                 else:
-                    # self.rgbprint(self.configloader.dic_color['others']['svip'], '爷')
                     list_msg.append('爷 ')
-                    list_color.append(self.configloader.dic_color['others']['svip'])
+                    list_color.append(self.dic_color['others']['svip'])
             if info[2][2] == 1:
-                # self.rgbprint(self.configloader.dic_color['others']['admin'], '房管')
                 list_msg.append('房管 ')
-                list_color.append(self.configloader.dic_color['others']['admin'])
+                list_color.append(self.dic_color['others']['admin'])
                 
             # 勋章
             if info[3]:
-                list_color.append(self.configloader.dic_color['fans-level']['fl' + str(info[3][0])])
+                list_color.append(self.dic_color['fans-level']['fl' + str(info[3][0])])
                 list_msg.append(info[3][1] + '|' + str(info[3][0]) + ' ')              
             # 等级
             if not info[5]:
-                list_color.append(self.configloader.dic_color['user-level']['ul' + str(info[4][0])])
+                list_color.append(self.dic_color['user-level']['ul' + str(info[4][0])])
                 list_msg.append('UL' + str(info[4][0]) + ' ')
         try:
             if info[2][7] != '': 
@@ -127,10 +130,7 @@ class Printer():
         list_color.append([])
         return list_msg, list_color
             
-       # if (self.configloader.dic_user['platform']['platform'] == 'ios_pythonista'):
-     #       self.concole_print(list_msg, list_color)
-      #  else:
-           # self.concole_print(list_msg)
+
         
         
         
