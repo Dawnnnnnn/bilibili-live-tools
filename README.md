@@ -93,11 +93,7 @@
 第三方库配置:
 ------
 
-        pip install requests
-        pip install rsa
-        pip install aiohttp
-        pip install webcolors
-
+        pip install -r requirements.txt
 
 使用方法：
 ------
