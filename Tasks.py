@@ -1,3 +1,4 @@
+from API import API
 from bilibili import bilibili
 import hashlib
 import datetime
@@ -8,19 +9,18 @@ import asyncio
 
 class Tasks():
     
-    def __init__(self, bilibili):
+    def __init__(self, bilibili, configloader,api):
         self.bilibili = bilibili
+        self.configloader = configloader
+        self.api = api
 
     # 获取每日包裹奖励
     def Daily_bag(self):
         url = 'http://api.live.bilibili.com/gift/v2/live/receive_daily_bag'
         response = requests.get(url, headers=self.bilibili.pcheaders)
-        try:
-            print("# 获得-" + response.json()['data']['bag_list'][0]['bag_name'] + "-成功")
-            print("# 获得-" + response.json()['data']['bag_list'][1]['bag_name'] + "-成功")
-            print("# 获得-" + response.json()['data']['bag_list'][2]['bag_name'] + "-成功")
-        except:
-            pass
+        for i in range(0,len(response.json()['data']['bag_list'])):
+            print("# 获得-" + response.json()['data']['bag_list'][i]['bag_name'] + "-成功")
+
 
     def CurrentTime(self):
         currenttime = str(int(time.mktime(datetime.datetime.now().timetuple())))
@@ -36,12 +36,8 @@ class Tasks():
     # 领取每日任务奖励
     def Daily_Task(self):
         url = 'https://api.live.bilibili.com/activity/v1/task/receive_award'
-        #payload1 = {'task_id': 'single_watch_task'}
-        #response1 = requests.post(url, data=payload1, headers=self.appheaders)
         payload2 = {'task_id': 'double_watch_task'}
         response2 = requests.post(url, data=payload2, headers=self.bilibili.appheaders)
-        #payload3 = {'task_id': 'share_task'}
-        #response3 = requests.post(url, data=payload3, headers=self.appheaders)
         print("# 双端观看直播:", response2.json()["msg"])
 
     # 应援团签到
@@ -74,12 +70,30 @@ class Tasks():
             else:
                 print("# 应援团 %s 应援失败" %(i1))
 
+    def send_gift(self):
+        if self.configloader.dic_user['gift']['on/off'] == "1":
+            try:
+                argvs = self.api.get_bag_list()
+                for i in range(0,len(argvs)):
+                    giftID = argvs[i][0]
+                    giftNum = argvs[i][1]
+                    bagID = argvs[i][2]
+                    roomID = self.configloader.dic_user['gift']['send_to_room']
+                    self.api.send_bag_gift_web(roomID,giftID,giftNum,bagID)
+            except:
+                print("# 没有将要过期的礼物~")
+
+    def sliver2coin(self):
+        if self.configloader.dic_user['coin']['on/off'] == "1":
+            self.api.silver2coin()
+
     async def run(self):
         while 1:
             print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "每日任务")
+            self.send_gift()
+            self.sliver2coin()
             self.DoSign()
             self.Daily_bag()
             self.Daily_Task()
             self.link_sign()
-
             await asyncio.sleep(21600)

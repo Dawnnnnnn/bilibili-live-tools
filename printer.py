@@ -12,13 +12,13 @@ def hex_to_rgb_percent(hex_str):
     return [float(i.strip('%'))/100.0 for i in color]
  
 
-    
 def level(str):
     if str == "user":
         return 0
     if str == "debug":
         return 1
-    
+
+
 class Printer():
     def __init__(self, configloader):
         self.configloader = configloader
@@ -59,8 +59,6 @@ class Printer():
     async def clean_printlist(self):
         
         while True:
-           # if self.printlist:
-              #  print(self.printlist)
             for i in self.printlist:
                 if i[0] == 0:
                     if (self.configloader.dic_user['platform']['platform'] == 'ios_pythonista'):
@@ -70,8 +68,6 @@ class Printer():
         
                     
                 elif isinstance(i[0], list):
-                    #print("qqqqqq")
-                  #  print(i)
                     for j in i[0]:
                         print(j)
                 else:

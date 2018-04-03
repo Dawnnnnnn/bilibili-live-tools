@@ -4,33 +4,23 @@ import random
 import requests
 import datetime
 import time
+import math
 
 
 def CurrentTime():
-    currenttime = str(int(time.mktime(datetime.datetime.now().timetuple())))
-    return currenttime
+    currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
+    return str(currenttime)
 
 def calculate_sign(str):
-    #value = self.GetHash()
-   # key = value['key']
-    #Hash = str(value['hash'])
-   # pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode())
-   # password = base64.b64encode(rsa.encrypt((Hash + password).encode('utf-8'), pubkey))
-  #  password = parse.quote_plus(password)
-   # username = parse.quote_plus(username)
     hash = hashlib.md5()
     hash.update(str.encode('utf-8'))
     sign = hash.hexdigest()
     return sign
         
 class API():
+
     def __init__(self, bilibili):
         self.bilibili = bilibili
-    # 本函数只是实现了直播观看历史里的提交，与正常观看仍有区别！！
-    # 其实csrf_token就是用了token，我懒得再提出来了
-    # 就是Login函数里面的cookie[0]['value']
-
-        
 
     def post_watching_history(self,csrf_token, room_id):
         data = {
@@ -39,8 +29,8 @@ class API():
             }
         url = "https://api.live.bilibili.com/room/v1/Room/room_entry_action"
         response = requests.post(url, data=data, headers=self.bilibili.pcheaders)
-        #print(response.json())
         return 0
+
     def check_room_true(self,roomid):
         url = "https://api.live.bilibili.com/room/v1/Room/room_init?id="+str(roomid)
         response = requests.get(url,headers=self.bilibili.pcheaders)
@@ -50,34 +40,81 @@ class API():
             param3 = response.json()['data']['encrypted']
             return param1,param2,param3
 
+    def silver2coin(self):
+        url = "https://api.live.bilibili.com/exchange/silver2coin"
+        response = requests.post(url,headers=self.bilibili.pcheaders)
+        print("#",response.json()['msg'])
+        temp_params = 'access_key=' + self.bilibili.access_key + '&actionKey=' + self.bilibili.actionKey + '&appkey=' + self.bilibili.appkey + '&build=' + self.bilibili.build + '&device=' + self.bilibili.device + '&mobi_app=' + self.bilibili.mobi_app + '&platform=' + self.bilibili.platform + '&ts=' + CurrentTime()
+        params = temp_params + self.bilibili.app_secret
+        hash = hashlib.md5()
+        hash.update(params.encode('utf-8'))
+        app_url = "https://api.live.bilibili.com/AppExchange/silver2coin?"+temp_params+"&sign="+str(hash.hexdigest())
+        response1 = requests.post(app_url,headers=self.bilibili.appheaders)
+        print("#",response1.json()['msg'])
 
     def get_bag_list(self):
-        url = "https://api.live.bilibili.com/gift/v2/gift/m_bag_list?" + 'access_key='+self.bilibili.access_key+'&actionKey='+self.bilibili.actionKey+'&appkey='+self.bilibili.appkey+'&build='+self.bilibili.build+'&device='+self.bilibili.device + '&mobi_app='+self.bilibili.mobi_app+'&platform='+self.bilibili.platform + '&ts=' + CurrentTime()
-        response = requests.get(url, headers=self.bilibili.pcheaders)
+        url = "http://api.live.bilibili.com/gift/v2/gift/bag_list"
+        response = requests.get(url,headers=self.bilibili.pcheaders)
+        temp = []
         print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询可用礼物')
-        for i in range(len(response.json()['data'])):
-            gift_name = response.json()['data'][i]['gift_name']
-            gift_num = str(response.json()['data'][i]['gift_num']).center(4)
-            expireat = str(round(int(response.json()['data'][i]['expireat']) / 86400, 1)).center(6)
-            print("# " + gift_name + 'X' + gift_num, '(在' + expireat + '天后过期)')
-    
+        for i in range(len(response.json()['data']['list'])):
+            bag_id = (response.json()['data']['list'][i]['bag_id'])
+            gift_id = (response.json()['data']['list'][i]['gift_id'])
+            gift_num = str((response.json()['data']['list'][i]['gift_num'])).center(4)
+            gift_name = response.json()['data']['list'][i]['gift_name']
+            expireat = (response.json()['data']['list'][i]['expire_at'])
+            left_time = (expireat-int(CurrentTime()))
+            left_days = (expireat-int(CurrentTime()))/86400
+            print("# " + gift_name + 'X' + gift_num, '(在'+str(math.ceil(left_days))+'天后过期)')
+            if 0 < int(left_time) < 86400:
+                temp.append([gift_id,gift_num,bag_id])
+        return temp
+
+    def get_uid_in_room(self, roomID):
+            url = "https://api.live.bilibili.com/room/v1/Room/room_init?id=" + roomID
+            response = requests.get(url, headers=self.bilibili.pcheaders)
+            return response.json()['data']['uid'],response.json()['data']['room_id']
+
+    def send_bag_gift_web(self, roomID, giftID, giftNum, bagID):
+            url = "http://api.live.bilibili.com/gift/v2/live/bag_send"
+            temp = self.get_uid_in_room(roomID)
+            data = {
+                'uid': self.bilibili.uid,
+                'gift_id': giftID,
+                'ruid': temp[0],
+                'gift_num': giftNum,
+                'bag_id': bagID,
+                'platform': 'pc',
+                'biz_code': 'live',
+                'biz_id': temp[1],
+                'rnd': CurrentTime(),
+                'storm_beat_id': '0',
+                'metadata': '',
+                'price': '0',
+                'csrf_token': self.bilibili.csrf
+            }
+            response = requests.post(url, headers=self.bilibili.pcheaders, data=data)
+            try:
+                print(response.json())
+                print("# 清理快到期礼物:",response.json()['data']['gift_name']+"x"+str(response.json()['data']['gift_num']))
+            except:
+                print("# 清理快到期礼物成功，但请联系开发者修bug!")
+
     def user_info(self):
-        url = "https://api.live.bilibili.com/User/getUserInfo?ts=" + CurrentTime()
+        url = "https://api.live.bilibili.com/i/api/liveinfo"
         response = requests.get(url, headers=self.bilibili.pcheaders)
-        json = response.json()
         print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询用户信息')
-        if(json['code'] == 'REPONSE_OK'):
-            data = json['data']
-            uname = data['uname']
-            silver = data['silver']
-            gold = data['gold']
-            achieve = data['achieve']
-            user_level = data['user_level']
-            user_next_level = data['user_next_level']
-            user_intimacy = data['user_intimacy']
-            user_next_intimacy = data['user_next_intimacy']
-            user_level_rank = data['user_level_rank']
-            billCoin = data['billCoin']
+        if(response.json()['code'] == 0):
+            uname = response.json()['data']['userInfo']['uname']
+            achieve = response.json()['data']['achieves']
+            user_level = response.json()['data']['userCoinIfo']['user_level']
+            silver = response.json()['data']['userCoinIfo']['silver']
+            gold = response.json()['data']['userCoinIfo']['gold']
+            user_next_level = response.json()['data']['userCoinIfo']['user_next_level']
+            user_intimacy = response.json()['data']['userCoinIfo']['user_intimacy']
+            user_next_intimacy = response.json()['data']['userCoinIfo']['user_next_intimacy']
+            user_level_rank = response.json()['data']['userCoinIfo']['user_level_rank']
+            billCoin = response.json()['data']['userCoinIfo']['coins']
             print('# 用户名', uname)
             print('# 银瓜子', silver)
             print('# 金瓜子', gold)

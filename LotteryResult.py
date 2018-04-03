@@ -10,9 +10,7 @@ class LotteryResult():
         self.bilibili =bilibili
 
     async def query(self):
-        while 1:           
-            # print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检查抽奖结果")
-            # print(self.bilibili.activity_raffleid_list)
+        while 1:
             if self.bilibili.activity_raffleid_list:               
                 for i in range(0,len(self.bilibili.activity_roomid_list)):
                     url = "http://api.live.bilibili.com/activity/v1/Raffle/notice?roomid="+str(self.bilibili.activity_roomid_list[0])+"&raffleId="+str(self.bilibili.activity_raffleid_list[0])

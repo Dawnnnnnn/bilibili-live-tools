@@ -7,7 +7,7 @@ def hex_to_rgb_percent(hex_str):
     color = webcolors.hex_to_rgb_percent(hex_str)
     # print([float(i.strip('%'))/100.0 for i in color])
     return [float(i.strip('%'))/100.0 for i in color]
-    
+
 
 # "255 255 255"
 def rgb_to_percent(rgb_str):
