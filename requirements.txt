@@ -1,0 +1,4 @@
+requests
+rsa
+aiohttp
+webcolors
