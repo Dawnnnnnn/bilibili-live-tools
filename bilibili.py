@@ -361,7 +361,7 @@ class bilibili():
 
     def get_gift_of_captain(self,roomid, id):
         join_url = "https://api.live.bilibili.com/lottery/v1/lottery/join"
-        payload = {"roomid": roomid, "id": id, "type": "guard", "csrf_token": self.doc_bilibili['csrf']}
+        payload = {"roomid": roomid, "id": id, "type": "guard", "csrf_token": self.dic_bilibili['csrf']}
         print(payload)
         response2 = requests.post(join_url, data=payload, headers=self.dic_bilibili['pcheaders'])
         return response2
