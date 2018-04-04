@@ -8,8 +8,7 @@ import os
 import configloader
 
 class Tasks():
-    
-    
+
     def __init__(self):
         fileDir = os.path.dirname(os.path.realpath('__file__'))
         file_user = fileDir + "/conf/user.conf"
@@ -63,11 +62,12 @@ class Tasks():
         if self.dic_user['gift']['on/off'] == '1':
             try:
                 argvs = bilibili().get_bag_list()
-                giftID = argvs[0][0]
-                giftNum = argvs[0][1]
-                bagID = argvs[0][2]
-                roomID = self.dic_user['gift']['send_to_room']
-                bilibili().send_bag_gift_web(roomID,giftID,giftNum,bagID)
+                for i in range(0,len(argvs)):
+                    giftID = argvs[i][0]
+                    giftNum = argvs[i][1]
+                    bagID = argvs[i][2]
+                    roomID = self.dic_user['gift']['send_to_room']
+                    bilibili().send_bag_gift_web(roomID,giftID,giftNum,bagID)
             except:
                 print("# 没有将要过期的礼物~")
 
@@ -78,11 +78,11 @@ class Tasks():
     async def run(self):
         while 1:
             print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "每日任务")
-            self.send_gift()
             self.sliver2coin()
             self.DoSign()
             self.Daily_bag()
             self.Daily_Task()
             self.link_sign()
+            self.send_gift()
             # print('Tasks over.')
             await asyncio.sleep(21600)
