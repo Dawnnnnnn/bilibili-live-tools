@@ -139,9 +139,9 @@ class bilibiliClient():
             return
         if cmd == 'SYS_GIFT':
             if 'giftId' in dic.keys():
-                text1 = dic['real_roomid']
-                text2 = dic['url']
                 if str(dic['giftId']) in bilibili().get_giftids_raffle_keys():
+                    text1 = dic['real_roomid']
+                    text2 = dic['url']
                     await asyncio.sleep(random.uniform(3, 5))
                     bilibili().post_watching_history(text1)
                     result = bilibili().check_room_true(text1)
@@ -195,6 +195,8 @@ class bilibiliClient():
                     else:
                         self.printer.printlist_append(['join_lottery','','debug', [dic, "请联系开发者"]])
                 else:
+                    text1 = dic['real_roomid']
+                    text2 = dic['url']
                     self.printer.printlist_append(['join_lottery', '', 'debug', [dic, "请联系开发者"]])
                     try:
                         self.printer.printlist_append(['join_lottery', '', 'user',
