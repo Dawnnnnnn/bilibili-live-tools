@@ -32,7 +32,7 @@ class OnlineHeart():
                 temp = response.json()['data']['title']
                 if "测试" in temp:
                     print("检测到疑似钓鱼类测试抽奖，默认不参与，请自行判断抽奖可参与性")
-                    print(url)
+                    # print(url)
                 else:
                     check = len(response.json()['data']['typeB'])
                     for g in range(0, check):
@@ -42,7 +42,7 @@ class OnlineHeart():
                         if int(join_end_time) > int(ts) > int(join_start_time):
                             response1 = bilibili().get_gift_of_lottery(i, g)
                             print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-                            print("参与抽奖回显：",response1.json())
+                            print("参与实物抽奖回显：",response1.json())
                         else:
                             break
             else:
