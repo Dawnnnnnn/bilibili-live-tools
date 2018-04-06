@@ -434,7 +434,15 @@ class bilibili():
 
     def get_giftlist_of_captain(self, roomid):
         true_url = 'https://api.live.bilibili.com/lottery/v1/lottery/check?roomid=' + str(roomid)
-        response1 = requests.get(true_url)
+        headers = {
+        "Accept-Encoding":"gzip, deflate,br",
+        "Accept-Language":"zh-CN",
+        "DNT": "1",
+        "Host":"api.live.bilibili.com",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent":'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:59.0) Gecko/20100101 Firefox/59.0'
+        }
+        response1 = requests.get(true_url,headers=headers)
         return response1
 
 
