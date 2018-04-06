@@ -59,6 +59,8 @@ def controler():
         code = input('')
         if code == '1':
             Statistics().getlist()
+        if code == '2':
+            Statistics().getresult()
         
 loop = asyncio.get_event_loop()        
 mainthread = threading.Thread(target=main, args=(loop,))

@@ -173,10 +173,11 @@ class bilibiliClient():
                                                                    str(text1).center(9),
                                                                    "的" + bilibili().get_giftids_raffle(
                                                                        str(dic['giftId'])) + "活动抽奖"])
-                                    
+
                                     try:
                                         self.printer.printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
                                                                        response1.json()['data']['gift_desc']])
+                                        Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
                                     except:
                                         pass
                                     try:
@@ -217,9 +218,12 @@ class bilibiliClient():
                                                                                  time.localtime(time.time())), "参与了房间",
                                                                    str(text1).center(9),
                                                                    "的" + "活动抽奖"])
+
                                     try:
                                         self.printer.printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
                                                                        response1.json()['data']['gift_desc']])
+                                        Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
+
                                     except:
                                         pass
                                     try:

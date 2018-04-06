@@ -20,15 +20,24 @@ class Statistics:
             # cls.instance.TV_time_list = []
             cls.instance.joined_event = []
             cls.instance.joined_TV = []
+            cls.instance.result = {}
             # cls.instance.TVsleeptime = 185
             # cls.instance.activitysleeptime = 125
         return cls.instance
+
+    def add_to_result(self, type, num):
+        self.result[type] = self.result.get(type, 0) + int(num)
 
     def getlist(self):
         # print(self.joined_event)
         # print(self.joined_TV)
         print('本次参与活动抽奖次数:', len(self.joined_event))
         print('本次参与电视抽奖次数:', len(self.joined_TV))
+
+    def getresult(self):
+        print('本次参与抽奖结果为：')
+        for k, v in self.result.items():
+            print('{}X{}'.format(k, v))
 
     def delete_0st_activitylist(self):
         del self.activity_roomid_list[0]
@@ -51,6 +60,7 @@ class Statistics:
                     data = json_response['data']
                     print("# 房间", str(self.activity_roomid_list[0]).center(9), "网页端活动抽奖结果:",
                           data['gift_name'] + "x" + str(data['gift_num']))
+                    self.add_to_result(data['gift_name'], int(data['gift_num']))
 
                     self.delete_0st_activitylist()
 
@@ -83,6 +93,7 @@ class Statistics:
                     data = json_response['data']
                     print("# 房间", str(self.TV_roomid_list[0]).center(9), "小电视道具抽奖结果:",
                           data['gift_name'] + "x" + str(data['gift_num']))
+                    self.add_to_result(data['gift_name'], int(data['gift_num']))
 
                     self.delete_0st_TVlist()
             # else:
