@@ -63,8 +63,8 @@ controlthread = threading.Thread(target=controler)
 mainthread.start()
 controlthread.start()
 
-while True:
-    pass
+mainthread.join()
+controlthread.join()
  
 
 
