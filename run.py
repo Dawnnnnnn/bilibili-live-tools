@@ -65,8 +65,4 @@ controlthread.start()
 
 mainthread.join()
 controlthread.join()
- 
 
-
-        
-    

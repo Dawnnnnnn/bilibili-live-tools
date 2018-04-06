@@ -5,7 +5,6 @@ import configloader
 import os
 import hashlib
 import random
-import requests
 import datetime
 import time
 import math
@@ -262,15 +261,15 @@ class bilibili():
     def fetchmedal(self):
         print('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度', adjust_for_chinese('排名'), '勋章状态'))
         dic_worn = {'1': '正在佩戴', '0':'待机状态'}
-        url = 'https://api.live.bilibili.com/i/api/medal?page=1'
+        url = 'https://api.live.bilibili.com/i/api/medal?page=1&pageSize=50'
         response = requests.post(url, headers=self.dic_bilibili['pcheaders'])
         # print(response.json())
         json_response = response.json()
         if json_response['code'] == 0:
             for i in json_response['data']['fansMedalList']:
                 print('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name']+ '|' + str(i['level'])), adjust_for_chinese(i['anchorInfo']['uname']), str(i['intimacy'])+'/'+str(i['next_intimacy']), str(i['todayFeed'])+'/'+ str(i['dayLimit']), adjust_for_chinese(str(i['rank'])), dic_worn[str(i['status'])]))
-            
-        
+
+
     def GetHash(self):
         url = 'https://passport.bilibili.com/api/oauth2/getKey'
         temp_params = 'appkey=' + self.dic_bilibili['appkey'] + self.dic_bilibili['app_secret']
