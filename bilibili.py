@@ -20,6 +20,11 @@ reload(sys)
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
+# 13:30  --->  13.5
+def eventtime():
+    now = datetime.datetime.now()
+    return now.hour + now.minute / 60.0
+    
 
 
 def calculate_sign(str):
@@ -27,6 +32,21 @@ def calculate_sign(str):
     hash.update(str.encode('utf-8'))
     sign = hash.hexdigest()
     return sign
+
+def adjust_for_chinese(str):
+    SPACE = '\N{IDEOGRAPHIC SPACE}'
+    EXCLA = '\N{FULLWIDTH EXCLAMATION MARK}'
+    TILDE = '\N{FULLWIDTH TILDE}'
+    
+    # strings of ASCII and full-width characters (same order)
+    west = ''.join(chr(i) for i in range(ord(' '),ord('~')))
+    east = SPACE + ''.join(chr(i) for i in range(ord(EXCLA),ord(TILDE)))
+    
+    # build the translation table
+    full = str.maketrans(west,east)
+    str =str.translate(full).rstrip().split('\n')
+    md = '{:^10}'.format(str[0])
+    return md.translate(full)
 
 
 class bilibili():
@@ -46,8 +66,16 @@ class bilibili():
             # cls.instance.TV_time_list = []
             # cls.instance.TVsleeptime = 185
             # cls.instance.activitysleeptime = 125
+            cls.instance.joined_event = []
+            cls.instance.joined_TV = []
 
         return cls.instance
+        
+    def getlist(self):
+        # print(self.joined_event)
+        # print(self.joined_TV)
+        print('本次参与活动抽奖次数:', len(self.joined_event))
+        print('本次参与电视抽奖次数:', len(self.joined_TV))
 
     def post_watching_history(self, room_id):
         data = {
@@ -230,6 +258,19 @@ class bilibili():
         response = requests.post(url, headers=self.dic_bilibili['pcheaders'], data=data)
         print(response.json())
 
+
+    def fetchmedal(self):
+        print('{} {} {:^12} {:^9}  {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度', adjust_for_chinese('排名'), '勋章状态'))
+        dic_worn = {'1': '正在佩戴', '0':'待机状态'}
+        url = 'https://api.live.bilibili.com/i/api/medal?page=1'
+        response = requests.post(url, headers=self.dic_bilibili['pcheaders'])
+        # print(response.json())
+        json_response = response.json()
+        if json_response['code'] == 0:
+            for i in json_response['data']['fansMedalList']:
+                print('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name']+ '|' + str(i['level'])), adjust_for_chinese(i['anchorInfo']['uname']), str(i['intimacy'])+'/'+str(i['next_intimacy']), str(i['todayFeed'])+'/'+ str(i['dayLimit']), adjust_for_chinese(str(i['rank'])), dic_worn[str(i['status'])]))
+            
+        
     def GetHash(self):
         url = 'https://passport.bilibili.com/api/oauth2/getKey'
         temp_params = 'appkey=' + self.dic_bilibili['appkey'] + self.dic_bilibili['app_secret']
@@ -474,12 +515,17 @@ class bilibili():
         self.activity_roomid_list.append(text1)
         # self.activity_time_list.append(int(time))
         # self.activity_time_list.append(int(CurrentTime()))
+        self.joined_event.append(eventtime())
+        # print("activity加入成功", self.joined_event)
+        
 
     def append_to_TVlist(self, raffleid, real_roomid, time=''):
         self.TV_raffleid_list.append(raffleid)
         self.TV_roomid_list.append(real_roomid)
         # self.TV_time_list.append(int(time)+int(CurrentTime()))
         # self.TV_time_list.append(int(CurrentTime()))
+        self.joined_TV.append(eventtime())
+        # print("tv加入成功", self.joined_TV)
 
     def check_TVlist(self, raffleid):
         if raffleid not in self.TV_raffleid_list:

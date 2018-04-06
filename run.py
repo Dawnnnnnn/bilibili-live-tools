@@ -8,6 +8,8 @@ import asyncio
 from printer import Printer
 import bilibili
 import os
+import sys
+import threading
 
 # fileDir = os.path.dirname(os.path.realpath('__file__'))
 # print(fileDir)
@@ -24,24 +26,47 @@ bilibili.login()
 
 bilibili.user_info()
 bilibili.get_bag_list()
+bilibili.fetchmedal()
 task = OnlineHeart()
 task1 = Silver()
 task2 = Tasks()
 task3 = LotteryResult()
 task4 = connect(printer)
 
-tasks = [
-    task.run(),
-    task1.run(),
-    task2.run(),
-    task4.connect(),
-    task3.query(),
-    printer.clean_printlist()
-]
 
-loop = asyncio.get_event_loop()
+def main(loop):  
+    tasks = [
+        task.run(),
+        task1.run(),
+        task2.run(),
+        task4.connect(),
+        task3.query(),
+        printer.clean_printlist()
+    ]
+    
+    asyncio.set_event_loop(loop)
+    
+    loop.run_until_complete(asyncio.wait(tasks))
+    
+    loop.close()
+    
+def controler():
+    while True:
+        code = input('')
+        if code == '1':
+            bilibili.getlist()
+        
+loop = asyncio.get_event_loop()        
+mainthread = threading.Thread(target=main, args=(loop,))
+controlthread = threading.Thread(target=controler)
 
-loop.run_until_complete(asyncio.wait(tasks))
+mainthread.start()
+controlthread.start()
 
-loop.close()
+while True:
+    pass
+ 
 
+
+        
+    

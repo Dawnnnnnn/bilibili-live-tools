@@ -180,12 +180,12 @@ class bilibiliClient():
                                         self.printer.printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
                                                                        response1.json()['data']['gift_desc']])
                                     except:
-                                        pass
+                                        print(response1.json())
                                     try:
                                         self.printer.printlist_append(
                                             ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
                                     except:
-                                        pass
+                                        print(response1.json())
                             break
                 elif dic['giftId'] == 39:
                     self.printer.printlist_append(['join_lottery', '', 'user', "节奏风暴"])
