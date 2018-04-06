@@ -3,12 +3,9 @@ import asyncio
 import random
 from struct import *
 import json
-import datetime
 import time
-import hashlib
 import re
 import requests
-# from printer import Printer
 import sys
 
 
@@ -180,12 +177,12 @@ class bilibiliClient():
                                         self.printer.printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
                                                                        response1.json()['data']['gift_desc']])
                                     except:
-                                        print(response1.json())
+                                        pass
                                     try:
                                         self.printer.printlist_append(
                                             ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
                                     except:
-                                        print(response1.json())
+                                        pass
                             break
                 elif dic['giftId'] == 39:
                     self.printer.printlist_append(['join_lottery', '', 'user', "节奏风暴"])

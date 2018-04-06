@@ -5,7 +5,6 @@ import configloader
 import os
 import hashlib
 import random
-import requests
 import datetime
 import time
 import math
@@ -269,8 +268,8 @@ class bilibili():
         if json_response['code'] == 0:
             for i in json_response['data']['fansMedalList']:
                 print('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name']+ '|' + str(i['level'])), adjust_for_chinese(i['anchorInfo']['uname']), str(i['intimacy'])+'/'+str(i['next_intimacy']), str(i['todayFeed'])+'/'+ str(i['dayLimit']), adjust_for_chinese(str(i['rank'])), dic_worn[str(i['status'])]))
-            
-        
+
+
     def GetHash(self):
         url = 'https://passport.bilibili.com/api/oauth2/getKey'
         temp_params = 'appkey=' + self.dic_bilibili['appkey'] + self.dic_bilibili['app_secret']
