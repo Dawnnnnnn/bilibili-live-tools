@@ -16,13 +16,13 @@ from urllib import parse
 import codecs
 reload(sys)
 
+
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
-# 13:30  --->  13.5
-def eventtime():
-    now = datetime.datetime.now()
-    return now.hour + now.minute / 60.0
+
+
+
     
 
 
@@ -32,20 +32,6 @@ def calculate_sign(str):
     sign = hash.hexdigest()
     return sign
 
-def adjust_for_chinese(str):
-    SPACE = '\N{IDEOGRAPHIC SPACE}'
-    EXCLA = '\N{FULLWIDTH EXCLAMATION MARK}'
-    TILDE = '\N{FULLWIDTH TILDE}'
-    
-    # strings of ASCII and full-width characters (same order)
-    west = ''.join(chr(i) for i in range(ord(' '),ord('~')))
-    east = SPACE + ''.join(chr(i) for i in range(ord(EXCLA),ord(TILDE)))
-    
-    # build the translation table
-    full = str.maketrans(west,east)
-    str =str.translate(full).rstrip().split('\n')
-    md = '{:^10}'.format(str[0])
-    return md.translate(full)
 
 
 class bilibili():
@@ -57,24 +43,9 @@ class bilibili():
             fileDir = os.path.dirname(os.path.realpath('__file__'))
             cls.instance.file_bilibili = fileDir + "/conf/bilibili.conf"
             cls.instance.dic_bilibili = configloader.load_bilibili(cls.instance.file_bilibili)
-            cls.instance.activity_raffleid_list = []
-            cls.instance.activity_roomid_list = []
-            # cls.instance.activity_time_list = []
-            cls.instance.TV_raffleid_list = []
-            cls.instance.TV_roomid_list = []
-            # cls.instance.TV_time_list = []
-            # cls.instance.TVsleeptime = 185
-            # cls.instance.activitysleeptime = 125
-            cls.instance.joined_event = []
-            cls.instance.joined_TV = []
-
         return cls.instance
         
-    def getlist(self):
-        # print(self.joined_event)
-        # print(self.joined_TV)
-        print('本次参与活动抽奖次数:', len(self.joined_event))
-        print('本次参与电视抽奖次数:', len(self.joined_TV))
+
 
     def post_watching_history(self, room_id):
         data = {
@@ -110,23 +81,10 @@ class bilibili():
         response1 = requests.post(app_url, headers=self.dic_bilibili['appheaders'])
         print("#", response1.json()['msg'])
 
-    def get_bag_list(self):
+    def request_fetch_bag_list(self):
         url = "http://api.live.bilibili.com/gift/v2/gift/bag_list"
         response = requests.get(url, headers=self.dic_bilibili['pcheaders'])
-        temp = []
-        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询可用礼物')
-        for i in range(len(response.json()['data']['list'])):
-            bag_id = (response.json()['data']['list'][i]['bag_id'])
-            gift_id = (response.json()['data']['list'][i]['gift_id'])
-            gift_num = str((response.json()['data']['list'][i]['gift_num'])).center(4)
-            gift_name = response.json()['data']['list'][i]['gift_name']
-            expireat = (response.json()['data']['list'][i]['expire_at'])
-            left_time = (expireat - int(CurrentTime()))
-            left_days = (expireat - int(CurrentTime())) / 86400
-            print("# " + gift_name + 'X' + gift_num, '(在' + str(math.ceil(left_days)) + '天后过期)')
-            if 0 < int(left_time) < 43200:   # 剩余时间少于半天时自动送礼
-                temp.append([gift_id, gift_num, bag_id])
-        return temp
+        return response
 
     def get_uid_in_room(self, roomID):
         url = "https://api.live.bilibili.com/room/v1/Room/room_init?id=" + roomID
@@ -158,37 +116,13 @@ class bilibili():
         except:
             print("# 清理快到期礼物成功，但请联系开发者修bug!")
 
-    def user_info(self):
+    def request_fetch_user_info(self):
         url = "https://api.live.bilibili.com/i/api/liveinfo"
         response = requests.get(url, headers=self.dic_bilibili['pcheaders'])
-        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询用户信息')
-        if (response.json()['code'] == 0):
-            uname = response.json()['data']['userInfo']['uname']
-            achieve = response.json()['data']['achieves']
-            user_level = response.json()['data']['userCoinIfo']['user_level']
-            silver = response.json()['data']['userCoinIfo']['silver']
-            gold = response.json()['data']['userCoinIfo']['gold']
-            user_next_level = response.json()['data']['userCoinIfo']['user_next_level']
-            user_intimacy = response.json()['data']['userCoinIfo']['user_intimacy']
-            user_next_intimacy = response.json()['data']['userCoinIfo']['user_next_intimacy']
-            user_level_rank = response.json()['data']['userCoinIfo']['user_level_rank']
-            billCoin = response.json()['data']['userCoinIfo']['coins']
-            print('# 用户名', uname)
-            print('# 银瓜子', silver)
-            print('# 金瓜子', gold)
-            print('# 硬币数', billCoin)
-            print('# 成就值', achieve)
-            print('# 等级值', user_level, '———>', user_next_level)
-            print('# 经验值', user_intimacy)
-            print('# 剩余值', user_next_intimacy - user_intimacy)
-            arrow = int(user_intimacy * 30 / user_next_intimacy)
-            line = 30 - arrow
-            percent = user_intimacy / user_next_intimacy * 100.0
-            process_bar = '[' + '>' * arrow + '-' * line + ']' + '%.2f' % percent + '%'
-            print(process_bar)
-            print('# 等级榜', user_level_rank)
+        return response
 
-    def send_danmu_msg_andriod(self, msg, roomId):
+
+    def request_send_danmu_msg_andriod(self, msg, roomId):
         url = 'https://api.live.bilibili.com/api/sendmsg?'
         # page ??
         time = CurrentTime()
@@ -240,9 +174,9 @@ class bilibili():
         }
 
         response = requests.post(url, headers=self.dic_bilibili['appheaders'], data=data)
-        print(response.json())
+        return response
 
-    def send_danmu_msg_web(self, msg, roomId):
+    def request_send_danmu_msg_web(self, msg, roomId):
         url = 'https://api.live.bilibili.com/msg/send'
         data = {
             'color': '16777215',
@@ -255,19 +189,13 @@ class bilibili():
         }
 
         response = requests.post(url, headers=self.dic_bilibili['pcheaders'], data=data)
-        print(response.json())
+        return response
 
 
-    def fetchmedal(self):
-        print('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度', adjust_for_chinese('排名'), '勋章状态'))
-        dic_worn = {'1': '正在佩戴', '0':'待机状态'}
+    def request_fetchmedal(self):
         url = 'https://api.live.bilibili.com/i/api/medal?page=1&pageSize=50'
         response = requests.post(url, headers=self.dic_bilibili['pcheaders'])
-        # print(response.json())
-        json_response = response.json()
-        if json_response['code'] == 0:
-            for i in json_response['data']['fansMedalList']:
-                print('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name']+ '|' + str(i['level'])), adjust_for_chinese(i['anchorInfo']['uname']), str(i['intimacy'])+'/'+str(i['next_intimacy']), str(i['todayFeed'])+'/'+ str(i['dayLimit']), adjust_for_chinese(str(i['rank'])), dic_worn[str(i['status'])]))
+        return response
 
 
     def GetHash(self):
@@ -509,32 +437,7 @@ class bilibili():
         response1 = requests.get(true_url)
         return response1
 
-    def append_to_activitylist(self, raffleid, text1, time=''):
-        self.activity_raffleid_list.append(raffleid)
-        self.activity_roomid_list.append(text1)
-        # self.activity_time_list.append(int(time))
-        # self.activity_time_list.append(int(CurrentTime()))
-        self.joined_event.append(eventtime())
-        # print("activity加入成功", self.joined_event)
-        
 
-    def append_to_TVlist(self, raffleid, real_roomid, time=''):
-        self.TV_raffleid_list.append(raffleid)
-        self.TV_roomid_list.append(real_roomid)
-        # self.TV_time_list.append(int(time)+int(CurrentTime()))
-        # self.TV_time_list.append(int(CurrentTime()))
-        self.joined_TV.append(eventtime())
-        # print("tv加入成功", self.joined_TV)
-
-    def check_TVlist(self, raffleid):
-        if raffleid not in self.TV_raffleid_list:
-            return True
-        return False
-
-    def check_activitylist(self, raffleid):
-        if raffleid not in self.activity_raffleid_list:
-            return True
-        return False
 
     def get_giftids_raffle(self, str):
         return self.dic_bilibili['giftids_raffle'][str]
@@ -569,72 +472,6 @@ class bilibili():
         }
         response = requests.get(url, headers=headers)
         return response
-
-    def delete_0st_activitylist(self):
-        del self.activity_roomid_list[0]
-        del self.activity_raffleid_list[0]
-        # del self.activity_time_list[0]
-
-    def delete_0st_TVlist(self):
-        del self.TV_roomid_list[0]
-        del self.TV_raffleid_list[0]
-        # del self.TV_time_list[0]
-
-    def clean_activity(self):
-        # print(self.activity_raffleid_list)
-        if self.activity_raffleid_list:
-            for i in range(0, len(self.activity_roomid_list)):
-                response = self.get_activity_result(self.activity_roomid_list[0], self.activity_raffleid_list[0])
-                json_response = response.json()
-                # print(json_response)
-                if json_response['code'] == 0:
-                    data = json_response['data']
-                    print("# 房间", str(self.activity_roomid_list[0]).center(9), "网页端活动抽奖结果:",
-                          data['gift_name'] + "x" + str(data['gift_num']))
-
-                    self.delete_0st_activitylist()
-
-                elif json_response['code'] == -400:
-                    # sleepseconds = self.activitysleeptime + self.activity_time_list[0] - int(CurrentTime())+ 2
-                    # sleepseconds = self.activity_time_list[0] - int(CurrentTime())
-                    # return sleepsecondsq
-                    return
-
-                else:
-                    print('未知情况')
-                    print(json_response)
-
-        else:
-            return
-
-    def clean_TV(self):
-        # print(self.TV_raffleid_list)
-        if self.TV_raffleid_list:
-            for i in range(0, len(self.TV_roomid_list)):
-
-                response = self.get_TV_result(self.TV_roomid_list[0], self.TV_raffleid_list[0])
-                # if response.json()['data']['gift_name'] != "":
-                json_response = response.json()
-                # print(json_response)
-                if json_response['data']['gift_id'] == '-1':
-                    return
-                elif json_response['data']['gift_id'] != '-1':
-
-                    data = json_response['data']
-                    print("# 房间", str(self.TV_roomid_list[0]).center(9), "小电视道具抽奖结果:",
-                          data['gift_name'] + "x" + str(data['gift_num']))
-
-                    self.delete_0st_TVlist()
-            # else:
-            # print(int(CurrentTime()))
-            # sleepseconds = self.TV_time_list[0] - int(CurrentTime()) + 1
-            # sleepseconds = self.TV_time_list[0] - int(CurrentTime())
-            # return
-
-            #  else:
-            # print('未知')
-        else:
-            return
 
     def pcpost_heartbeat(self):
         url = 'http://api.live.bilibili.com/User/userOnlineHeart'

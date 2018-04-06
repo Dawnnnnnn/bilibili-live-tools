@@ -4,16 +4,14 @@ from LotteryResult import LotteryResult
 from Tasks import Tasks
 from connect import connect
 import asyncio
-
+import utils
 from printer import Printer
+from statistics import Statistics
 import bilibili
 import os
 import sys
 import threading
 
-# fileDir = os.path.dirname(os.path.realpath('__file__'))
-# print(fileDir)
-# file_color = fileDir + "/conf/color.conf"
 
 
 
@@ -21,12 +19,18 @@ printer = Printer()
 
 bilibili = bilibili.bilibili()
 
+
+
 bilibili.login()
 
+Statistics()
 
-bilibili.user_info()
-bilibili.get_bag_list()
-bilibili.fetchmedal()
+utils.fetch_user_info()
+utils.fetch_bag_list()
+utils.fetch_medal()
+
+
+
 task = OnlineHeart()
 task1 = Silver()
 task2 = Tasks()
@@ -54,7 +58,7 @@ def controler():
     while True:
         code = input('')
         if code == '1':
-            bilibili.getlist()
+            Statistics().getlist()
         
 loop = asyncio.get_event_loop()        
 mainthread = threading.Thread(target=main, args=(loop,))
