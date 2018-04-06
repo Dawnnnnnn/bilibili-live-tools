@@ -44,7 +44,7 @@ class OnlineHeart():
                             print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
                             print("参与实物抽奖回显：",response1.json())
                         else:
-                            break
+                            pass
             else:
                 break
 

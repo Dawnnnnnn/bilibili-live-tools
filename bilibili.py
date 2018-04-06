@@ -241,7 +241,7 @@ class bilibili():
             payload = "appkey=" + self.dic_bilibili[
                 'appkey'] + "&password=" + password + "&username=" + username + "&sign=" + sign
             response = requests.post(url, data=payload, headers=headers)
-            if response.json()['code'] == -105:
+            while response.json()['code'] == -105:
                 headers = {
                     'Accept': 'application/json, text/plain, */*',
                     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
@@ -253,12 +253,12 @@ class bilibili():
                 res = s.get(url,headers=headers)
                 with open("capture.png","wb")as f:
                     f.write(res.content)  # 验证码图片
-                try:
-                    img = Image.open('capture.png')
-                    img.show()
-                except:
-                    self.capture_output()
-                captcha=input("输入验证码:")
+                tmp1 = base64.b64encode(res.content)
+                url = "http://101.236.6.31:8080/code"
+                data = {"image": tmp1}
+                ressponse = requests.post(url, data=data)
+                captcha = ressponse.text
+                print("此次登录出现验证码,识别结果为%s"%(captcha))
                 temp_params = 'actionKey=' + self.dic_bilibili[
                     'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
                                   'build'] + '&captcha='+captcha+'&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&password='+ password +'&platform=' + self.dic_bilibili[
@@ -434,7 +434,15 @@ class bilibili():
 
     def get_giftlist_of_captain(self, roomid):
         true_url = 'https://api.live.bilibili.com/lottery/v1/lottery/check?roomid=' + str(roomid)
-        response1 = requests.get(true_url)
+        headers = {
+        "Accept-Encoding":"gzip, deflate,br",
+        "Accept-Language":"zh-CN",
+        "DNT": "1",
+        "Host":"api.live.bilibili.com",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent":'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:59.0) Gecko/20100101 Firefox/59.0'
+        }
+        response1 = requests.get(true_url,headers=headers)
         return response1
 
 
