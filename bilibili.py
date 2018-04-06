@@ -260,7 +260,7 @@ class bilibili():
 
 
     def fetchmedal(self):
-        print('{} {} {:^12} {:^9}  {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度', adjust_for_chinese('排名'), '勋章状态'))
+        print('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度', adjust_for_chinese('排名'), '勋章状态'))
         dic_worn = {'1': '正在佩戴', '0':'待机状态'}
         url = 'https://api.live.bilibili.com/i/api/medal?page=1'
         response = requests.post(url, headers=self.dic_bilibili['pcheaders'])
