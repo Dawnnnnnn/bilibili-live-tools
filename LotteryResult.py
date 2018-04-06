@@ -1,4 +1,4 @@
-from bilibili import bilibili
+from statistics import Statistics
 import requests
 import asyncio
 import time
@@ -10,10 +10,9 @@ class LotteryResult():
         
         while 1:
             # print('lotteryresult test')
-            bilibili().clean_activity()
+            Statistics().clean_activity()
 
-            
-            bilibili().clean_TV()
+            Statistics().clean_TV()
             
             
             # print('自动延迟参数', sleeptime1, sleeptime2)

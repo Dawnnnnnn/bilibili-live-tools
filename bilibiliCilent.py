@@ -1,4 +1,5 @@
 from bilibili import bilibili
+from statistics import Statistics
 import asyncio
 import random
 from struct import *
@@ -160,11 +161,11 @@ class bilibiliClient():
                                 await asyncio.sleep(random.uniform(0.5, 1))
                                 resttime = response.json()['data'][j]['time']
                                 raffleid = response.json()['data'][j]['raffleId']
-                                if bilibili().check_activitylist(raffleid):
+                                if Statistics().check_activitylist(raffleid):
 
                                     response1, pc_response = bilibili().get_gift_of_events(text1, text2, raffleid)
 
-                                    bilibili().append_to_activitylist(raffleid, text1)
+                                    Statistics().append_to_activitylist(raffleid, text1)
                                     
                                     self.printer.printlist_append(['join_lottery', '', 'user',
                                                                    time.strftime('%Y-%m-%d %H:%M:%S',
@@ -210,7 +211,7 @@ class bilibiliClient():
                                 raffleid = response.json()['data'][j]['raffleId']
                                 if bilibili().check_activitylist(raffleid):
                                     response1, pc_response = bilibili().get_gift_of_events(text1, text2, raffleid)
-                                    bilibili().append_to_activitylist(raffleid, text1)
+                                    Statistics().append_to_activitylist(raffleid, text1)
                                     self.printer.printlist_append(['join_lottery', '', 'user',
                                                                    time.strftime('%Y-%m-%d %H:%M:%S',
                                                                                  time.localtime(time.time())), "参与了房间",
@@ -260,9 +261,9 @@ class bilibiliClient():
                                 await asyncio.sleep(random.uniform(0.5, 1))
                                 resttime = response.json()['data']['unjoin'][j]['dtime']
                                 raffleid = response.json()['data']['unjoin'][j]['id']
-                                if bilibili().check_TVlist(raffleid):
+                                if Statistics().check_TVlist(raffleid):
                                     response2 = bilibili().get_gift_of_TV(real_roomid, raffleid)
-                                    bilibili().append_to_TVlist(raffleid, real_roomid)
+                                    Statistics().append_to_TVlist(raffleid, real_roomid)
                                     self.printer.printlist_append(['join_lottery', '小电视', 'user',
                                                                    time.strftime('%Y-%m-%d %H:%M:%S',
                                                                                  time.localtime(time.time())), "参与了房间",
