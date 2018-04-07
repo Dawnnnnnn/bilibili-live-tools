@@ -85,6 +85,11 @@ class bilibili():
         url = "http://api.live.bilibili.com/gift/v2/gift/bag_list"
         response = requests.get(url, headers=self.dic_bilibili['pcheaders'])
         return response
+        
+    def request_check_taskinfo(self):
+        url = 'https://api.live.bilibili.com/i/api/taskInfo'
+        response = requests.get(url, headers=self.dic_bilibili['pcheaders'])
+        return response
 
     def get_uid_in_room(self, roomID):
         url = "https://api.live.bilibili.com/room/v1/Room/room_init?id=" + roomID

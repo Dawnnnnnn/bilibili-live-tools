@@ -11,7 +11,7 @@ import bilibili
 import os
 import sys
 import threading
-
+import biliconsole
 
 
 
@@ -54,17 +54,11 @@ def main(loop):
     
     loop.close()
     
-def controler():
-    while True:
-        code = input('')
-        if code == '1':
-            Statistics().getlist()
-        if code == '2':
-            Statistics().getresult()
+
         
 loop = asyncio.get_event_loop()        
 mainthread = threading.Thread(target=main, args=(loop,))
-controlthread = threading.Thread(target=controler)
+controlthread = threading.Thread(target=biliconsole.controler)
 
 mainthread.start()
 controlthread.start()
