@@ -92,3 +92,59 @@ def fetch_bag_list():
         if 0 < int(left_time) < 43200:   # 剩余时间少于半天时自动送礼
             temp.append([gift_id, gift_num, bag_id])
     return temp
+    
+def check_taskinfo():
+    response = bilibili().request_check_taskinfo()
+    json_response = response.json()
+    # print(json_response)
+    if json_response['code'] == 0:
+        data = json_response['data']
+        double_watch_info = data['double_watch_info']
+        box_info = data['box_info']
+        sign_info = data['sign_info']
+        live_time_info= data['live_time_info']
+        print('双端观看直播：')
+        if double_watch_info['status'] == 1:
+            print('# 该任务已完成，但未领取奖励')
+        elif double_watch_info['status'] == 2:
+            print('# 该任务已完成，已经领取奖励')
+        else:
+            print('# 该任务未完成')
+            if double_watch_info['web_watch'] == 1:
+                print('## 网页端观看任务已完成')
+            else:
+                print('## 网页端观看任务未完成')
+            
+            if double_watch_info['mobile_watch'] == 1:
+                print('## 移动端观看任务已完成')
+            else:
+                print('## 移动端观看任务未完成')
+                
+        print('直播在线宝箱：')
+        if box_info['status'] == 1:
+            print('# 该任务已完成')
+        else:
+            print('# 该任务未完成')
+            print('## 一共{}次重置次数，当前为第{}次第{}个礼包(每次3个礼包)'.format(box_info['max_times'], box_info['freeSilverTimes'], box_info['type']))
+            
+        print('每日签到：')
+        if sign_info['status'] == 1:
+            print('# 该任务已完成')
+        else:
+            print('# 该任务未完成')
+            
+        if sign_info['signDaysList'] == list(range(1, sign_info['curDay'] + 1)):
+            print('# 当前全勤')
+        else:
+            print('# 出现断签')
+        
+        print('直播奖励：')    
+        if live_time_info['status'] == 1:
+            print('# 已完成')
+        else:
+            print('# 未完成(目前本项目未实现自动完成直播任务)')
+            
+            
+             
+            
+            

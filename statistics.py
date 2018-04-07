@@ -56,22 +56,25 @@ class Statistics:
                 response = bilibili().get_activity_result(self.activity_roomid_list[0], self.activity_raffleid_list[0])
                 json_response = response.json()
                 # print(json_response)
-                if json_response['code'] == 0:
-                    data = json_response['data']
-                    print("# 房间", str(self.activity_roomid_list[0]).center(9), "网页端活动抽奖结果:",
-                          data['gift_name'] + "x" + str(data['gift_num']))
-                    self.add_to_result(data['gift_name'], int(data['gift_num']))
-
-                    self.delete_0st_activitylist()
-
-                elif json_response['code'] == -400:
-                    # sleepseconds = self.activitysleeptime + self.activity_time_list[0] - int(CurrentTime())+ 2
-                    # sleepseconds = self.activity_time_list[0] - int(CurrentTime())
-                    # return sleepsecondsq
-                    return
-
-                else:
-                    print('未知情况')
+                try:
+                    if json_response['code'] == 0:
+                        data = json_response['data']
+                        print("# 房间", str(self.activity_roomid_list[0]).center(9), "网页端活动抽奖结果:",
+                              data['gift_name'] + "x" + str(data['gift_num']))
+                        self.add_to_result(data['gift_name'], int(data['gift_num']))
+    
+                        self.delete_0st_activitylist()
+    
+                    elif json_response['code'] == -400:
+                        # sleepseconds = self.activitysleeptime + self.activity_time_list[0] - int(CurrentTime())+ 2
+                        # sleepseconds = self.activity_time_list[0] - int(CurrentTime())
+                        # return sleepsecondsq
+                        return
+    
+                    else:
+                        print('未知情况')
+                        print(json_response)
+                except :
                     print(json_response)
 
         else:
@@ -86,16 +89,19 @@ class Statistics:
                 # if response.json()['data']['gift_name'] != "":
                 json_response = response.json()
                 # print(json_response)
-                if json_response['data']['gift_id'] == '-1':
-                    return
-                elif json_response['data']['gift_id'] != '-1':
-
-                    data = json_response['data']
-                    print("# 房间", str(self.TV_roomid_list[0]).center(9), "小电视道具抽奖结果:",
-                          data['gift_name'] + "x" + str(data['gift_num']))
-                    self.add_to_result(data['gift_name'], int(data['gift_num']))
-
-                    self.delete_0st_TVlist()
+                try:
+                    if json_response['data']['gift_id'] == '-1':
+                        return
+                    elif json_response['data']['gift_id'] != '-1':
+    
+                        data = json_response['data']
+                        print("# 房间", str(self.TV_roomid_list[0]).center(9), "小电视道具抽奖结果:",
+                              data['gift_name'] + "x" + str(data['gift_num']))
+                        self.add_to_result(data['gift_name'], int(data['gift_num']))
+    
+                        self.delete_0st_TVlist()
+                except :
+                    print(json_response)
             # else:
             # print(int(CurrentTime()))
             # sleepseconds = self.TV_time_list[0] - int(CurrentTime()) + 1
