@@ -144,6 +144,18 @@ def check_taskinfo():
         else:
             print('# 未完成(目前本项目未实现自动完成直播任务)')
             
+def check_room(roomid):
+    response = bilibili().request_check_room(roomid)
+    json_response = response.json()
+    if json_response['code'] == 0:
+        print('查询结果:')
+        data = json_response['data']
+        print('# 真实房间号为:{}'.format(data['room_id']))
+        if data['short_id'] == 0:
+            print('# 此房间无短房号')
+        else:
+            print('# 短号为:{}'.format(data['short_id']))
+            
             
              
             

@@ -10,10 +10,25 @@ def guide_of_console():
     print('|4 查看持有勋章状态          |')
     print('|5 获取直播个人的基本信息     |')
     print('|6 检查今日任务的完成情况     |')
+    print('|7 模拟安卓客户端发送弹幕     |')
+    print('|8 模拟电脑网页端发送弹幕     |')
+    print('|9 直播间的长短号码的转化     |')
     print('￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣')
     
 
-
+def preprocess_send_danmu_msg_andriod():
+    msg = input('请输入要发送的信息:')
+    roomid = input('请输入要发送的房间号:')
+    utils.send_danmu_msg_andriod(msg, int(roomid))
+    
+def preprocess_send_danmu_msg_web():
+    msg = input('请输入要发送的信息:')
+    roomid = input('请输入要发送的房间号:')
+    utils.send_danmu_msg_web(msg, int(roomid))
+    
+def preprocess_check_room():
+    roomid = input('请输入要转化的房间号:')
+    utils.check_room(roomid)
 
 
 options ={
@@ -23,11 +38,17 @@ options ={
     '4': utils.fetch_medal,
     '5': utils.fetch_user_info,
     '6': utils.check_taskinfo,
+    '7': preprocess_send_danmu_msg_andriod,
+    '8': preprocess_send_danmu_msg_web,
+    '9': preprocess_check_room,
+    
     'help': guide_of_console
 }
 
+def return_error():
+    print('命令无法识别，请重新输入')
 
 def controler():
     while True:
         x = input('')
-        options[x]()
+        options.get(x, return_error)()
