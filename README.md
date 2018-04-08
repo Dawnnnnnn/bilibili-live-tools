@@ -114,6 +114,10 @@
 
     架构调整
     输入help查看控制台指令
+    
+4.8
+
+    enhance console(控制台错误指令处理bug fixed)
 
 环境:
 ------  
