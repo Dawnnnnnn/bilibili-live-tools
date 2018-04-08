@@ -80,6 +80,11 @@ class bilibili():
             hash.hexdigest())
         response1 = requests.post(app_url, headers=self.dic_bilibili['appheaders'])
         print("#", response1.json()['msg'])
+        
+    def request_check_room(self, roomid):
+        url = "https://api.live.bilibili.com/room/v1/Room/room_init?id=" + str(roomid)
+        response = requests.get(url, headers=self.dic_bilibili['pcheaders'])
+        return response
 
     def request_fetch_bag_list(self):
         url = "http://api.live.bilibili.com/gift/v2/gift/bag_list"
