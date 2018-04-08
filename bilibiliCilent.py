@@ -179,7 +179,8 @@ class bilibiliClient():
                                                                        response1.json()['data']['gift_desc']])
                                         Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
                                     except:
-                                        pass
+                                        self.printer.printlist_append(['join_lottery', '', 'debug', "# debug结果:",
+                                                                       response1.json()])
                                     try:
                                         self.printer.printlist_append(
                                             ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
