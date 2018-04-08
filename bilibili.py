@@ -57,8 +57,7 @@ class bilibili():
         return 0
 
     def check_room_true(self, roomid):
-        url = "https://api.live.bilibili.com/room/v1/Room/room_init?id=" + str(roomid)
-        response = requests.get(url, headers=self.dic_bilibili['pcheaders'])
+        response = self.request_check_room(roomid)
         if response.json()['code'] == 0:
             param1 = response.json()['data']['is_hidden']
             param2 = response.json()['data']['is_locked']
@@ -97,8 +96,7 @@ class bilibili():
         return response
 
     def get_uid_in_room(self, roomID):
-        url = "https://api.live.bilibili.com/room/v1/Room/room_init?id=" + roomID
-        response = requests.get(url, headers=self.dic_bilibili['pcheaders'])
+        response = self.request_check_room(roomID)
         return response.json()['data']['uid'], response.json()['data']['room_id']
 
     def send_bag_gift_web(self, roomID, giftID, giftNum, bagID):
