@@ -315,30 +315,6 @@ class bilibili():
                 print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登录失败,错误信息为:",
                       response.json()['message'])
 
-    def capture_output(self):
-        output_width = 140  # 终端展现的大小
-        output_height = 140  # 终端展现的大小
-        image_path = 'capture.png'
-        image = Image.open(image_path)
-        if image.mode is not 'RGB':
-            image = image.convert('RGB')
-        image_width, image_height = image.size
-        w_scale = output_width * 1.0 / image_width
-        h_scale = output_height * 1.0 / image_height
-        scale = w_scale if w_scale < h_scale else h_scale
-        res_width = int(scale * image_width)
-        res_height = int(scale * image_height)
-        image = image.resize((res_width, res_height), Image.HAMMING)
-        image_pixels = image.load()
-        out_width, out_height = image.size
-        replace_chars = '01'
-        terminal_chars = ''
-        for h in range(out_height):
-            for w in range(out_width):
-                point_pixel = image_pixels[w, h]
-                terminal_chars += replace_chars[int(sum(point_pixel) / 3.0 / 256.0 * len(replace_chars))]
-            terminal_chars += '\n'
-        print(terminal_chars)
 
     def get_gift_of_storm(self, dic):
         roomid = dic['roomid']
@@ -443,9 +419,13 @@ class bilibili():
     def get_giftlist_of_captain(self, roomid):
         true_url = 'https://api.live.bilibili.com/lottery/v1/lottery/check?roomid=' + str(roomid)
         headers = {
-        "Accept-Encoding":"gzip, deflate,br",
+        "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q = 0.8",
+        "Accept-Encoding":"gzip,deflate,br",
         "Accept-Language":"zh-CN",
         "DNT": "1",
+        "Cookie":"LIVE_BUVID=AUTO7715232653604550",
+        "Connection":"keep-alive",
+        "Cache-Control":"max-age =0",
         "Host":"api.live.bilibili.com",
         "Upgrade-Insecure-Requests": "1",
         "User-Agent":'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:59.0) Gecko/20100101 Firefox/59.0'
