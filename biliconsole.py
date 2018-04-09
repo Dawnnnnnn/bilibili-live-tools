@@ -25,11 +25,21 @@ def preprocess_send_danmu_msg_web():
     msg = input('请输入要发送的信息:')
     roomid = input('请输入要发送的房间号:')
     utils.send_danmu_msg_web(msg, int(roomid))
-    
+
 def preprocess_check_room():
     roomid = input('请输入要转化的房间号:')
     utils.check_room(roomid)
 
+def process_send_gift_web():
+    utils.fetch_bag_list(verbose=True)
+    bagid = input('请输入要发送的礼物编号:')
+    giftid = utils.fetch_bag_list(bagid=bagid)
+    # print('是谁', giftid)
+    giftnum = input('请输入要发送的礼物数目:')
+    roomid = input('请输入要发送的房间号:')
+    utils.send_gift_web(roomid, giftid, giftnum, bagid)
+    
+    
 
 options ={
     '1': Statistics().getlist,
@@ -41,7 +51,7 @@ options ={
     '7': preprocess_send_danmu_msg_andriod,
     '8': preprocess_send_danmu_msg_web,
     '9': preprocess_check_room,
-    
+    '10': process_send_gift_web,
     'help': guide_of_console
 }
 
