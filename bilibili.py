@@ -26,11 +26,6 @@ def CurrentTime():
     
 
 
-def calculate_sign(str):
-    hash = hashlib.md5()
-    hash.update(str.encode('utf-8'))
-    sign = hash.hexdigest()
-    return sign
 
 
 
@@ -45,7 +40,12 @@ class bilibili():
             cls.instance.dic_bilibili = configloader.load_bilibili(cls.instance.file_bilibili)
         return cls.instance
         
-
+    def calc_sign(self, str):
+        str = str + self.dic_bilibili['app_secret']
+        hash = hashlib.md5()
+        hash.update(str.encode('utf-8'))
+        sign = hash.hexdigest()
+        return sign
 
     def post_watching_history(self, room_id):
         data = {
@@ -65,11 +65,8 @@ class bilibili():
             'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
                           'build'] + '&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili[
                           'mobi_app'] + '&platform=' + self.dic_bilibili['platform'] + '&ts=' + CurrentTime()
-        params = temp_params + self.dic_bilibili['app_secret']
-        hash = hashlib.md5()
-        hash.update(params.encode('utf-8'))
-        app_url = "https://api.live.bilibili.com/AppExchange/silver2coin?" + temp_params + "&sign=" + str(
-            hash.hexdigest())
+        sign = self.calc_sign(temp_params)
+        app_url = "https://api.live.bilibili.com/AppExchange/silver2coin?" + temp_params + "&sign=" + sign
         response1 = requests.post(app_url, headers=self.dic_bilibili['appheaders'])
         print("#", response1.json()['msg'])
         
@@ -120,7 +117,7 @@ class bilibili():
         time = CurrentTime()
         list_url = ["access_key=" + self.dic_bilibili['access_key'], "appkey=" + self.dic_bilibili['appkey'], 'aid=',
                     'page=1', "build=" + self.dic_bilibili['build']]
-        sign = calculate_sign('&'.join(sorted(list_url)) + self.dic_bilibili['app_secret'])
+        sign = self.calc_sign('&'.join(sorted(list_url)))
 
         url = url + '&'.join(list_url[:3] + ['sign=' + sign] + list_url[3:])
 
@@ -192,10 +189,8 @@ class bilibili():
 
     def GetHash(self):
         url = 'https://passport.bilibili.com/api/oauth2/getKey'
-        temp_params = 'appkey=' + self.dic_bilibili['appkey'] + self.dic_bilibili['app_secret']
-        hash = hashlib.md5()
-        hash.update(temp_params.encode('utf-8'))
-        sign = hash.hexdigest()
+        temp_params = 'appkey=' + self.dic_bilibili['appkey']
+        sign = self.calc_sign(temp_params)
         params = {'appkey': self.dic_bilibili['appkey'], 'sign': sign}
         response = requests.post(url, data=params)
         value = response.json()['data']
@@ -225,10 +220,7 @@ class bilibili():
             # url = 'https://passport.bilibili.com/api/oauth2/login'   //旧接口
             url = "https://passport.bilibili.com/api/v2/oauth2/login"
             temp_params = 'appkey=' + self.dic_bilibili['appkey'] + '&password=' + password + '&username=' + username
-            params = temp_params + self.dic_bilibili['app_secret']
-            hash = hashlib.md5()
-            hash.update(params.encode('utf-8'))
-            sign = hash.hexdigest()
+            sign = self.calc_sign(temp_params)
             headers = {"Content-type": "application/x-www-form-urlencoded"}
             payload = "appkey=" + self.dic_bilibili[
                 'appkey'] + "&password=" + password + "&username=" + username + "&sign=" + sign
@@ -255,10 +247,7 @@ class bilibili():
                     'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
                                   'build'] + '&captcha='+captcha+'&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&password='+ password +'&platform=' + self.dic_bilibili[
                                   'platform'] +'&username='+username
-                params = temp_params + self.dic_bilibili['app_secret']
-                hash = hashlib.md5()
-                hash.update(params.encode('utf-8'))
-                sign = hash.hexdigest()
+                sign = self.calc_sign(temp_params)
                 payload = temp_params + '&sign=' + sign
                 headers['Content-type'] = "application/x-www-form-urlencoded"
                 headers['cookie'] = "sid=hxt5szbb"
@@ -335,10 +324,8 @@ class bilibili():
                           'platform'] + '&room_id=' + str(
             text1) + '&ts=' + CurrentTime()
         params = temp_params + self.dic_bilibili['app_secret']
-        hash = hashlib.md5()
-        hash.update(params.encode('utf-8'))
-        true_url = 'http://api.live.bilibili.com/YunYing/roomEvent?' + temp_params + '&sign=' + str(
-            hash.hexdigest())
+        sign = self.calc_sign(temp_params)
+        true_url = 'http://api.live.bilibili.com/YunYing/roomEvent?' + temp_params + '&sign=' + sign
         pc_url = 'http://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
             text1) + '&raffleId=' + str(raffleid)
         response1 = requests.get(true_url, params=params, headers=headers)
@@ -353,11 +340,8 @@ class bilibili():
             raffleid) + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&platform=' + self.dic_bilibili[
                           'platform'] + '&roomid=' + str(
             real_roomid) + '&ts=' + CurrentTime()
-        params = temp_params + self.dic_bilibili['app_secret']
-        hash = hashlib.md5()
-        hash.update(params.encode('utf-8'))
-        true_url = 'http://api.live.bilibili.com/AppSmallTV/join?' + temp_params + '&sign=' + str(
-            hash.hexdigest())
+        sign = self.calc_sign(temp_params)
+        true_url = 'http://api.live.bilibili.com/AppSmallTV/join?' + temp_params + '&sign=' + sign
         response2 = requests.get(true_url, headers=self.dic_bilibili['appheaders'])
         return response2
 
@@ -388,11 +372,8 @@ class bilibili():
                       '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&platform=' + self.dic_bilibili[
                           'platform'] + '&roomid=' + str(
             real_roomid) + '&ts=' + CurrentTime()
-        params = temp_params + self.dic_bilibili['app_secret']
-        hash = hashlib.md5()
-        hash.update(params.encode('utf-8'))
-        check_url = 'https://api.live.bilibili.com/AppSmallTV/index?' + temp_params + '&sign=' + str(
-            hash.hexdigest())
+        sign = self.calc_sign(temp_params)
+        check_url = 'https://api.live.bilibili.com/AppSmallTV/index?' + temp_params + '&sign=' + sign
         headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
         }
@@ -464,10 +445,8 @@ class bilibili():
             'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
                           'build'] + '&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili[
                           'mobi_app'] + '&platform=' + self.dic_bilibili['platform'] + '&ts=' + time
-        params = temp_params + self.dic_bilibili['app_secret']
-        hash = hashlib.md5()
-        hash.update(params.encode('utf-8'))
-        url = 'https://api.live.bilibili.com/mobile/userOnlineHeart?' + temp_params + '&sign=' + str(hash.hexdigest())
+        sign = self.calc_sign(temp_params)
+        url = 'https://api.live.bilibili.com/mobile/userOnlineHeart?' + temp_params + '&sign=' + sign
         payload = {'roomid': 23058, 'scale': 'xhdpi'}
         response = requests.post(url, data=payload, headers=self.dic_bilibili['appheaders'])
         return response
@@ -494,11 +473,8 @@ class bilibili():
             'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
                           'build'] + '&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili[
                           'mobi_app'] + '&platform=' + self.dic_bilibili['platform'] + '&ts=' + time
-        params = temp_params + self.dic_bilibili['app_secret']
-        hash = hashlib.md5()
-        hash.update(params.encode('utf-8'))
-        GetTask_url = 'https://api.live.bilibili.com/mobile/freeSilverCurrentTask?' + temp_params + '&sign=' + str(
-            hash.hexdigest())
+        sign = self.calc_sign(temp_params)
+        GetTask_url = 'https://api.live.bilibili.com/mobile/freeSilverCurrentTask?' + temp_params + '&sign=' + sign
         response = requests.get(GetTask_url, headers=self.dic_bilibili['appheaders'])
         return response
 
@@ -509,11 +485,8 @@ class bilibili():
                           'build'] + '&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili[
                           'mobi_app'] + '&platform=' + self.dic_bilibili[
                           'platform'] + '&time_end=' + timeend + '&time_start=' + timestart + '&ts=' + time
-        params = temp_params + self.dic_bilibili['app_secret']
-        hash = hashlib.md5()
-        hash.update(params.encode('utf-8'))
-        url = 'https://api.live.bilibili.com/mobile/freeSilverAward?' + temp_params + '&sign=' + str(
-            hash.hexdigest())
+        sign = self.calc_sign(temp_params)
+        url = 'https://api.live.bilibili.com/mobile/freeSilverAward?' + temp_params + '&sign=' + sign
         response = requests.get(url, headers=self.dic_bilibili['appheaders'])
         return response
 
@@ -547,11 +520,8 @@ class bilibili():
                       self.dic_bilibili['build'] + "&group_id=" + str(i1) + "&mobi_app=" + self.dic_bilibili[
                           'mobi_app'] + "&owner_id=" + str(i2) + "&platform=" + self.dic_bilibili[
                           'platform'] + "&src=xiaomi&trace_id=20171224024300024&ts=" + CurrentTime() + "&version=5.20.1.520001"
-        params = temp_params + self.dic_bilibili['app_secret']
-        hash = hashlib.md5()
-        hash.update(params.encode('utf-8'))
-        url = "https://api.vc.bilibili.com/link_setting/v1/link_setting/sign_in?" + temp_params + "&sign=" + str(
-            hash.hexdigest())
+        sign = self.calc_sign(temp_params)
+        url = "https://api.vc.bilibili.com/link_setting/v1/link_setting/sign_in?" + temp_params + "&sign=" + sign
         appheaders = self.dic_bilibili['appheaders'].copy()
         appheaders['Host'] = "api.vc.bilibili.com"
         response = requests.get(url, headers=appheaders)
