@@ -123,6 +123,26 @@ class bilibili():
             print("# 清理快到期礼物:", response.json()['data']['gift_name'] + "x" + str(response.json()['data']['gift_num']))
         except:
             print("# 清理快到期礼物成功，但请联系开发者修bug!")
+            
+    def request_send_gift_web(self, giftid, giftnum, bagid, ruid, biz_id):
+        url = "http://api.live.bilibili.com/gift/v2/live/bag_send"
+        data = {
+            'uid': self.dic_bilibili['uid'],
+            'gift_id': giftid,
+            'ruid': ruid,
+            'gift_num': giftnum,
+            'bag_id': bagid,
+            'platform': 'pc',
+            'biz_code': 'live',
+            'biz_id': biz_id,
+            'rnd': CurrentTime(),
+            'storm_beat_id': '0',
+            'metadata': '',
+            'price': '0',
+            'csrf_token': self.dic_bilibili['csrf']
+        }
+        response = requests.post(url, headers=self.dic_bilibili['pcheaders'], data=data)
+        return response
 
     def request_fetch_user_info(self):
         url = "https://api.live.bilibili.com/i/api/liveinfo"
