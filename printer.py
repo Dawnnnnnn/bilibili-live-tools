@@ -21,14 +21,19 @@ def level(str):
         return 1
 
 
-class Printer():
-    def __init__(self):
-        fileDir = os.path.dirname(os.path.realpath('__file__'))
-        file_color = fileDir + "/conf/color.conf"
-        self.dic_color = configloader.load_color(file_color)
-        file_user = fileDir + "/conf/user.conf"
-        self.dic_user = configloader.load_user(file_user)
-        self.printlist=[]
+class Printer():       
+    instance = None
+
+    def __new__(cls, *args, **kw):
+        if not cls.instance:
+            cls.instance = super(Printer, cls).__new__(cls, *args, **kw)
+            fileDir = os.path.dirname(os.path.realpath('__file__'))
+            file_color = fileDir + "/conf/color.conf"
+            cls.instance.dic_color = configloader.load_color(file_color)
+            file_user = fileDir + "/conf/user.conf"
+            cls.instance.dic_user = configloader.load_user(file_user)
+            cls.instance.printlist=[]
+        return cls.instance
     def concole_print(self, msg, color=[]):
         if color:
             for i, j in zip(msg, color):

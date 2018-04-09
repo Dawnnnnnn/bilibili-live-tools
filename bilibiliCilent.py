@@ -1,5 +1,6 @@
 from bilibili import bilibili
 from statistics import Statistics
+from printer import Printer
 import asyncio
 import random
 from struct import *
@@ -13,9 +14,8 @@ import sys
 
 class bilibiliClient():
 
-    def __init__(self, printer):
+    def __init__(self):
         self.bilibili = bilibili()
-        self.printer = printer
         self._reader = None
         self._writer = None
         self._uid = None
@@ -133,7 +133,7 @@ class bilibiliClient():
 
         if cmd == 'DANMU_MSG':
             # print(dic)
-            self.printer.printlist_append(['danmu', '弹幕', 'user', dic])
+            Printer().printlist_append(['danmu', '弹幕', 'user', dic])
             return
         if cmd == 'SYS_GIFT':
             if 'giftId' in dic.keys():
@@ -144,12 +144,12 @@ class bilibiliClient():
                     bilibili().post_watching_history(text1)
                     result = bilibili().check_room_true(text1)
                     if True in result:
-                        self.printer.printlist_append(['join_lottery', '钓鱼提醒', 'user',
+                        Printer().printlist_append(['join_lottery', '钓鱼提醒', 'user',
                                                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
                                                        "WARNING:检测到房间", str(text1).center(9), "的钓鱼操作"])
                     else:
                         
-                        self.printer.printlist_append(['join_lottery', '', 'user',
+                        Printer().printlist_append(['join_lottery', '', 'user',
                                                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
                                                        "检测到房间", str(text1).center(9),
                                                        "的" + bilibili().get_giftids_raffle(str(dic['giftId'])) + "活动抽奖"])
@@ -167,7 +167,7 @@ class bilibiliClient():
 
                                     Statistics().append_to_activitylist(raffleid, text1)
                                     
-                                    self.printer.printlist_append(['join_lottery', '', 'user',
+                                    Printer().printlist_append(['join_lottery', '', 'user',
                                                                    time.strftime('%Y-%m-%d %H:%M:%S',
                                                                                  time.localtime(time.time())), "参与了房间",
                                                                    str(text1).center(9),
@@ -175,31 +175,31 @@ class bilibiliClient():
                                                                        str(dic['giftId'])) + "活动抽奖"])
 
                                     try:
-                                        self.printer.printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
+                                        Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
                                                                        response1.json()['data']['gift_desc']])
                                         Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
                                     except:
-                                        self.printer.printlist_append(['join_lottery', '', 'debug', "# debug结果:",
+                                        Printer().printlist_append(['join_lottery', '', 'debug', "# debug结果:",
                                                                        response1.json()])
                                     try:
-                                        self.printer.printlist_append(
+                                        Printer().printlist_append(
                                             ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
                                     except:
                                         pass
                             break
                 elif dic['giftId'] == 39:
-                    self.printer.printlist_append(['join_lottery', '', 'user', "节奏风暴"])
+                    Printer().printlist_append(['join_lottery', '', 'user', "节奏风暴"])
                     response1 = bilibili().get_gift_of_storm(dic)
                     if response1 != None:
                         print(response1.json())
                     else:
-                        self.printer.printlist_append(['join_lottery','','debug', [dic, "请联系开发者"]])
+                        Printer().printlist_append(['join_lottery','','debug', [dic, "请联系开发者"]])
                 else:
                     text1 = dic['real_roomid']
                     text2 = dic['url']
-                    self.printer.printlist_append(['join_lottery', '', 'debug', [dic, "请联系开发者"]])
+                    Printer().printlist_append(['join_lottery', '', 'debug', [dic, "请联系开发者"]])
                     try:
-                        self.printer.printlist_append(['join_lottery', '', 'user',
+                        Printer().printlist_append(['join_lottery', '', 'user',
                                                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
                                                        "检测到房间", str(text1).center(9),
                                                        "的" + "活动抽奖"])
@@ -214,21 +214,21 @@ class bilibiliClient():
                                 if bilibili().check_activitylist(raffleid):
                                     response1, pc_response = bilibili().get_gift_of_events(text1, text2, raffleid)
                                     Statistics().append_to_activitylist(raffleid, text1)
-                                    self.printer.printlist_append(['join_lottery', '', 'user',
+                                    Printer().printlist_append(['join_lottery', '', 'user',
                                                                    time.strftime('%Y-%m-%d %H:%M:%S',
                                                                                  time.localtime(time.time())), "参与了房间",
                                                                    str(text1).center(9),
                                                                    "的" + "活动抽奖"])
 
                                     try:
-                                        self.printer.printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
+                                        Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
                                                                        response1.json()['data']['gift_desc']])
                                         Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
 
                                     except:
                                         pass
                                     try:
-                                        self.printer.printlist_append(
+                                        Printer().printlist_append(
                                             ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
                                     except:
                                         pass
@@ -237,11 +237,11 @@ class bilibiliClient():
                         pass
                     
             else:
-                self.printer.printlist_append(['join_lottery', '普通送礼提示', 'user', ['普通送礼提示', dic['msg_text']]])
+                Printer().printlist_append(['join_lottery', '普通送礼提示', 'user', ['普通送礼提示', dic['msg_text']]])
             return
         if cmd == 'SYS_MSG':
             if set(self.dic_bulletin) == set(dic):
-                self.printer.printlist_append(['join_lottery', '系统公告', 'user', dic['msg']])
+                Printer().printlist_append(['join_lottery', '系统公告', 'user', dic['msg']])
             else:
                 try:
                     TV_url = dic['url']
@@ -251,7 +251,7 @@ class bilibiliClient():
                     bilibili().post_watching_history(real_roomid)
                     result = bilibili().check_room_true(real_roomid)
                     if True in result:
-                        self.printer.printlist_append(['join_lottery', '', 'debug',
+                        Printer().printlist_append(['join_lottery', '', 'debug',
                                                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
                                                        "WARNING:检测到房间",
                                                        str(real_roomid).center(9), "的钓鱼操作"])
@@ -269,11 +269,11 @@ class bilibiliClient():
                                 if Statistics().check_TVlist(raffleid):
                                     response2 = bilibili().get_gift_of_TV(real_roomid, raffleid)
                                     Statistics().append_to_TVlist(raffleid, real_roomid)
-                                    self.printer.printlist_append(['join_lottery', '小电视', 'user',
+                                    Printer().printlist_append(['join_lottery', '小电视', 'user',
                                                                    time.strftime('%Y-%m-%d %H:%M:%S',
                                                                                  time.localtime(time.time())), "参与了房间",
                                                                    str(real_roomid).center(9), "的小电视抽奖"])
-                                    self.printer.printlist_append(
+                                    Printer().printlist_append(
                                         ['join_lottery', '小电视', 'user', "# 小电视道具抽奖状态:", response2.json()['msg']])
                             break
                 except:
@@ -296,6 +296,6 @@ class bilibiliClient():
                     response2 = bilibili().get_gift_of_captain(roomid, id)
                     print("获取到房间 %s 的总督奖励: " %(roomid),response2.json())
             except:
-                self.printer.printlist_append(['join_lotter', '', 'debug', "# 没领取到奖励,请联系开发者"])
+                Printer().printlist_append(['join_lotter', '', 'debug', "# 没领取到奖励,请联系开发者"])
                 pass
             return

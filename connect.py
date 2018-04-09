@@ -6,12 +6,11 @@ from printer import Printer
 class connect():
     tasks = {}
     
-    def __init__(self, printer):
-        self.printer = printer
+    def __init__(self):
         self.task = None
         
     async def connect(self):
-        danmuji = bilibiliClient(self.printer)
+        danmuji = bilibiliClient()
         task1 = asyncio.ensure_future(danmuji.connectServer())
         task2 = asyncio.ensure_future(danmuji.HeartbeatLoop())
         self.tasks = [task1, task2]
@@ -26,7 +25,7 @@ class connect():
                 if task2.done() == False:
                     task2.cancel()
                 print('# 重新连接直播间')
-                danmuji = bilibiliClient(self.printer)
+                danmuji = bilibiliClient()
                 task11 = asyncio.ensure_future(danmuji.connectServer())
                 task22 = asyncio.ensure_future(danmuji.HeartbeatLoop())
                 self.tasks = [task11, task22]

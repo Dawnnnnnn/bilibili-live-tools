@@ -35,7 +35,7 @@ task = OnlineHeart()
 task1 = Silver()
 task2 = Tasks()
 task3 = LotteryResult()
-task4 = connect(printer)
+task4 = connect()
 
 
 def main(loop):  

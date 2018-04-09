@@ -38,9 +38,9 @@ def load_bilibili(file):
         dic_nomalised_bilibili[i] = int(dic_bilibili['normal'][i])
             
     # str to bool
-    for i in dic_bilibili_type['bool'].split():
+    # for i in dic_bilibili_type['bool'].split():
     
-        dic_nomalised_bilibili[i] = True if dic_bilibili['normal'][i] == 'True' else False
+        # dic_nomalised_bilibili[i] = True if dic_bilibili['normal'][i] == 'True' else False
 
                
         
