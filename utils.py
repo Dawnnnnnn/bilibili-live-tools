@@ -76,9 +76,10 @@ def fetch_user_info():
         print(process_bar)
         print('# 等级榜', user_level_rank)
 
-def fetch_bag_list():
+def fetch_bag_list(verbose=False, bagid=None):
     response = bilibili().request_fetch_bag_list()
     temp = []
+    # print(response.json())
     print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询可用礼物')
     for i in range(len(response.json()['data']['list'])):
         bag_id = (response.json()['data']['list'][i]['bag_id'])
@@ -88,9 +89,16 @@ def fetch_bag_list():
         expireat = (response.json()['data']['list'][i]['expire_at'])
         left_time = (expireat - int(CurrentTime()))
         left_days = (expireat - int(CurrentTime())) / 86400
-        print("# " + gift_name + 'X' + gift_num, '(在' + str(math.ceil(left_days)) + '天后过期)')
-        if 0 < int(left_time) < 43200:   # 剩余时间少于半天时自动送礼
-            temp.append([gift_id, gift_num, bag_id])
+        if bagid is not None:
+            if bag_id == int(bagid):
+                return gift_id
+        else:
+            if verbose:
+                print("# 编号为" + str(bag_id) + '的'+ gift_name + 'X' + gift_num, '(在' + str(math.ceil(left_days)) + '天后过期)')
+            else:
+                print("# " + gift_name + 'X' + gift_num, '(在' + str(math.ceil(left_days)) + '天后过期)')
+                if 0 < int(left_time) < 43200:   # 剩余时间少于半天时自动送礼
+                    temp.append([gift_id, gift_num, bag_id])
     return temp
     
 def check_taskinfo():
@@ -157,6 +165,17 @@ def check_room(roomid):
             print('# 短号为:{}'.format(data['short_id']))
             
             
-             
-            
+def send_gift_web(roomid, giftid, giftnum, bagid):
+    response = bilibili().request_check_room(roomid)
+    ruid = response.json()['data']['uid']
+    biz_id = response.json()['data']['room_id']
+    print(ruid, biz_id)
+    response1 = bilibili().request_send_gift_web(giftid, giftnum, bagid, ruid, biz_id)
+    json_response1 = response1.json()
+    if json_response1['code'] == 0:
+        # print(json_response1['data'])
+        print("# 送出礼物:", json_response1['data']['gift_name'] + "X" + str(json_response1['data']['gift_num']))
+    else:
+        print("# 错误", json_response1['msg'])
+    
             
