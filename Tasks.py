@@ -6,6 +6,7 @@ import time
 import asyncio
 import os
 import configloader
+import utils
 
 class Tasks():
 
@@ -61,7 +62,7 @@ class Tasks():
     def send_gift(self):
         if self.dic_user['gift']['on/off'] == '1':
             try:
-                argvs = bilibili().get_bag_list()
+                argvs = utils.fetch_bag_list()
                 for i in range(0,len(argvs)):
                     giftID = argvs[i][0]
                     giftNum = argvs[i][1]
