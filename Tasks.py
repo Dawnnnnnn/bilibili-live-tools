@@ -68,7 +68,7 @@ class Tasks():
                     giftNum = argvs[i][1]
                     bagID = argvs[i][2]
                     roomID = self.dic_user['gift']['send_to_room']
-                    bilibili().send_bag_gift_web(roomID,giftID,giftNum,bagID)
+                    utils.send_gift_web(roomID,giftID,giftNum,bagID)
             except:
                 print("# 没有将要过期的礼物~")
 

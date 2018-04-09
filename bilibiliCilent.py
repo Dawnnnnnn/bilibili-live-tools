@@ -1,6 +1,7 @@
 from bilibili import bilibili
 from statistics import Statistics
 from printer import Printer
+import utils
 import asyncio
 import random
 from struct import *
@@ -142,7 +143,7 @@ class bilibiliClient():
                     text2 = dic['url']
                     await asyncio.sleep(random.uniform(3, 5))
                     bilibili().post_watching_history(text1)
-                    result = bilibili().check_room_true(text1)
+                    result = utils.check_room_true(text1)
                     if True in result:
                         Printer().printlist_append(['join_lottery', '钓鱼提醒', 'user',
                                                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
@@ -249,7 +250,7 @@ class bilibiliClient():
                     # url = "https://api.live.bilibili.com/AppSmallTV/index?access_key=&actionKey=appkey&appkey=1d8b6e7d45233436&build=5230003&device=android&mobi_app=android&platform=android&roomid=939654&ts=1521734039&sign=4f85e1d3ce0e1a3acd46fcf9ca3cbeed"
                     await asyncio.sleep(random.uniform(3, 5))
                     bilibili().post_watching_history(real_roomid)
-                    result = bilibili().check_room_true(real_roomid)
+                    result = utils.check_room_true(real_roomid)
                     if True in result:
                         Printer().printlist_append(['join_lottery', '', 'debug',
                                                        time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),

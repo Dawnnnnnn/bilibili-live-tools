@@ -54,16 +54,9 @@ class bilibili():
         }
         url = "https://api.live.bilibili.com/room/v1/Room/room_entry_action"
         response = requests.post(url, data=data, headers=self.dic_bilibili['pcheaders'])
-        return 0
+        return response
 
-    def check_room_true(self, roomid):
-        response = self.request_check_room(roomid)
-        if response.json()['code'] == 0:
-            param1 = response.json()['data']['is_hidden']
-            param2 = response.json()['data']['is_locked']
-            param3 = response.json()['data']['encrypted']
-            return param1, param2, param3
-
+    
     def silver2coin(self):
         url = "https://api.live.bilibili.com/exchange/silver2coin"
         response = requests.post(url, headers=self.dic_bilibili['pcheaders'])
@@ -95,35 +88,6 @@ class bilibili():
         response = requests.get(url, headers=self.dic_bilibili['pcheaders'])
         return response
 
-    def get_uid_in_room(self, roomID):
-        response = self.request_check_room(roomID)
-        return response.json()['data']['uid'], response.json()['data']['room_id']
-
-    def send_bag_gift_web(self, roomID, giftID, giftNum, bagID):
-        url = "http://api.live.bilibili.com/gift/v2/live/bag_send"
-        temp = self.get_uid_in_room(roomID)
-        data = {
-            'uid': self.dic_bilibili['uid'],
-            'gift_id': giftID,
-            'ruid': temp[0],
-            'gift_num': giftNum,
-            'bag_id': bagID,
-            'platform': 'pc',
-            'biz_code': 'live',
-            'biz_id': temp[1],
-            'rnd': CurrentTime(),
-            'storm_beat_id': '0',
-            'metadata': '',
-            'price': '0',
-            'csrf_token': self.dic_bilibili['csrf']
-        }
-        response = requests.post(url, headers=self.dic_bilibili['pcheaders'], data=data)
-        try:
-            # print(response.json())
-            print("# 清理快到期礼物:", response.json()['data']['gift_name'] + "x" + str(response.json()['data']['gift_num']))
-        except:
-            print("# 清理快到期礼物成功，但请联系开发者修bug!")
-            
     def request_send_gift_web(self, giftid, giftnum, bagid, ruid, biz_id):
         url = "http://api.live.bilibili.com/gift/v2/live/bag_send"
         data = {
@@ -506,13 +470,13 @@ class bilibili():
         url = 'https://api.live.bilibili.com/mobile/userOnlineHeart?' + temp_params + '&sign=' + str(hash.hexdigest())
         payload = {'roomid': 23058, 'scale': 'xhdpi'}
         response = requests.post(url, data=payload, headers=self.dic_bilibili['appheaders'])
-        # print("app端心跳状态：" + response.json()['message'])
+        return response
 
     # 心跳礼物
     def heart_gift(self):
         url = "https://api.live.bilibili.com/gift/v2/live/heart_gift_receive?roomid=3&area_v2_id=34"
         response = requests.get(url, headers=self.dic_bilibili['pcheaders'])
-        # print(response.json())
+        return response
 
     def get_lotterylist(self, i):
         url = "https://api.live.bilibili.com/lottery/v1/box/getStatus?aid=" + str(i)

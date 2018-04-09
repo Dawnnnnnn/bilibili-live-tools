@@ -1,4 +1,5 @@
 from bilibili import bilibili
+from printer import Printer
 import time
 import datetime
 import math
@@ -50,17 +51,19 @@ def send_danmu_msg_web(msg, roomId):
 def fetch_user_info():
     response = bilibili().request_fetch_user_info()
     print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询用户信息')
-    if (response.json()['code'] == 0):
-        uname = response.json()['data']['userInfo']['uname']
-        achieve = response.json()['data']['achieves']
-        user_level = response.json()['data']['userCoinIfo']['user_level']
-        silver = response.json()['data']['userCoinIfo']['silver']
-        gold = response.json()['data']['userCoinIfo']['gold']
-        user_next_level = response.json()['data']['userCoinIfo']['user_next_level']
-        user_intimacy = response.json()['data']['userCoinIfo']['user_intimacy']
-        user_next_intimacy = response.json()['data']['userCoinIfo']['user_next_intimacy']
-        user_level_rank = response.json()['data']['userCoinIfo']['user_level_rank']
-        billCoin = response.json()['data']['userCoinIfo']['coins']
+    json_response = response.json()
+    if (json_response['code'] == 0):
+        data = json_response['data']
+        uname = data['userInfo']['uname']
+        achieve = data['achieves']
+        user_level = data['userCoinIfo']['user_level']
+        silver = data['userCoinIfo']['silver']
+        gold = data['userCoinIfo']['gold']
+        user_next_level = data['userCoinIfo']['user_next_level']
+        user_intimacy = data['userCoinIfo']['user_intimacy']
+        user_next_intimacy = data['userCoinIfo']['user_next_intimacy']
+        user_level_rank = data['userCoinIfo']['user_level_rank']
+        billCoin = data['userCoinIfo']['coins']
         print('# 用户名', uname)
         print('# 银瓜子', silver)
         print('# 金瓜子', gold)
@@ -177,5 +180,15 @@ def send_gift_web(roomid, giftid, giftnum, bagid):
         print("# 送出礼物:", json_response1['data']['gift_name'] + "X" + str(json_response1['data']['gift_num']))
     else:
         print("# 错误", json_response1['msg'])
+        
+def check_room_true(roomid):
+        response = bilibili().request_check_room(roomid)
+        json_response = response.json()
+        if json_response['code'] == 0:
+            data = json_response['data']
+            param1 = data['is_hidden']
+            param2 = data['is_locked']
+            param3 = data['encrypted']
+            return param1, param2, param3
     
             
