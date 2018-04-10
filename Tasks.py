@@ -74,7 +74,9 @@ class Tasks():
 
     def sliver2coin(self):
         if self.dic_user['coin']['on/off'] == '1':
-            bilibili().silver2coin()
+            response, response1= bilibili().silver2coin()
+            print("#", response.json()['msg'])
+            print("#", response1.json()['msg'])
 
     async def run(self):
         while 1:

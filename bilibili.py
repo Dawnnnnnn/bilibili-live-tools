@@ -72,7 +72,6 @@ class bilibili():
     def silver2coin(self):
         url = "https://api.live.bilibili.com/exchange/silver2coin"
         response = self.bili_section.post(url, headers=self.dic_bilibili['pcheaders'])
-        print("#", response.json()['msg'])
         temp_params = 'access_key=' + self.dic_bilibili['access_key'] + '&actionKey=' + self.dic_bilibili[
             'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
                           'build'] + '&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili[
@@ -80,7 +79,7 @@ class bilibili():
         sign = self.calc_sign(temp_params)
         app_url = "https://api.live.bilibili.com/AppExchange/silver2coin?" + temp_params + "&sign=" + sign
         response1 = self.bili_section.post(app_url, headers=self.dic_bilibili['appheaders'])
-        print("#", response1.json()['msg'])
+        return response, response1
         
     def request_check_room(self, roomid):
         url = "https://api.live.bilibili.com/room/v1/Room/room_init?id=" + str(roomid)
