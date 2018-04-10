@@ -21,6 +21,14 @@ def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
 
+def cnn_captcha(img):
+    url = "http://101.236.6.31:8080/code"
+    data = {"image": img}
+    ressponse = requests.post(url, data=data)
+    captcha = ressponse.text
+    print("此次登录出现验证码,识别结果为%s"%(captcha))
+    return captcha
+
 
 
     
@@ -223,14 +231,9 @@ class bilibili():
         s = requests.session()
         url = "https://passport.bilibili.com/captcha"
         res = s.get(url,headers=headers)
-        with open("capture.png","wb")as f:
-            f.write(res.content)  # 验证码图片
         tmp1 = base64.b64encode(res.content)
-        url = "http://101.236.6.31:8080/code"
-        data = {"image": tmp1}
-        ressponse = requests.post(url, data=data)
-        captcha = ressponse.text
-        print("此次登录出现验证码,识别结果为%s"%(captcha))
+        
+        captcha = cnn_captcha(tmp1)
         temp_params = 'actionKey=' + self.dic_bilibili[
             'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
                           'build'] + '&captcha='+captcha+'&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&password='+ password +'&platform=' + self.dic_bilibili[
@@ -243,7 +246,7 @@ class bilibili():
         response = s.post(url,data=payload,headers=headers)
         return response
         
-
+    
     def login(self):
         username = str(self.dic_bilibili['account']['username'])
         password = str(self.dic_bilibili['account']['password'])
@@ -265,25 +268,10 @@ class bilibili():
                 self.dic_bilibili['access_key'] = access_key
                 self.dic_bilibili['cookie'] = cookie_format
                 self.dic_bilibili['uid'] = cookie[1]['value']
-                self.dic_bilibili['pcheaders'] = {
-                    'Accept': 'application/json, text/plain, */*',
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
-                    'Accept-Language': 'zh-CN,zh;q=0.9',
-                    'accept-encoding': 'gzip, deflate',
-                    'Host': 'api.live.bilibili.com',
-                    'cookie': cookie_format
-                }
-                self.dic_bilibili['appheaders'] = {
-                    "User-Agent": "bili-universal/6570 CFNetwork/894 Darwin/17.4.0",
-                    "Accept-encoding": "gzip",
-                    "Buvid": "000ce0b9b9b4e342ad4f421bcae5e0ce",
-                    "Display-ID": "146771405-1521008435",
-                    "Accept-Language": "zh-CN",
-                    "Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
-                    "Connection": "keep-alive",
-                    "Host": "api.live.bilibili.com",
-                    'cookie': cookie_format
-                }
+                self.dic_bilibili['pcheaders']['cookie'] = cookie_format
+                self.dic_bilibili['appheaders']['cookie'] = cookie_format
+                # print(self.dic_bilibili['pcheaders'])
+                
 
                 print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登陆成功")
             except:
