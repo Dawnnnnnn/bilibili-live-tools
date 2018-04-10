@@ -30,31 +30,24 @@ task3 = LotteryResult()
 task4 = connect()
 
 
-def main(loop):  
-    tasks = [
-        task.run(),
-        task1.run(),
-        task2.run(),
-        task4.connect(),
-        task3.query(),
-        printer.clean_printlist()
-    ]
-    
-    asyncio.set_event_loop(loop)
-    
-    loop.run_until_complete(asyncio.wait(tasks))
-    
-    loop.close()
+console_thread = threading.Thread(target=biliconsole.controler)
+
+console_thread.start()
+
+loop = asyncio.get_event_loop() 
+tasks = [
+    task.run(),
+    task1.run(),
+    task2.run(),
+    task4.connect(),
+    task3.query(),
+    printer.clean_printlist()
+]
+
+loop.run_until_complete(asyncio.wait(tasks))
+console_thread.join()
+
+loop.close()
     
 
-        
-loop = asyncio.get_event_loop()        
-mainthread = threading.Thread(target=main, args=(loop,))
-controlthread = threading.Thread(target=biliconsole.controler)
-
-mainthread.start()
-controlthread.start()
-
-mainthread.join()
-controlthread.join()
 
