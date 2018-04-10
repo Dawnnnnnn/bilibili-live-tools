@@ -186,65 +186,75 @@ class bilibili():
         url = 'https://api.live.bilibili.com/i/api/medal?page=1&pageSize=50'
         response = self.bili_section.post(url, headers=self.dic_bilibili['pcheaders'])
         return response
-
-
-    def GetHash(self):
+        
+    def calc_name_passw(self, username, password):
         url = 'https://passport.bilibili.com/api/oauth2/getKey'
         temp_params = 'appkey=' + self.dic_bilibili['appkey']
         sign = self.calc_sign(temp_params)
         params = {'appkey': self.dic_bilibili['appkey'], 'sign': sign}
         response = requests.post(url, data=params)
         value = response.json()['data']
-        return value
+        key = value['key']
+        Hash = str(value['hash'])
+        pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode())
+        password = base64.b64encode(rsa.encrypt((Hash + password).encode('utf-8'), pubkey))
+        password = parse.quote_plus(password)
+        username = parse.quote_plus(username)
+        return username, password
+
+    def normal_login(self, username, password):
+        # url = 'https://passport.bilibili.com/api/oauth2/login'   //旧接口
+        url = "https://passport.bilibili.com/api/v2/oauth2/login"
+        temp_params = 'appkey=' + self.dic_bilibili['appkey'] + '&password=' + password + '&username=' + username
+        sign = self.calc_sign(temp_params)
+        headers = {"Content-type": "application/x-www-form-urlencoded"}
+        payload = "appkey=" + self.dic_bilibili[
+            'appkey'] + "&password=" + password + "&username=" + username + "&sign=" + sign
+        response = requests.post(url, data=payload, headers=headers)
+        return response
+        
+    def login_with_captcha(self, username, password):
+        headers = {
+            'Accept': 'application/json, text/plain, */*',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+            'Host': 'passport.bilibili.com',
+            'cookie':"sid=hxt5szbb"
+        }
+        s = requests.session()
+        url = "https://passport.bilibili.com/captcha"
+        res = s.get(url,headers=headers)
+        with open("capture.png","wb")as f:
+            f.write(res.content)  # 验证码图片
+        tmp1 = base64.b64encode(res.content)
+        url = "http://101.236.6.31:8080/code"
+        data = {"image": tmp1}
+        ressponse = requests.post(url, data=data)
+        captcha = ressponse.text
+        print("此次登录出现验证码,识别结果为%s"%(captcha))
+        temp_params = 'actionKey=' + self.dic_bilibili[
+            'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
+                          'build'] + '&captcha='+captcha+'&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&password='+ password +'&platform=' + self.dic_bilibili[
+                          'platform'] +'&username='+username
+        sign = self.calc_sign(temp_params)
+        payload = temp_params + '&sign=' + sign
+        headers['Content-type'] = "application/x-www-form-urlencoded"
+        headers['cookie'] = "sid=hxt5szbb"
+        url = "https://passport.bilibili.com/api/v2/oauth2/login"
+        response = s.post(url,data=payload,headers=headers)
+        return response
+        
 
     def login(self):
         username = str(self.dic_bilibili['account']['username'])
         password = str(self.dic_bilibili['account']['password'])
 
         if username != "":
-            value = self.GetHash()
-            key = value['key']
-            Hash = str(value['hash'])
-            pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode())
-            password = base64.b64encode(rsa.encrypt((Hash + password).encode('utf-8'), pubkey))
-            password = parse.quote_plus(password)
-            username = parse.quote_plus(username)
-            # url = 'https://passport.bilibili.com/api/oauth2/login'   //旧接口
-            url = "https://passport.bilibili.com/api/v2/oauth2/login"
-            temp_params = 'appkey=' + self.dic_bilibili['appkey'] + '&password=' + password + '&username=' + username
-            sign = self.calc_sign(temp_params)
-            headers = {"Content-type": "application/x-www-form-urlencoded"}
-            payload = "appkey=" + self.dic_bilibili[
-                'appkey'] + "&password=" + password + "&username=" + username + "&sign=" + sign
-            response = requests.post(url, data=payload, headers=headers)
+            username, password = self.calc_name_passw(username, password)
+            
+            response = self.normal_login(username, password)
             while response.json()['code'] == -105:
-                headers = {
-                    'Accept': 'application/json, text/plain, */*',
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
-                    'Host': 'passport.bilibili.com',
-                    'cookie':"sid=hxt5szbb"
-                }
-                s = requests.session()
-                url = "https://passport.bilibili.com/captcha"
-                res = s.get(url,headers=headers)
-                with open("capture.png","wb")as f:
-                    f.write(res.content)  # 验证码图片
-                tmp1 = base64.b64encode(res.content)
-                url = "http://101.236.6.31:8080/code"
-                data = {"image": tmp1}
-                ressponse = requests.post(url, data=data)
-                captcha = ressponse.text
-                print("此次登录出现验证码,识别结果为%s"%(captcha))
-                temp_params = 'actionKey=' + self.dic_bilibili[
-                    'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
-                                  'build'] + '&captcha='+captcha+'&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&password='+ password +'&platform=' + self.dic_bilibili[
-                                  'platform'] +'&username='+username
-                sign = self.calc_sign(temp_params)
-                payload = temp_params + '&sign=' + sign
-                headers['Content-type'] = "application/x-www-form-urlencoded"
-                headers['cookie'] = "sid=hxt5szbb"
-                url = "https://passport.bilibili.com/api/v2/oauth2/login"
-                response = s.post(url,data=payload,headers=headers)
+                
+                response = self.login_with_captcha(username, password)
             try:
                 access_key = response.json()['data']['token_info']['access_token']
                 cookie = (response.json()['data']['cookie_info']['cookies'])
@@ -519,10 +529,4 @@ class bilibili():
         response = requests.get(url, headers=appheaders)
         return response
 
-# a = bilibili()
-# b = bilibili()
-# print(a is b)
-# print(a.dic_bilibili['giftids_raffle'])
-# bilibili().test(1)
-# bilibili().login()
-# print(bilibili().dic_bilibili)
+
