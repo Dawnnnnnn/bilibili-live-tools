@@ -1,4 +1,3 @@
-from PIL import Image
 import sys
 from imp import reload
 import configloader
@@ -7,13 +6,11 @@ import hashlib
 import random
 import datetime
 import time
-import math
 import requests
 import rsa
 import base64
-import configparser
 from urllib import parse
-import codecs
+
 reload(sys)
 
 
@@ -29,7 +26,12 @@ def cnn_captcha(img):
     print("此次登录出现验证码,识别结果为%s"%(captcha))
     return captcha
 
-
+def calc_name_passw(key, Hash, username, password):
+    pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode())
+    password = base64.b64encode(rsa.encrypt((Hash + password).encode('utf-8'), pubkey))
+    password = parse.quote_plus(password)
+    username = parse.quote_plus(username)
+    return username, password
 
     
 
@@ -47,6 +49,7 @@ class bilibili():
             file_bilibili = fileDir + "/conf/bilibili.conf"
             cls.instance.dic_bilibili = configloader.load_bilibili(file_bilibili)
             cls.instance.bili_section = requests.session()
+            cls.instance.login()
         return cls.instance
         
     def calc_sign(self, str):
@@ -195,21 +198,16 @@ class bilibili():
         response = self.bili_section.post(url, headers=self.dic_bilibili['pcheaders'])
         return response
         
-    def calc_name_passw(self, username, password):
+    def request_getkey(self):
         url = 'https://passport.bilibili.com/api/oauth2/getKey'
         temp_params = 'appkey=' + self.dic_bilibili['appkey']
         sign = self.calc_sign(temp_params)
         params = {'appkey': self.dic_bilibili['appkey'], 'sign': sign}
         response = requests.post(url, data=params)
-        value = response.json()['data']
-        key = value['key']
-        Hash = str(value['hash'])
-        pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode())
-        password = base64.b64encode(rsa.encrypt((Hash + password).encode('utf-8'), pubkey))
-        password = parse.quote_plus(password)
-        username = parse.quote_plus(username)
-        return username, password
-
+        return response
+        
+        
+        
     def normal_login(self, username, password):
         # url = 'https://passport.bilibili.com/api/oauth2/login'   //旧接口
         url = "https://passport.bilibili.com/api/v2/oauth2/login"
@@ -252,7 +250,11 @@ class bilibili():
         password = str(self.dic_bilibili['account']['password'])
 
         if username != "":
-            username, password = self.calc_name_passw(username, password)
+            response = self.request_getkey()
+            value = response.json()['data']
+            key = value['key']
+            Hash = str(value['hash'])
+            username, password = calc_name_passw(key, Hash, username, password)
             
             response = self.normal_login(username, password)
             while response.json()['code'] == -105:
@@ -427,6 +429,7 @@ class bilibili():
     def pcpost_heartbeat(self):
         url = 'https://api.live.bilibili.com/User/userOnlineHeart'
         response = self.bili_section.post(url, headers=self.dic_bilibili['pcheaders'])
+        return response
 
     # 发送app心跳包
     def apppost_heartbeat(self):

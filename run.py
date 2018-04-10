@@ -7,22 +7,14 @@ import asyncio
 import utils
 from printer import Printer
 from statistics import Statistics
-import bilibili
-import os
-import sys
+from bilibili import bilibili
 import threading
 import biliconsole
 
 
-
+print('Hello world.')
 printer = Printer()
-
-bilibili = bilibili.bilibili()
-
-
-
-bilibili.login()
-
+bilibili()
 Statistics()
 
 utils.fetch_user_info()
