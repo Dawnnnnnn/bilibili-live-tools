@@ -12,7 +12,7 @@ import threading
 import biliconsole
 
 
-print('Hello world.')
+# print('Hello world.')
 printer = Printer()
 bilibili()
 Statistics()

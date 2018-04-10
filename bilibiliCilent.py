@@ -295,6 +295,8 @@ class bilibiliClient():
                     id = response1.json()['data']['guard'][i]['id']
                     print(id)
                     response2 = bilibili().get_gift_of_captain(roomid, id)
+                    payload = {"roomid": roomid, "id": id, "type": "guard", "csrf_token": ''}
+                    print(payload)
                     print("获取到房间 %s 的总督奖励: " %(roomid),response2.json())
             except:
                 Printer().printlist_append(['join_lotter', '', 'debug', "# 没领取到奖励,请联系开发者"])

@@ -49,7 +49,12 @@ class bilibili():
             file_bilibili = fileDir + "/conf/bilibili.conf"
             cls.instance.dic_bilibili = configloader.load_bilibili(file_bilibili)
             cls.instance.bili_section = requests.session()
-            cls.instance.login()
+            print('正在登陆中...')
+            tag, msg = cls.instance.login()
+            if tag:
+                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登陆成功")
+            else:
+                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登录失败,错误信息为:", msg)
         return cls.instance
         
     def calc_sign(self, str):
@@ -270,14 +275,11 @@ class bilibili():
                 self.dic_bilibili['cookie'] = cookie_format
                 self.dic_bilibili['uid'] = cookie[1]['value']
                 self.dic_bilibili['pcheaders']['cookie'] = cookie_format
-                self.dic_bilibili['appheaders']['cookie'] = cookie_format
-                # print(self.dic_bilibili['pcheaders'])
+                self.dic_bilibili['appheaders']['cookie'] = cookie_format     
+                return True, None           
                 
-
-                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登陆成功")
             except:
-                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登录失败,错误信息为:",
-                      response.json()['message'])
+                return False, response.json()['message']
 
 
     def get_gift_of_storm(self, dic):
@@ -339,7 +341,6 @@ class bilibili():
     def get_gift_of_captain(self, roomid, id):
         join_url = "https://api.live.bilibili.com/lottery/v1/lottery/join"
         payload = {"roomid": roomid, "id": id, "type": "guard", "csrf_token": self.dic_bilibili['csrf']}
-        print(payload)
         response2 = self.bili_section.post(join_url, data=payload, headers=self.dic_bilibili['pcheaders'])
         return response2
 
