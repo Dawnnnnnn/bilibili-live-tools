@@ -28,7 +28,19 @@ def load_bilibili(file):
     
                 
     dic_nomalised_bilibili = dic_bilibili['normal'].copy()
-    dic_nomalised_bilibili['account'] = dic_bilibili['account']
+    
+    dic_nomalised_bilibili['account'] = dic_bilibili['account'].copy()
+    if dic_nomalised_bilibili['account']['username']:
+        pass
+    else:
+        username = input("# 输入帐号: ")
+        password = input("# 输入密码: ")
+        cf_bilibili.set('account', 'username', username)
+        cf_bilibili.set('account', 'password', password)
+        cf_bilibili.write(codecs.open(file, "w+", "utf8"))
+        dic_nomalised_bilibili['account']['username'] = username
+        dic_nomalised_bilibili['account']['password'] = password
+        
     
         
     dic_bilibili_type = dic_bilibili['types']
@@ -49,6 +61,8 @@ def load_bilibili(file):
         # print(i)
         if i[0:3] == 'dic':
             dic_nomalised_bilibili[i[4:]] = dic_bilibili[i]
+            
+    
                 
     
     return dic_nomalised_bilibili
@@ -84,8 +98,7 @@ def load_user(file):
             
     return dic_user
             
-
-        
+       
         
 
 

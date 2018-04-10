@@ -36,8 +36,8 @@ class bilibili():
         if not cls.instance:
             cls.instance = super(bilibili, cls).__new__(cls, *args, **kw)
             fileDir = os.path.dirname(os.path.realpath('__file__'))
-            cls.instance.file_bilibili = fileDir + "/conf/bilibili.conf"
-            cls.instance.dic_bilibili = configloader.load_bilibili(cls.instance.file_bilibili)
+            file_bilibili = fileDir + "/conf/bilibili.conf"
+            cls.instance.dic_bilibili = configloader.load_bilibili(file_bilibili)
             cls.instance.bili_section = requests.session()
         return cls.instance
         
@@ -198,18 +198,9 @@ class bilibili():
         return value
 
     def login(self):
-        if self.dic_bilibili['account']['username']:
-            username = str(self.dic_bilibili['account']['username'])
-            password = str(self.dic_bilibili['account']['password'])
-        else:
-            username = input("# 输入帐号: ")
-            password = input("# 输入密码: ")
-            config = configparser.ConfigParser()
-            config.optionxform = str
-            config.read_file(codecs.open(self.file_bilibili, "r", "utf8"))
-            config.set('account', 'username', username)
-            config.set('account', 'password', password)
-            config.write(codecs.open(self.file_bilibili, "w+", "utf8"))
+        username = str(self.dic_bilibili['account']['username'])
+        password = str(self.dic_bilibili['account']['password'])
+
         if username != "":
             value = self.GetHash()
             key = value['key']
