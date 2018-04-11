@@ -70,8 +70,8 @@ class bilibili():
                 response = self.bili_section.post(url, headers=headers, data=data)
                 return response
             except :
-                print('当前网络不好，正在重试，请反馈开发者!!!!')
-                print(sys.exc_info()[0], sys.exc_info()[1])
+                #print('当前网络不好，正在重试，请反馈开发者!!!!')
+                #print(sys.exc_info()[0], sys.exc_info()[1])
                 continue
         
         
@@ -81,8 +81,8 @@ class bilibili():
                 response = self.bili_section.get(url, headers=headers, data=data, params=params)
                 return response
             except :
-                print('当前网络不好，正在重试，请反馈开发者!!!!')
-                print(sys.exc_info()[0], sys.exc_info()[1])
+                #print('当前网络不好，正在重试，请反馈开发者!!!!')
+                #print(sys.exc_info()[0], sys.exc_info()[1])
                 continue
 
     def post_watching_history(self, room_id):
