@@ -541,4 +541,12 @@ class bilibili():
         response = requests.get(url, headers=appheaders)
         return response
 
-
+    def gift_list(self):
+        temp_dic = {}
+        url = "https://api.live.bilibili.com/gift/v2/live/room_gift_list?roomid=2721650&area_v2_id=86"
+        res = self.bili_section_get(url)
+        for j in range(0, len(res.json()['data'])):
+            price = res.json()['data'][j]['price']
+            id = res.json()['data'][j]['id']
+            temp_dic[id] = price
+        return temp_dic

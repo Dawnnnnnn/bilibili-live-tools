@@ -22,17 +22,17 @@ def adjust_for_chinese(str):
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
-    
 def seconds_until_tomorrow():
-    today = datetime.date.today()
-    tomorrow = today + datetime.timedelta(days=1)
-    tomorrow_start_time = int(time.mktime(time.strptime(str(tomorrow), '%Y-%m-%d')))
-    current_time = int(time.mktime(datetime.datetime.now().timetuple()))
-    return tomorrow_start_time - current_time
-    
+     today = datetime.date.today()
+     tomorrow = today + datetime.timedelta(days=1)
+     tomorrow_start_time = int(time.mktime(time.strptime(str(tomorrow), '%Y-%m-%d')))
+     current_time = int(time.mktime(datetime.datetime.now().timetuple()))
+     return tomorrow_start_time - current_time
 
-def fetch_medal():
-    print('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度',
+def fetch_medal(printer=True):
+    if printer == True:
+        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询勋章信息')
+        print('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度',
                                                  adjust_for_chinese('排名'), '勋章状态'))
     dic_worn = {'1': '正在佩戴', '0': '待机状态'}
     response = bilibili().request_fetchmedal()
@@ -40,13 +40,18 @@ def fetch_medal():
     json_response = response.json()
     if json_response['code'] == 0:
         for i in json_response['data']['fansMedalList']:
-            print('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name'] + '|' + str(i['level'])),
-                                                         adjust_for_chinese(i['anchorInfo']['uname']),
-                                                         str(i['intimacy']) + '/' + str(i['next_intimacy']),
-                                                         str(i['todayFeed']) + '/' + str(i['dayLimit']),
-                                                         adjust_for_chinese(str(i['rank'])),
-                                                         dic_worn[str(i['status'])]))
-
+            if printer == True:
+                print('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name'] + '|' + str(i['level'])),
+                                                             adjust_for_chinese(i['anchorInfo']['uname']),
+                                                             str(i['intimacy']) + '/' + str(i['next_intimacy']),
+                                                             str(i['todayFeed']) + '/' + str(i['dayLimit']),
+                                                             adjust_for_chinese(str(i['rank'])),
+                                                             dic_worn[str(i['status'])]))
+            if i['status'] == 1:
+                roomid = i['roomid']
+                today_feed = i['today_feed']
+                day_limit = i['day_limit']
+    return roomid,today_feed,day_limit
 def send_danmu_msg_andriod(msg, roomId):
     response = bilibili().request_send_danmu_msg_andriod(msg, roomId)
     print(response.json())
@@ -86,11 +91,12 @@ def fetch_user_info():
         print(process_bar)
         print('# 等级榜', user_level_rank)
 
-def fetch_bag_list(verbose=False, bagid=None):
+def fetch_bag_list(verbose=False, bagid=None,printer=True):
     response = bilibili().request_fetch_bag_list()
     temp = []
-    # print(response.json())
-    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询可用礼物')
+    gift_list = []
+    if printer == True:
+        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询可用礼物')
     for i in range(len(response.json()['data']['list'])):
         bag_id = (response.json()['data']['list'][i]['bag_id'])
         gift_id = (response.json()['data']['list'][i]['gift_id'])
@@ -99,17 +105,19 @@ def fetch_bag_list(verbose=False, bagid=None):
         expireat = (response.json()['data']['list'][i]['expire_at'])
         left_time = (expireat - int(CurrentTime()))
         left_days = (expireat - int(CurrentTime())) / 86400
+        gift_list.append([gift_id, gift_num, bag_id])
         if bagid is not None:
             if bag_id == int(bagid):
                 return gift_id
         else:
             if verbose:
                 print("# 编号为" + str(bag_id) + '的'+ gift_name + 'X' + gift_num, '(在' + str(math.ceil(left_days)) + '天后过期)')
-            else:
+            elif printer == True:
                 print("# " + gift_name + 'X' + gift_num, '(在' + str(math.ceil(left_days)) + '天后过期)')
+
                 if 0 < int(left_time) < 43200:   # 剩余时间少于半天时自动送礼
                     temp.append([gift_id, gift_num, bag_id])
-    return temp
+    return temp,gift_list
     
 def check_taskinfo():
     response = bilibili().request_check_taskinfo()
@@ -179,7 +187,6 @@ def send_gift_web(roomid, giftid, giftnum, bagid):
     response = bilibili().request_check_room(roomid)
     ruid = response.json()['data']['uid']
     biz_id = response.json()['data']['room_id']
-    print(ruid, biz_id)
     response1 = bilibili().request_send_gift_web(giftid, giftnum, bagid, ruid, biz_id)
     json_response1 = response1.json()
     if json_response1['code'] == 0:
@@ -198,4 +205,4 @@ def check_room_true(roomid):
             param3 = data['encrypted']
             return param1, param2, param3
     
-            
+

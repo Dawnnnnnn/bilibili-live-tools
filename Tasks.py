@@ -62,7 +62,7 @@ class Tasks():
     def send_gift(self):
         if self.dic_user['gift']['on/off'] == '1':
             try:
-                argvs = utils.fetch_bag_list()
+                argvs = utils.fetch_bag_list(printer=False)[0]
                 for i in range(0,len(argvs)):
                     giftID = argvs[i][0]
                     giftNum = argvs[i][1]
@@ -71,6 +71,34 @@ class Tasks():
                     utils.send_gift_web(roomID,giftID,giftNum,bagID)
             except:
                 print("# 没有将要过期的礼物~")
+
+    def auto_send_gift(self):
+        if self.dic_user['auto-gift']['on/off'] == "1":
+            a = utils.fetch_medal(printer=False)
+            temp_dic = bilibili().gift_list()
+            temp = utils.fetch_bag_list(printer=False)[1]
+            roomid = a[0]
+            today_feed = a[1]
+            day_limit = a[2]
+            left_num = int(day_limit) - int(today_feed)
+            calculate = 0
+            for i in range(0,len(temp)):
+                gift_id = int(temp[i][0])
+                gift_num = int(temp[i][1])
+                bag_id = int(temp[i][2])
+                if (gift_num * (temp_dic[gift_id] / 100) < left_num) and (gift_id != 4 and gift_id != 3):
+                    calculate = calculate + temp_dic[gift_id] / 100 * gift_num
+                    # tmp = calculate / (temp_dic[gift_id] / 100)
+                    tmp2 = temp_dic[gift_id] / 100 * gift_num
+                    utils.send_gift_web(roomid,gift_id,gift_num,bag_id)
+                    left_num = left_num-tmp2
+                elif left_num - temp_dic[gift_id] / 100 >= 0 and (gift_id != 4 and gift_id != 3):
+                    tmp = (left_num) / (temp_dic[gift_id] / 100)
+                    tmp1 = (temp_dic[gift_id] / 100) * int(tmp)
+                    calculate = calculate + tmp1
+                    utils.send_gift_web(roomid, gift_id, tmp, bag_id)
+                    left_num = left_num - tmp1
+            print("# 自动送礼共送出亲密度为%s的礼物" % int(calculate))
 
     def sliver2coin(self):
         if self.dic_user['coin']['on/off'] == '1':
@@ -87,5 +115,6 @@ class Tasks():
             self.Daily_Task()
             self.link_sign()
             self.send_gift()
+            self.auto_send_gift()
             # print('Tasks over.')
             await asyncio.sleep(21600)
