@@ -319,7 +319,7 @@ class bilibili():
                 "captcha_phrase": "",
                 "token": "",
                 "csrf_token": self.dic_bilibili['csrf']}
-            response1 = self.bili_section_post(storm_url, data=payload, headers=self.dic_bilibili['pcheaders'], timeout=2)
+            response1 = self.bili_section_post(storm_url, data=payload, headers=self.dic_bilibili['pcheaders'])
             return response1
         else:
             return None
