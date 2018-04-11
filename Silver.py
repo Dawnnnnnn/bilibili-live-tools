@@ -1,9 +1,8 @@
 from bilibili import bilibili
-import hashlib
-import requests
 import datetime
 import time
 import asyncio
+import utils
 
 class Silver():
 
@@ -50,8 +49,8 @@ class Silver():
             print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检查宝箱状态")
             temp = self.GetAward()
             if temp == None or temp == -10017:
-                #print("# 半小时后检测是否第二天了")               
-                await asyncio.sleep(1800)
+                #print("# 半小时后检测是否第二天了")              
+                await asyncio.sleep(utils.seconds_until_tomorrow() + 300)
             elif temp == 0:
                 print("# 打开了宝箱")
                 self.GetAward()

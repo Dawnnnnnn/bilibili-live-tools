@@ -22,7 +22,14 @@ def adjust_for_chinese(str):
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
-
+    
+def seconds_until_tomorrow():
+    today = datetime.date.today()
+    tomorrow = today + datetime.timedelta(days=1)
+    tomorrow_start_time = int(time.mktime(time.strptime(str(tomorrow), '%Y-%m-%d')))
+    current_time = int(time.mktime(datetime.datetime.now().timetuple()))
+    return tomorrow_start_time - current_time
+    
 
 def fetch_medal():
     print('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度',
