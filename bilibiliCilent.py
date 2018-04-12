@@ -48,7 +48,7 @@ class bilibiliClient():
         while self.connected == False:
             await asyncio.sleep(0.5)
 
-        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '开始心跳')
+        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '弹幕模块开始心跳')
 
         while self.connected == True:
             await self.SendSocketData(0, 16, self.bilibili.dic_bilibili['_protocolversion'], 2, 1, "")
@@ -76,30 +76,51 @@ class bilibiliClient():
 
         await self._writer.drain()
 
+    async def ReadSocketData(self, len_wanted):
+        bytes_data = b''
+        if len_wanted == 0:
+            return bytes_data
+        len_remain = len_wanted
+        while len_remain != 0:
+            try:
+                tmp = await asyncio.wait_for(self._reader.read(len_remain), timeout=35.0)
+            except asyncio.TimeoutError:
+                print('TIMEOUT，稍后重连')
+                self._writer.close()
+                self.connected = False
+                return None
+            except :
+                print(sys.exc_info()[0], sys.exc_info()[1])
+                print('请联系开发者')
+                self._writer.close()
+                self.connected = False
+                return None
+                
+            if not tmp:
+                print("# FIN，稍后将重连")
+                self._writer.close()
+                self.connected = False
+                return None
+            else:
+                bytes_data = bytes_data + tmp
+                len_remain = len_remain - len(tmp)
+                
+        return bytes_data
+        
     async def ReceiveMessageLoop(self):
         while self.connected == True:
-            tmp = await self._reader.read(16)
-            num0 = 16
-            while num0 != len(tmp) and tmp:
-                tmp += await self._reader.read(num0 - len(tmp))
-                # print("妈蛋运营商，切劳资包")
-            if not tmp:
-                print("# 网络连接中断或服务器主动断开，请检查本地网络状况，稍后将尝试重连")
-                self.connected = False
+            tmp = await self.ReadSocketData(16)
+            if tmp is None:
                 break
+            
             expr, = unpack('!I', tmp[:4])
 
             num, = unpack('!I', tmp[8:12])
 
             num2 = expr - 16
 
-            tmp = await self._reader.read(num2)
-            while num2 != len(tmp) and tmp:
-                tmp += await self._reader.read(num2 - len(tmp))
-                # print("妈蛋运营商，切劳资包")
-            if not tmp and num2 != 0:
-                print("# 网络连接中断或服务器主动断开，请检查本地网络状况，稍后将尝试重连....")
-                self.connected = False
+            tmp = await self.ReadSocketData(num2)
+            if tmp is None:
                 break
 
             if num2 != 0:
@@ -181,7 +202,7 @@ class bilibiliClient():
                                         Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
                                     except:
                                         Printer().printlist_append(['join_lottery', '', 'debug', "# debug结果:",
-                                                                       response1.json()])
+                                                                       str(response1.json())])
                                     try:
                                         Printer().printlist_append(
                                             ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
