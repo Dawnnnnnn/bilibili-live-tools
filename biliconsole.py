@@ -1,5 +1,6 @@
 import utils
 from statistics import Statistics
+from connect import connect
 
 def guide_of_console():
     print('___________________________')
@@ -39,6 +40,10 @@ def process_send_gift_web():
     roomid = input('请输入要发送的房间号:')
     utils.send_gift_web(roomid, giftid, giftnum, bagid)
     
+def preprocess_change_danmuji_roomid():
+    roomid = input('请输入roomid')
+    connect().reconnect(roomid)
+    
     
 
 options ={
@@ -52,6 +57,7 @@ options ={
     '8': preprocess_send_danmu_msg_web,
     '9': preprocess_check_room,
     '10': process_send_gift_web,
+    '11': preprocess_change_danmuji_roomid,
     'help': guide_of_console
 }
 
