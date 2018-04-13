@@ -38,29 +38,22 @@ def fetch_medal(printer=True):
     response = bilibili().request_fetchmedal()
     # print(response.json())
     json_response = response.json()
+    roomid = 0
+    today_feed =0
+    day_limit = 0
     if json_response['code'] == 0:
         for i in json_response['data']['fansMedalList']:
+            if i['status'] == 1:
+                roomid = i['roomid']
+                today_feed = i['today_feed']
+                day_limit = i['day_limit']
             if printer == True:
-                if i['status'] == 1:
-                    roomid = i['roomid']
-                    today_feed = i['today_feed']
-                    day_limit = i['day_limit']
-                    print('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name'] + '|' + str(i['level'])),
-                                                                 adjust_for_chinese(i['anchorInfo']['uname']),
-                                                                 str(i['intimacy']) + '/' + str(i['next_intimacy']),
-                                                                 str(i['todayFeed']) + '/' + str(i['dayLimit']),
-                                                                 adjust_for_chinese(str(i['rank'])),
-                                                                 dic_worn[str(i['status'])]))
-                if i['status'] == 0:
-                    print('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name'] + '|' + str(i['level'])),
-                                                                 adjust_for_chinese(i['anchorInfo']['uname']),
-                                                                 str(i['intimacy']) + '/' + str(i['next_intimacy']),
-                                                                 str(i['todayFeed']) + '/' + str(i['dayLimit']),
-                                                                 adjust_for_chinese(str(i['rank'])),
-                                                                 dic_worn[str(i['status'])]))
-                    roomid = 0
-                    today_feed = 0
-                    day_limit = 0
+                print('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name'] + '|' + str(i['level'])),
+                                                           adjust_for_chinese(i['anchorInfo']['uname']),
+                                                           str(i['intimacy']) + '/' + str(i['next_intimacy']),
+                                                           str(i['todayFeed']) + '/' + str(i['dayLimit']),
+                                                           adjust_for_chinese(str(i['rank'])),
+                                                           dic_worn[str(i['status'])]))
         return roomid,today_feed,day_limit
 def send_danmu_msg_andriod(msg, roomId):
     response = bilibili().request_send_danmu_msg_andriod(msg, roomId)
