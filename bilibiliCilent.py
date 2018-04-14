@@ -184,7 +184,8 @@ class bilibiliClient():
                             raffleid = response.json()['data'][j]['raffleId']
                             if Statistics().check_activitylist(raffleid):
 
-                                response1, pc_response = bilibili().get_gift_of_events(text1, text2, raffleid)
+                                response1 = bilibili().get_gift_of_events_app(text1, text2, raffleid)
+                                pc_response = bilibili().get_gift_of_events_web(text1, text2, raffleid)
 
                                 Statistics().append_to_activitylist(raffleid, text1)
                                 
@@ -231,7 +232,8 @@ class bilibiliClient():
                             resttime = response.json()['data'][j]['time']
                             raffleid = response.json()['data'][j]['raffleId']
                             if bilibili().check_activitylist(raffleid):
-                                response1, pc_response = bilibili().get_gift_of_events(text1, text2, raffleid)
+                                response1 = bilibili().get_gift_of_events_app(text1, text2, raffleid)
+                                pc_response = bilibili().get_gift_of_events_web(text1, text2, raffleid)
                                 Statistics().append_to_activitylist(raffleid, text1)
                                 Printer().printlist_append(['join_lottery', '', 'user',
                                                                time.strftime('%Y-%m-%d %H:%M:%S',

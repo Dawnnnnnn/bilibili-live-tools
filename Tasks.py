@@ -1,7 +1,5 @@
 from bilibili import bilibili
-import hashlib
 import datetime
-import requests
 import time
 import asyncio
 import os
@@ -102,7 +100,8 @@ class Tasks():
 
     def sliver2coin(self):
         if self.dic_user['coin']['on/off'] == '1':
-            response, response1= bilibili().silver2coin()
+            response = bilibili().silver2coin_web()
+            response1 = bilibili().silver2coin_app()
             print("#", response.json()['msg'])
             print("#", response1.json()['msg'])
 

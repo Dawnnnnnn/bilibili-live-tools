@@ -95,9 +95,12 @@ class bilibili():
         return response
 
     
-    def silver2coin(self):
+    def silver2coin_web(self):
         url = "https://api.live.bilibili.com/exchange/silver2coin"
         response = self.bili_section_post(url, headers=self.dic_bilibili['pcheaders'])
+        return response
+        
+    def silver2coin_app(self):
         temp_params = 'access_key=' + self.dic_bilibili['access_key'] + '&actionKey=' + self.dic_bilibili[
             'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
                           'build'] + '&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili[
@@ -105,7 +108,7 @@ class bilibili():
         sign = self.calc_sign(temp_params)
         app_url = "https://api.live.bilibili.com/AppExchange/silver2coin?" + temp_params + "&sign=" + sign
         response1 = self.bili_section_post(app_url, headers=self.dic_bilibili['appheaders'])
-        return response, response1
+        return response1
         
     def request_check_room(self, roomid):
         url = "https://api.live.bilibili.com/room/v1/Room/room_init?id=" + str(roomid)
@@ -323,8 +326,21 @@ class bilibili():
             return response1
         else:
             return None
+            
+    def get_gift_of_events_web(self, text1, text2, raffleid):
+        headers = {
+            'Accept': 'application/json, text/plain, */*',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+            'cookie': self.dic_bilibili['cookie'],
+            'referer': text2
+        }
+        pc_url = 'https://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
+            text1) + '&raffleId=' + str(raffleid)
+        pc_response = self.bili_section_get(pc_url, headers=headers)
 
-    def get_gift_of_events(self, text1, text2, raffleid):
+        return pc_response
+
+    def get_gift_of_events_app(self, text1, text2, raffleid):
         headers = {
             'Accept': 'application/json, text/plain, */*',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
@@ -340,12 +356,8 @@ class bilibili():
         params = temp_params + self.dic_bilibili['app_secret']
         sign = self.calc_sign(temp_params)
         true_url = 'https://api.live.bilibili.com/YunYing/roomEvent?' + temp_params + '&sign=' + sign
-        pc_url = 'https://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
-            text1) + '&raffleId=' + str(raffleid)
         response1 = self.bili_section_get(true_url, params=params, headers=headers)
-        pc_response = self.bili_section_get(pc_url, headers=headers)
-
-        return response1, pc_response
+        return response1
 
     def get_gift_of_TV(self, real_roomid, raffleid):
         temp_params = 'access_key=' + self.dic_bilibili['access_key'] + '&actionKey=' + self.dic_bilibili[
