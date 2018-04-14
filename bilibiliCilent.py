@@ -178,37 +178,35 @@ class bilibiliClient():
                         response = bilibili().get_giftlist_of_events(text1)
                         checklen = response.json()['data']
                         num = len(checklen)
-                        while num != 0:
-                            for j in range(0, num):
-                                await asyncio.sleep(random.uniform(0.5, 1))
-                                resttime = response.json()['data'][j]['time']
-                                raffleid = response.json()['data'][j]['raffleId']
-                                if Statistics().check_activitylist(raffleid):
+                        for j in range(0, num):
+                            await asyncio.sleep(random.uniform(0.5, 1))
+                            resttime = response.json()['data'][j]['time']
+                            raffleid = response.json()['data'][j]['raffleId']
+                            if Statistics().check_activitylist(raffleid):
 
-                                    response1, pc_response = bilibili().get_gift_of_events(text1, text2, raffleid)
+                                response1, pc_response = bilibili().get_gift_of_events(text1, text2, raffleid)
 
-                                    Statistics().append_to_activitylist(raffleid, text1)
-                                    
-                                    Printer().printlist_append(['join_lottery', '', 'user',
-                                                                   time.strftime('%Y-%m-%d %H:%M:%S',
-                                                                                 time.localtime(time.time())), "参与了房间",
-                                                                   str(text1).center(9),
-                                                                   "的" + bilibili().get_giftids_raffle(
-                                                                       str(dic['giftId'])) + "活动抽奖"])
+                                Statistics().append_to_activitylist(raffleid, text1)
+                                
+                                Printer().printlist_append(['join_lottery', '', 'user',
+                                                               time.strftime('%Y-%m-%d %H:%M:%S',
+                                                                             time.localtime(time.time())), "参与了房间",
+                                                               str(text1).center(9),
+                                                               "的" + bilibili().get_giftids_raffle(
+                                                                   str(dic['giftId'])) + "活动抽奖"])
 
-                                    try:
-                                        Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
-                                                                       response1.json()['data']['gift_desc']])
-                                        Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
-                                    except:
-                                        Printer().printlist_append(['join_lottery', '', 'debug', "# debug结果:",
-                                                                       str(response1.json())])
-                                    try:
-                                        Printer().printlist_append(
-                                            ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
-                                    except:
-                                        pass
-                            break
+                                try:
+                                    Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
+                                                                   response1.json()['data']['gift_desc']])
+                                    Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
+                                except:
+                                    Printer().printlist_append(['join_lottery', '', 'debug', "# debug结果:",
+                                                                   str(response1.json())])
+                                try:
+                                    Printer().printlist_append(
+                                        ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
+                                except:
+                                    pass
                 elif dic['giftId'] == 39:
                     Printer().printlist_append(['join_lottery', '', 'user', "节奏风暴"])
                     response1 = bilibili().get_gift_of_storm(dic)
@@ -228,33 +226,31 @@ class bilibiliClient():
                         response = bilibili().get_giftlist_of_events(text1)
                         checklen = response.json()['data']
                         num = len(checklen)
-                        while num != 0:
-                            for j in range(0, num):
-                                await asyncio.sleep(random.uniform(0.5, 1))
-                                resttime = response.json()['data'][j]['time']
-                                raffleid = response.json()['data'][j]['raffleId']
-                                if bilibili().check_activitylist(raffleid):
-                                    response1, pc_response = bilibili().get_gift_of_events(text1, text2, raffleid)
-                                    Statistics().append_to_activitylist(raffleid, text1)
-                                    Printer().printlist_append(['join_lottery', '', 'user',
-                                                                   time.strftime('%Y-%m-%d %H:%M:%S',
-                                                                                 time.localtime(time.time())), "参与了房间",
-                                                                   str(text1).center(9),
-                                                                   "的" + "活动抽奖"])
+                        for j in range(0, num):
+                            await asyncio.sleep(random.uniform(0.5, 1))
+                            resttime = response.json()['data'][j]['time']
+                            raffleid = response.json()['data'][j]['raffleId']
+                            if bilibili().check_activitylist(raffleid):
+                                response1, pc_response = bilibili().get_gift_of_events(text1, text2, raffleid)
+                                Statistics().append_to_activitylist(raffleid, text1)
+                                Printer().printlist_append(['join_lottery', '', 'user',
+                                                               time.strftime('%Y-%m-%d %H:%M:%S',
+                                                                             time.localtime(time.time())), "参与了房间",
+                                                               str(text1).center(9),
+                                                               "的" + "活动抽奖"])
 
-                                    try:
-                                        Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
-                                                                       response1.json()['data']['gift_desc']])
-                                        Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
+                                try:
+                                    Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果:",
+                                                                   response1.json()['data']['gift_desc']])
+                                    Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
 
-                                    except:
-                                        pass
-                                    try:
-                                        Printer().printlist_append(
-                                            ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
-                                    except:
-                                        pass
-                            break
+                                except:
+                                    pass
+                                try:
+                                    Printer().printlist_append(
+                                        ['join_lottery', '', 'user', "# 网页端活动抽奖状态:", pc_response.json()['message']])
+                                except:
+                                    pass
                     except :
                         pass
                     
@@ -283,21 +279,19 @@ class bilibiliClient():
                         response = bilibili().get_giftlist_of_TV(real_roomid)
                         checklen = response.json()['data']['unjoin']
                         num = len(checklen)
-                        while num != 0:
-                            for j in range(0, num):
-                                await asyncio.sleep(random.uniform(0.5, 1))
-                                resttime = response.json()['data']['unjoin'][j]['dtime']
-                                raffleid = response.json()['data']['unjoin'][j]['id']
-                                if Statistics().check_TVlist(raffleid):
-                                    response2 = bilibili().get_gift_of_TV(real_roomid, raffleid)
-                                    Statistics().append_to_TVlist(raffleid, real_roomid)
-                                    Printer().printlist_append(['join_lottery', '小电视', 'user',
-                                                                   time.strftime('%Y-%m-%d %H:%M:%S',
-                                                                                 time.localtime(time.time())), "参与了房间",
-                                                                   str(real_roomid).center(9), "的小电视抽奖"])
-                                    Printer().printlist_append(
-                                        ['join_lottery', '小电视', 'user', "# 小电视道具抽奖状态:", response2.json()['msg']])
-                            break
+                        for j in range(0, num):
+                            await asyncio.sleep(random.uniform(0.5, 1))
+                            resttime = response.json()['data']['unjoin'][j]['dtime']
+                            raffleid = response.json()['data']['unjoin'][j]['id']
+                            if Statistics().check_TVlist(raffleid):
+                                response2 = bilibili().get_gift_of_TV(real_roomid, raffleid)
+                                Statistics().append_to_TVlist(raffleid, real_roomid)
+                                Printer().printlist_append(['join_lottery', '小电视', 'user',
+                                                               time.strftime('%Y-%m-%d %H:%M:%S',
+                                                                             time.localtime(time.time())), "参与了房间",
+                                                               str(real_roomid).center(9), "的小电视抽奖"])
+                                Printer().printlist_append(
+                                    ['join_lottery', '小电视', 'user', "# 小电视道具抽奖状态:", response2.json()['msg']])
                 except:
                     pass
         if cmd == 'GUARD_MSG':
