@@ -1,6 +1,7 @@
 import utils
 from statistics import Statistics
 from connect import connect
+from printer import Printer
 
 def guide_of_console():
     print('___________________________')
@@ -43,7 +44,13 @@ def process_send_gift_web():
 def preprocess_change_danmuji_roomid():
     roomid = input('请输入roomid')
     connect().reconnect(roomid)
-    
+
+def change_printer_dic_user():
+    new_words = input('弹幕控制')
+    if new_words == 'T':
+        Printer().dic_user['print_control']['弹幕'] = True
+    else:
+        Printer().dic_user['print_control']['弹幕'] = False
     
 
 options ={
@@ -58,6 +65,7 @@ options ={
     '9': preprocess_check_room,
     '10': process_send_gift_web,
     '11': preprocess_change_danmuji_roomid,
+    '12': change_printer_dic_user,
     'help': guide_of_console
 }
 
