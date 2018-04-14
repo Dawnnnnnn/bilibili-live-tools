@@ -103,9 +103,10 @@ class Printer():
                             print(j)
                     else:
                         print(''.join(i[1]))
-            self.lock.acquire()
-            del self.printlist[:len_printlist]
-            self.lock.release()
+            if len_printlist != 0:
+                self.lock.acquire()
+                del self.printlist[:len_printlist]
+                self.lock.release()
             await asyncio.sleep(0)
                         
             
