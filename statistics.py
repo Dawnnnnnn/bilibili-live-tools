@@ -59,8 +59,7 @@ class Statistics:
                 try:
                     if json_response['code'] == 0:
                         data = json_response['data']
-                        print("# 房间", str(self.activity_roomid_list[0]).center(9), "网页端活动抽奖结果:",
-                              data['gift_name'] + "x" + str(data['gift_num']))
+                        print("# 房间{:^9}网页端活动抽奖结果: {}X{}".format(self.activity_roomid_list[0], data['gift_name'], data['gift_num']))
                         self.add_to_result(data['gift_name'], int(data['gift_num']))
     
                         self.delete_0st_activitylist()
@@ -95,8 +94,7 @@ class Statistics:
                     elif json_response['data']['gift_id'] != '-1':
     
                         data = json_response['data']
-                        print("# 房间", str(self.TV_roomid_list[0]).center(9), "小电视道具抽奖结果:",
-                              data['gift_name'] + "x" + str(data['gift_num']))
+                        print("# 房间{:^9}小电视道具抽奖结果: {}X{}".format(self.TV_roomid_list[0], data['gift_name'], data['gift_num']))
                         self.add_to_result(data['gift_name'], int(data['gift_num']))
     
                         self.delete_0st_TVlist()
