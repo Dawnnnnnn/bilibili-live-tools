@@ -4,7 +4,7 @@ from printer import Printer
 import utils
 import asyncio
 import random
-from struct import *
+import struct
 import json
 import time
 import re
@@ -64,7 +64,7 @@ class bilibiliClient():
         bytearr = body.encode('utf-8')
         if packetlength == 0:
             packetlength = len(bytearr) + 16
-        sendbytes = pack('!IHHII', packetlength, magic, ver, action, param)
+        sendbytes = struct.pack('!IHHII', packetlength, magic, ver, action, param)
         if len(bytearr) != 0:
             sendbytes = sendbytes + bytearr
         # print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), sendbytes)
@@ -113,9 +113,9 @@ class bilibiliClient():
             if tmp is None:
                 break
             
-            expr, = unpack('!I', tmp[:4])
+            expr, = struct.unpack('!I', tmp[:4])
 
-            num, = unpack('!I', tmp[8:12])
+            num, = struct.unpack('!I', tmp[8:12])
 
             num2 = expr - 16
 
@@ -126,7 +126,7 @@ class bilibiliClient():
             if num2 != 0:
                 num -= 1
                 if num == 0 or num == 1 or num == 2:
-                    num3, = unpack('!I', tmp)
+                    num3, = struct.unpack('!I', tmp)
                     self._UserCount = num3
                     continue
                 elif num == 3 or num == 4:
@@ -210,8 +210,12 @@ class bilibiliClient():
                                     pass
                 elif dic['giftId'] == 39:
                     Printer().printlist_append(['join_lottery', '', 'user', "节奏风暴"])
-                    response1 = bilibili().get_gift_of_storm(dic)
-                    if response1 != None:
+                    response = bilibili().get_giftlist_of_storm(dic)
+                    temp = response.json()
+                    check = len(temp['data'])
+                    if check != 0 and temp['data']['hasJoin'] != 1:
+                        id = temp['data']['id']
+                        response1 = bilibili().get_gift_of_storm(id)
                         print(response1.json())
                     else:
                         Printer().printlist_append(['join_lottery','','debug', [dic, "请联系开发者"]])

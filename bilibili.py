@@ -306,27 +306,24 @@ class bilibili():
                 return False, response.json()['message']
 
 
-    def get_gift_of_storm(self, dic):
+    def get_giftlist_of_storm(self, dic):
         roomid = dic['roomid']
         get_url = "https://api.live.bilibili.com/lottery/v1/Storm/check?roomid=" + str(roomid)
         response = self.bili_section_get(get_url, headers=self.dic_bilibili['pcheaders'])
-        temp = response.json()
-        check = len(temp['data'])
-        if check != 0 and temp['data']['hasJoin'] != 1:
-            id = temp['data']['id']
-            storm_url = 'https://api.live.bilibili.com/lottery/v1/Storm/join'
-            payload = {
-                "id": id,
-                "color": "16777215",
-                "captcha_token": "",
-                "captcha_phrase": "",
-                "token": "",
-                "csrf_token": self.dic_bilibili['csrf']}
-            response1 = self.bili_section_post(storm_url, data=payload, headers=self.dic_bilibili['pcheaders'])
-            return response1
-        else:
-            return None
-            
+        return response
+        
+    def get_gift_of_storm(self, id):
+        storm_url = 'https://api.live.bilibili.com/lottery/v1/Storm/join'
+        payload = {
+            "id": id,
+            "color": "16777215",
+            "captcha_token": "",
+            "captcha_phrase": "",
+            "token": "",
+            "csrf_token": self.dic_bilibili['csrf']}
+        response1 = self.bili_section_post(storm_url, data=payload, headers=self.dic_bilibili['pcheaders'])
+        return response1
+        
     def get_gift_of_events_web(self, text1, text2, raffleid):
         headers = {
             'Accept': 'application/json, text/plain, */*',
