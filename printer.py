@@ -84,7 +84,7 @@ class Printer():
                 else:
                     print(' '.join(i))
             self.printlist=[]
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0)
                         
             
             
