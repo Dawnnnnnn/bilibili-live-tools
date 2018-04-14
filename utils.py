@@ -30,9 +30,10 @@ def seconds_until_tomorrow():
      return tomorrow_start_time - current_time
 
 def fetch_medal(printer=True):
+    printlist = []
     if printer == True:
-        print('[{}] 查询勋章信息'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
-        print('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度',
+        printlist.append('查询勋章信息')
+        printlist.append('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度',
                                                  adjust_for_chinese('排名'), '勋章状态'))
     dic_worn = {'1': '正在佩戴', '0': '待机状态'}
     response = bilibili().request_fetchmedal()
@@ -48,12 +49,14 @@ def fetch_medal(printer=True):
                 today_feed = i['today_feed']
                 day_limit = i['day_limit']
             if printer == True:
-                print('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name'] + '|' + str(i['level'])),
+                printlist.append('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name'] + '|' + str(i['level'])),
                                                            adjust_for_chinese(i['anchorInfo']['uname']),
                                                            str(i['intimacy']) + '/' + str(i['next_intimacy']),
                                                            str(i['todayFeed']) + '/' + str(i['dayLimit']),
                                                            adjust_for_chinese(str(i['rank'])),
                                                            dic_worn[str(i['status'])]))
+        if printer:
+            Printer().printlist_append(['join_lottery', '', 'user', printlist], True)
         return roomid,today_feed,day_limit
 def send_danmu_msg_andriod(msg, roomId):
     response = bilibili().request_send_danmu_msg_andriod(msg, roomId)

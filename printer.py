@@ -7,6 +7,7 @@ import asyncio
 import os
 import configloader
 import time
+import threading
 
 # "#969696"
 def hex_to_rgb_percent(hex_str):
@@ -39,6 +40,7 @@ class Printer():
             file_user = fileDir + "/conf/user.conf"
             cls.instance.dic_user = configloader.load_user(file_user)
             cls.instance.printlist=[]
+            cls.instance.lock = threading.Lock()
         return cls.instance
     def concole_print(self, msg, color=[]):
         if color:
@@ -61,21 +63,28 @@ class Printer():
         if tag:
             if dic[1] == '弹幕':
                 list_msg, list_color = self.print_danmu_msg(dic[3]) 
+                self.lock.acquire()
                 self.printlist.append([0, list_msg, list_color])
+                self.lock.release()
                 return 
             
             if isinstance(dic[3], list):
               #  print(dic[3])
                 # [[list]]
+                self.lock.acquire()
                 self.printlist.append([timestamp(tag_time), [dic[3]]])
+                self.lock.release()
             else:
                # print(dic[3:])
                 # [ss, ss]
+                self.lock.acquire()
                 self.printlist.append([timestamp(tag_time), dic[3:]])
+                self.lock.release()
         
     async def clean_printlist(self):
         
         while True:
+            len_printlist = len(self.printlist)
             for i in self.printlist:
                 
                 if i[0] == 0:
@@ -94,7 +103,9 @@ class Printer():
                             print(j)
                     else:
                         print(''.join(i[1]))
-            self.printlist=[]
+            self.lock.acquire()
+            del self.printlist[:len_printlist]
+            self.lock.release()
             await asyncio.sleep(0)
                         
             
