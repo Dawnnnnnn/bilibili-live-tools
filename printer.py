@@ -77,22 +77,23 @@ class Printer():
         
         while True:
             for i in self.printlist:
-                if i[0] is None:
-                    pass
-                else:
-                    print(''.join(['[', i[0], ']']), end=' ')
-                if i[1][0] == 0:
+                
+                if i[0] == 0:
                     if (self.dic_user['platform']['platform'] == 'ios_pythonista'):
                         self.concole_print(i[1], i[2])
                     else:
                         self.concole_print(i[1])
-        
-                    
-                elif isinstance(i[1][0], list):
-                    for j in i[1][0]:
-                        print(j)
                 else:
-                    print(''.join(i[1]))
+                    if i[0] is None:
+                        pass
+                    else:
+                        print(''.join(['[', i[0], ']']), end=' ')
+                        
+                    if isinstance(i[1][0], list):
+                        for j in i[1][0]:
+                            print(j)
+                    else:
+                        print(''.join(i[1]))
             self.printlist=[]
             await asyncio.sleep(0)
                         
