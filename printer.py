@@ -6,6 +6,7 @@ import webcolors
 import asyncio
 import os
 import configloader
+import time
 
 # "#969696"
 def hex_to_rgb_percent(hex_str):
@@ -20,6 +21,11 @@ def level(str):
     if str == "debug":
         return 1
 
+def timestamp(tag_time):
+    if tag_time:
+        return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+    else:
+        return None
 
 class Printer():       
     instance = None
@@ -44,7 +50,7 @@ class Printer():
         else:
             print(''.join(msg))  
               
-    def printlist_append(self, dic):
+    def printlist_append(self, dic, tag_time=False):
         tag = False
         dic_printcontrol = self.dic_user['print_control']
         if dic[0] in dic_printcontrol.keys():
@@ -61,28 +67,32 @@ class Printer():
             if isinstance(dic[3], list):
               #  print(dic[3])
                 # [[list]]
-                self.printlist.append([dic[3]])
+                self.printlist.append([timestamp(tag_time), [dic[3]]])
             else:
                # print(dic[3:])
                 # [ss, ss]
-                self.printlist.append(dic[3:])
+                self.printlist.append([timestamp(tag_time), dic[3:]])
         
     async def clean_printlist(self):
         
         while True:
             for i in self.printlist:
-                if i[0] == 0:
+                if i[0] is None:
+                    pass
+                else:
+                    print(''.join(['[', i[0], ']']), end=' ')
+                if i[1][0] == 0:
                     if (self.dic_user['platform']['platform'] == 'ios_pythonista'):
                         self.concole_print(i[1], i[2])
                     else:
                         self.concole_print(i[1])
         
                     
-                elif isinstance(i[0], list):
-                    for j in i[0]:
+                elif isinstance(i[1][0], list):
+                    for j in i[1][0]:
                         print(j)
                 else:
-                    print(' '.join(i))
+                    print(''.join(i[1]))
             self.printlist=[]
             await asyncio.sleep(0)
                         

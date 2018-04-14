@@ -4,6 +4,7 @@ import hashlib
 import time
 import datetime
 import asyncio
+from printer import Printer
 
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
@@ -50,7 +51,7 @@ class OnlineHeart():
 
     async def run(self):
         while 1:
-            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "心跳")
+            Printer().printlist_append(['join_lottery', '', 'user', "心跳"], True)
             self.apppost_heartbeat()
             self.pcpost_heartbeat()
             self.heart_gift()           

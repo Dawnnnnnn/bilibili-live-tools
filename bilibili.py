@@ -52,9 +52,9 @@ class bilibili():
             print('正在登陆中...')
             tag, msg = cls.instance.login()
             if tag:
-                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登陆成功")
+                print("[{}] 登陆成功".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
             else:
-                print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "登录失败,错误信息为:", msg)
+                print("[{}] 登录失败,错误信息为:{}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), msg))
         return cls.instance
         
     def calc_sign(self, str):

@@ -5,6 +5,7 @@ import asyncio
 import os
 import configloader
 import utils
+from printer import Printer
 
 class Tasks():
 
@@ -17,7 +18,7 @@ class Tasks():
     def Daily_bag(self):
         response = bilibili().get_dailybag()
         for i in range(0,len(response.json()['data']['bag_list'])):
-            print("# 获得-" + response.json()['data']['bag_list'][i]['bag_name'] + "-成功")
+            Printer().printlist_append(['join_lottery', '', 'user', "# 获得-" + response.json()['data']['bag_list'][i]['bag_name'] + "-成功"])
 
 
     def CurrentTime(self):
@@ -28,13 +29,13 @@ class Tasks():
     def DoSign(self):
         response = bilibili().get_dosign()
         temp = response.json()
-        print("# 签到状态:",temp['msg'])
+        Printer().printlist_append(['join_lottery', '', 'user', "# 签到状态:",temp['msg']])
 
     # 领取每日任务奖励
     def Daily_Task(self):
         response2 = bilibili().get_dailytask()
         # print(response2.json())
-        print("# 双端观看直播:", response2.json()["msg"])
+        Printer().printlist_append(['join_lottery', '', 'user', "# 双端观看直播:", response2.json()["msg"]])
 
     # 应援团签到
     def link_sign(self):
@@ -51,11 +52,11 @@ class Tasks():
             response = bilibili().assign_group(i1, i2)
             if response.json()['code'] == 0:
                 if (response.json()['data']['status']) == 1:
-                    print("# 应援团 %s 已应援过"  %(i1) )
+                    Printer().printlist_append(['join_lottery', '', 'user', "# 应援团 %s 已应援过"  %(i1) ])
                 if (response.json()['data']['status']) == 0:
-                    print("# 应援团 %s 应援成功,获得 %s 点亲密度"  %(i1, response.json()['data']['add_num']))
+                    Printer().printlist_append(['join_lottery', '', 'user', "# 应援团 %s 应援成功,获得 %s 点亲密度"  %(i1, response.json()['data']['add_num'])])
             else:
-                print("# 应援团 %s 应援失败" %(i1))
+                Printer().printlist_append(['join_lottery', '', 'user',"# 应援团 %s 应援失败" %(i1)])
 
     def send_gift(self):
         if self.dic_user['gift']['on/off'] == '1':
@@ -68,7 +69,7 @@ class Tasks():
                     roomID = self.dic_user['gift']['send_to_room']
                     utils.send_gift_web(roomID,giftID,giftNum,bagID)
             except:
-                print("# 没有将要过期的礼物~")
+                Printer().printlist_append(['join_lottery', '', 'user', "# 没有将要过期的礼物~"])
 
     def auto_send_gift(self):
         if self.dic_user['auto-gift']['on/off'] == "1":
@@ -96,18 +97,18 @@ class Tasks():
                     calculate = calculate + tmp1
                     utils.send_gift_web(roomid, gift_id, tmp, bag_id)
                     left_num = left_num - tmp1
-            print("# 自动送礼共送出亲密度为%s的礼物" % int(calculate))
+            Printer().printlist_append(['join_lottery', '', 'user', "# 自动送礼共送出亲密度为%s的礼物" % int(calculate)])
 
     def sliver2coin(self):
         if self.dic_user['coin']['on/off'] == '1':
             response = bilibili().silver2coin_web()
             response1 = bilibili().silver2coin_app()
-            print("#", response.json()['msg'])
-            print("#", response1.json()['msg'])
+            Printer().printlist_append(['join_lottery', '', 'user',"# ", response.json()['msg']])
+            Printer().printlist_append(['join_lottery', '', 'user', "# ", response1.json()['msg']])
 
     async def run(self):
         while 1:
-            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "每日任务")
+            Printer().printlist_append(['join_lottery', '', 'user', "每日任务"], True)
             self.sliver2coin()
             self.DoSign()
             self.Daily_bag()

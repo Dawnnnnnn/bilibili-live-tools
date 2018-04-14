@@ -5,6 +5,9 @@ import datetime
 import time
 import asyncio
 import utils
+from printer import Printer
+
+
 class Silver():
 
     # 将time_end时间转换成正常时间
@@ -19,7 +22,7 @@ class Silver():
         temp = response.json()
         # print (temp['code'])    #宝箱领完返回的code为-10017
         if temp['code'] == -10017:
-            print("# 今日宝箱领取完毕")            
+            Printer().printlist_append(['join_lottery', '', 'user', "# 今日宝箱领取完毕"])            
         else:
             time_start = temp['data']['time_start']
             return str(time_start)
@@ -47,13 +50,13 @@ class Silver():
 
     async def run(self):
         while 1:
-            print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), "检查宝箱状态")
+            Printer().printlist_append(['join_lottery', '', 'user', "检查宝箱状态"], True)
             temp = self.GetAward()
             if temp == None or temp == -10017:
                 await asyncio.sleep(utils.seconds_until_tomorrow() + 300)
             elif temp == 0:
-                print("# 打开了宝箱")
+                Printer().printlist_append(['join_lottery', '', 'user', "# 打开了宝箱"])
                 self.GetAward()
             else:
-                print("# 继续等待宝箱冷却...")
+                Printer().printlist_append(['join_lottery', '', 'user',"# 继续等待宝箱冷却..."])
                 await asyncio.sleep(181)

@@ -31,7 +31,7 @@ def seconds_until_tomorrow():
 
 def fetch_medal(printer=True):
     if printer == True:
-        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询勋章信息')
+        print('[{}] 查询勋章信息'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
         print('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度',
                                                  adjust_for_chinese('排名'), '勋章状态'))
     dic_worn = {'1': '正在佩戴', '0': '待机状态'}
@@ -65,7 +65,7 @@ def send_danmu_msg_web(msg, roomId):
 
 def fetch_user_info():
     response = bilibili().request_fetch_user_info()
-    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询用户信息')
+    print('[{}] 查询用户信息'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
     json_response = response.json()
     if (json_response['code'] == 0):
         data = json_response['data']
@@ -99,7 +99,7 @@ def fetch_bag_list(verbose=False, bagid=None,printer=True):
     temp = []
     gift_list = []
     if printer == True:
-        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '查询可用礼物')
+        print('[{}] 查询可用礼物'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
     for i in range(len(response.json()['data']['list'])):
         bag_id = (response.json()['data']['list'][i]['bag_id'])
         gift_id = (response.json()['data']['list'][i]['gift_id'])
