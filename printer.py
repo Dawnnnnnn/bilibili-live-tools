@@ -107,7 +107,7 @@ class Printer():
                 self.lock.acquire()
                 del self.printlist[:len_printlist]
                 self.lock.release()
-            await asyncio.sleep(0)
+            await asyncio.sleep(0.1)
                         
             
             
