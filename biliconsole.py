@@ -2,6 +2,7 @@ import utils
 from statistics import Statistics
 from connect import connect
 from printer import Printer
+import asyncio
 
 def guide_of_console():
     print('___________________________')
@@ -18,19 +19,19 @@ def guide_of_console():
     print('￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣')
     
 
-def preprocess_send_danmu_msg_andriod():
+async def preprocess_send_danmu_msg_andriod():
     msg = input('请输入要发送的信息:')
     roomid = input('请输入要发送的房间号:')
-    utils.send_danmu_msg_andriod(msg, int(roomid))
+    await utils.send_danmu_msg_andriod(msg, int(roomid))
     
-def preprocess_send_danmu_msg_web():
+async def preprocess_send_danmu_msg_web():
     msg = input('请输入要发送的信息:')
     roomid = input('请输入要发送的房间号:')
-    utils.send_danmu_msg_web(msg, int(roomid))
+    await utils.send_danmu_msg_web(msg, int(roomid))
 
-def preprocess_check_room():
+async def preprocess_check_room():
     roomid = input('请输入要转化的房间号:')
-    utils.check_room(roomid)
+    await utils.check_room(roomid)
 
 def process_send_gift_web():
     utils.fetch_bag_list(verbose=True)
@@ -72,7 +73,25 @@ options ={
 def return_error():
     print('命令无法识别，请重新输入')
 
-def controler():
+async def controler():
     while True:
         x = input('')
-        options.get(x, return_error)()
+        if x == '7':
+            # func = options.get(x, return_error)
+            await preprocess_check_room()
+        else:
+            options.get(x, return_error)()
+        await asyncio.sleep(0.1)
+        
+def main():
+    loop = asyncio.new_event_loop()
+    tasks = [
+        controler()
+    ]
+    
+    loop.run_until_complete(asyncio.wait(tasks))
+    #console_thread.join()
+    
+    loop.close()
+    
+    

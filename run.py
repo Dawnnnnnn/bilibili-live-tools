@@ -12,14 +12,17 @@ import threading
 import biliconsole
 
 
+
+loop = asyncio.get_event_loop() 
+
 # print('Hello world.')
 printer = Printer()
 bilibili()
+
+# print('ok')
+
 Statistics()
 
-utils.fetch_user_info()
-utils.fetch_bag_list()
-utils.fetch_medal()
 
 
 
@@ -30,13 +33,17 @@ task3 = LotteryResult()
 task4 = connect()
 
 
-console_thread = threading.Thread(target=biliconsole.controler)
+console_thread = threading.Thread(target=biliconsole.main)
 
 console_thread.start()
 
 loop = asyncio.get_event_loop() 
 tasks = [
-    task.run(),
+    utils.fetch_user_info(),
+    utils.fetch_bag_list(),
+    utils.fetch_medal(),
+
+    task.run(), 
     task1.run(),
     task2.run(),
     task4.connect(),

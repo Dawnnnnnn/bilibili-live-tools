@@ -49,12 +49,12 @@ class Statistics:
         del self.TV_raffleid_list[0]
         # del self.TV_time_list[0]
 
-    def clean_activity(self):
+    async def clean_activity(self):
         # print(self.activity_raffleid_list)
         if self.activity_raffleid_list:
             for i in range(0, len(self.activity_roomid_list)):
-                response = bilibili().get_activity_result(self.activity_roomid_list[0], self.activity_raffleid_list[0])
-                json_response = response.json()
+                response = await bilibili().get_activity_result(self.activity_roomid_list[0], self.activity_raffleid_list[0])
+                json_response = await response.json()
                 # print(json_response)
                 try:
                     if json_response['code'] == 0:
@@ -63,7 +63,7 @@ class Statistics:
                         self.add_to_result(data['gift_name'], int(data['gift_num']))
     
                         self.delete_0st_activitylist()
-    
+                    # {'code': -400, 'msg': '尚未开奖，请耐心等待！', 'message': '尚未开奖，请耐心等待！', 'data': []}
                     elif json_response['code'] == -400:
                         # sleepseconds = self.activitysleeptime + self.activity_time_list[0] - int(CurrentTime())+ 2
                         # sleepseconds = self.activity_time_list[0] - int(CurrentTime())
@@ -79,16 +79,18 @@ class Statistics:
         else:
             return
 
-    def clean_TV(self):
+    async def clean_TV(self):
         # print(self.TV_raffleid_list)
         if self.TV_raffleid_list:
             for i in range(0, len(self.TV_roomid_list)):
 
-                response = bilibili().get_TV_result(self.TV_roomid_list[0], self.TV_raffleid_list[0])
+                response = await  bilibili().get_TV_result(self.TV_roomid_list[0], self.TV_raffleid_list[0])
                 # if response.json()['data']['gift_name'] != "":
-                json_response = response.json()
+                json_response = await response.json()
                 # print(json_response)
                 try:
+                    # {'code': 0, 'msg': '正在抽奖中..', 'message': '正在抽奖中..', 'data': {'gift_id': '-1', 'gift_name': '', 'gift_num': 0, 'gift_from': '', 'gift_type': 0, 'gift_content': '', 'status': 3}}
+
                     if json_response['data']['gift_id'] == '-1':
                         return
                     elif json_response['data']['gift_id'] != '-1':

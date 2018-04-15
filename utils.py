@@ -29,16 +29,16 @@ def seconds_until_tomorrow():
      current_time = int(time.mktime(datetime.datetime.now().timetuple()))
      return tomorrow_start_time - current_time
 
-def fetch_medal(printer=True):
+async def fetch_medal(printer=True):
     printlist = []
     if printer == True:
         printlist.append('查询勋章信息')
         printlist.append('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度',
                                                  adjust_for_chinese('排名'), '勋章状态'))
     dic_worn = {'1': '正在佩戴', '0': '待机状态'}
-    response = bilibili().request_fetchmedal()
+    response = await bilibili().request_fetchmedal()
     # print(response.json())
-    json_response = response.json()
+    json_response = await response.json()
     roomid = 0
     today_feed =0
     day_limit = 0
@@ -58,18 +58,19 @@ def fetch_medal(printer=True):
         if printer:
             Printer().printlist_append(['join_lottery', '', 'user', printlist], True)
         return roomid,today_feed,day_limit
-def send_danmu_msg_andriod(msg, roomId):
-    response = bilibili().request_send_danmu_msg_andriod(msg, roomId)
-    print(response.json())
+async def send_danmu_msg_andriod(msg, roomId):
+    response = await bilibili().request_send_danmu_msg_andriod(msg, roomId)
+    print('ggghhhjj')
+    print(await response.json())
 
-def send_danmu_msg_web(msg, roomId):
-    response = bilibili().request_send_danmu_msg_web(msg, roomId)
-    print(response.json())
+async def send_danmu_msg_web(msg, roomId):
+    response = await bilibili().request_send_danmu_msg_web(msg, roomId)
+    print(await response.json())
 
-def fetch_user_info():
-    response = bilibili().request_fetch_user_info()
+async def fetch_user_info():
+    response = await bilibili().request_fetch_user_info()
     print('[{}] 查询用户信息'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
-    json_response = response.json()
+    json_response = await response.json()
     if (json_response['code'] == 0):
         data = json_response['data']
         uname = data['userInfo']['uname']
@@ -97,18 +98,19 @@ def fetch_user_info():
         print(process_bar)
         print('# 等级榜', user_level_rank)
 
-def fetch_bag_list(verbose=False, bagid=None,printer=True):
-    response = bilibili().request_fetch_bag_list()
+async def fetch_bag_list(verbose=False, bagid=None,printer=True):
+    response = await bilibili().request_fetch_bag_list()
     temp = []
     gift_list = []
+    json_response = await response.json()
     if printer == True:
         print('[{}] 查询可用礼物'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
-    for i in range(len(response.json()['data']['list'])):
-        bag_id = (response.json()['data']['list'][i]['bag_id'])
-        gift_id = (response.json()['data']['list'][i]['gift_id'])
-        gift_num = str((response.json()['data']['list'][i]['gift_num'])).center(4)
-        gift_name = response.json()['data']['list'][i]['gift_name']
-        expireat = (response.json()['data']['list'][i]['expire_at'])
+    for i in range(len(json_response['data']['list'])):
+        bag_id = (json_response['data']['list'][i]['bag_id'])
+        gift_id = (json_response['data']['list'][i]['gift_id'])
+        gift_num = str((json_response['data']['list'][i]['gift_num'])).center(4)
+        gift_name = json_response['data']['list'][i]['gift_name']
+        expireat = (json_response['data']['list'][i]['expire_at'])
         left_time = (expireat - int(CurrentTime()))
         left_days = (expireat - int(CurrentTime())) / 86400
         gift_list.append([gift_id, gift_num, bag_id])
@@ -121,8 +123,9 @@ def fetch_bag_list(verbose=False, bagid=None,printer=True):
             elif printer == True:
                 print("# " + gift_name + 'X' + gift_num, '(在' + str(math.ceil(left_days)) + '天后过期)')
 
-                if 0 < int(left_time) < 43200:   # 剩余时间少于半天时自动送礼
-                    temp.append([gift_id, gift_num, bag_id])
+        if 0 < int(left_time) < 43200:   # 剩余时间少于半天时自动送礼
+            temp.append([gift_id, gift_num, bag_id])
+    # print(temp)
     return temp,gift_list
     
 def check_taskinfo():
@@ -176,9 +179,9 @@ def check_taskinfo():
         else:
             print('# 未完成(目前本项目未实现自动完成直播任务)')
             
-def check_room(roomid):
-    response = bilibili().request_check_room(roomid)
-    json_response = response.json()
+async def check_room(roomid):
+    response = await bilibili().request_check_room(roomid)
+    json_response = await response.json()
     if json_response['code'] == 0:
         print('查询结果:')
         data = json_response['data']
@@ -189,26 +192,29 @@ def check_room(roomid):
             print('# 短号为:{}'.format(data['short_id']))
             
             
-def send_gift_web(roomid, giftid, giftnum, bagid):
-    response = bilibili().request_check_room(roomid)
-    ruid = response.json()['data']['uid']
-    biz_id = response.json()['data']['room_id']
-    response1 = bilibili().request_send_gift_web(giftid, giftnum, bagid, ruid, biz_id)
-    json_response1 = response1.json()
+async def send_gift_web(roomid, giftid, giftnum, bagid):
+    response = await bilibili().request_check_room(roomid)
+    json_response = await response.json()
+    ruid = json_response['data']['uid']
+    biz_id = json_response['data']['room_id']
+    response1 = await bilibili().request_send_gift_web(giftid, giftnum, bagid, ruid, biz_id)
+    json_response1 = await response1.json()
     if json_response1['code'] == 0:
         # print(json_response1['data'])
         print("# 送出礼物:", json_response1['data']['gift_name'] + "X" + str(json_response1['data']['gift_num']))
     else:
         print("# 错误", json_response1['msg'])
         
-def check_room_true(roomid):
-        response = bilibili().request_check_room(roomid)
-        json_response = response.json()
+async def check_room_true(roomid):
+        response = await bilibili().request_check_room(roomid)
+        json_response = await response.json(content_type=None)
+        
         if json_response['code'] == 0:
             data = json_response['data']
             param1 = data['is_hidden']
             param2 = data['is_locked']
             param3 = data['encrypted']
+            # print(param1, param2, param3)
             return param1, param2, param3
     
 
