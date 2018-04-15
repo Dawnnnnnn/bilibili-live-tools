@@ -181,21 +181,23 @@ class bilibiliClient():
                                 response1 = bilibili().get_gift_of_events_app(text1, text2, raffleid)
                                 pc_response = bilibili().get_gift_of_events_web(text1, text2, raffleid)
 
-                                Statistics().append_to_activitylist(raffleid, text1)
                                 
                                 Printer().printlist_append(['join_lottery', '', 'user', "参与了房间{:^9}的{}活动抽奖".format(text1, bilibili().get_giftids_raffle(str(dic['giftId'])))], True)
 
-                                try:
-                                    Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果: ", response1.json()['data']['gift_desc']])
-                                    Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
-                                except:
-                                    Printer().printlist_append(['join_lottery', '', 'debug', "# debug结果:",
-                                                                   str(response1.json())])
-                                try:
-                                    Printer().printlist_append(
-                                        ['join_lottery', '', 'user', "# 网页端活动抽奖状态: ", pc_response.json()['message']])
-                                except:
-                                    pass
+                                json_response1 = response1.json()
+                                json_pc_response = pc_response.json()
+                                if json_response1['code'] == 0:
+                                    Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果: ",
+                                                                   json_response1['data']['gift_desc']])
+                                    Statistics().add_to_result(*(json_response1['data']['gift_desc'].split('X')))
+                                else:
+                                    Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果: ", json_response1['message']])
+                                    
+                                    
+                                Printer().printlist_append(
+                                        ['join_lottery', '', 'user', "# 网页端活动抽奖状态: ", json_pc_response['message']])
+                                if json_pc_response['code'] == 0:
+                                    Statistics().append_to_activitylist(raffleid, text1)
                 elif dic['giftId'] == 39:
                     Printer().printlist_append(['join_lottery', '', 'user', "节奏风暴"])
                     response = bilibili().get_giftlist_of_storm(dic)
@@ -223,21 +225,23 @@ class bilibiliClient():
                             if bilibili().check_activitylist(raffleid):
                                 response1 = bilibili().get_gift_of_events_app(text1, text2, raffleid)
                                 pc_response = bilibili().get_gift_of_events_web(text1, text2, raffleid)
-                                Statistics().append_to_activitylist(raffleid, text1)
                                 Printer().printlist_append(['join_lottery', '', 'user', "参与了房间{:^9}的{}活动抽奖".format(text1, bilibili().get_giftids_raffle(str(dic['giftId'])))], True)
-
-                                try:
+                                json_response1 = response1.json()
+                                json_pc_response = pc_response.json()
+                                if json_response1['code'] == 0:
                                     Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果: ",
-                                                                   response1.json()['data']['gift_desc']])
-                                    Statistics().add_to_result(*(response1.json()['data']['gift_desc'].split('X')))
-
-                                except:
-                                    pass
-                                try:
-                                    Printer().printlist_append(
-                                        ['join_lottery', '', 'user', "# 网页端活动抽奖状态: ", pc_response.json()['message']])
-                                except:
-                                    pass
+                                                                   json_response1['data']['gift_desc']])
+                                    Statistics().add_to_result(*(json_response1['data']['gift_desc'].split('X')))
+                                else:
+                                    Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果: ", json_response1['message']])
+                                    
+                                    
+                                Printer().printlist_append(
+                                        ['join_lottery', '', 'user', "# 网页端活动抽奖状态: ", json_pc_response['message']])
+                                if json_pc_response['code'] == 0:
+                                    Statistics().append_to_activitylist(raffleid, text1)
+                                    
+                                
                     except :
                         pass
                     
