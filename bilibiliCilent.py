@@ -191,6 +191,7 @@ class bilibiliClient():
                                                                    json_response1['data']['gift_desc']])
                                     Statistics().add_to_result(*(json_response1['data']['gift_desc'].split('X')))
                                 else:
+                                    print(json_response1)
                                     Printer().printlist_append(['join_lottery', '', 'user', "# 移动端活动抽奖结果: ", json_response1['message']])
                                     
                                     
@@ -198,6 +199,8 @@ class bilibiliClient():
                                         ['join_lottery', '', 'user', "# 网页端活动抽奖状态: ", json_pc_response['message']])
                                 if json_pc_response['code'] == 0:
                                     Statistics().append_to_activitylist(raffleid, text1)
+                                else:
+                                    print(json_pc_response)
                 elif dic['giftId'] == 39:
                     Printer().printlist_append(['join_lottery', '', 'user', "节奏风暴"])
                     response = bilibili().get_giftlist_of_storm(dic)
@@ -272,10 +275,16 @@ class bilibiliClient():
                             raffleid = response.json()['data']['unjoin'][j]['id']
                             if Statistics().check_TVlist(raffleid):
                                 response2 = bilibili().get_gift_of_TV(real_roomid, raffleid)
-                                Statistics().append_to_TVlist(raffleid, real_roomid)
                                 Printer().printlist_append(['join_lottery', '小电视', 'user', "参与了房间{:^9}的小电视抽奖".format(real_roomid)], True)
                                 Printer().printlist_append(
                                     ['join_lottery', '小电视', 'user', "# 小电视道具抽奖状态: ", response2.json()['msg']])
+                                # -400不存在
+                                if response2.json()['code'] == 0:
+                                    Statistics().append_to_TVlist(raffleid, real_roomid)
+                                else:
+                                    print(response2.json())
+                                
+                                
                 except:
                     pass
         if cmd == 'GUARD_MSG':
