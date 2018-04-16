@@ -18,6 +18,8 @@ class Statistics:
             cls.instance.TV_raffleid_list = []
             cls.instance.TV_roomid_list = []
             # cls.instance.TV_time_list = []
+            cls.instance.pushed_event = []
+            cls.instance.pushed_TV = []
             cls.instance.joined_event = []
             cls.instance.joined_TV = []
             cls.instance.result = {}
@@ -31,6 +33,9 @@ class Statistics:
     def getlist(self):
         # print(self.joined_event)
         # print(self.joined_TV)
+        print('本次推送活动抽奖次数:', len(self.pushed_event))
+        print('本次推送电视抽奖次数:', len(self.pushed_TV))
+        print()
         print('本次参与活动抽奖次数:', len(self.joined_event))
         print('本次参与电视抽奖次数:', len(self.joined_TV))
 
@@ -128,6 +133,12 @@ class Statistics:
         # self.TV_time_list.append(int(CurrentTime()))
         self.joined_TV.append(decimal_time())
         # print("tv加入成功", self.joined_TV)
+        
+    def append2pushed_activitylist(self):
+        self.pushed_event.append(decimal_time())
+        
+    def append2pushed_TVlist(self):
+        self.pushed_TV.append(decimal_time())
 
     def check_TVlist(self, raffleid):
         if raffleid not in self.TV_raffleid_list:

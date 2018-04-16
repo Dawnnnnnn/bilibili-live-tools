@@ -53,13 +53,13 @@ class Rafflehandler:
     def append2list_TV(self, real_roomid):
         #print('welcome to appending') 
         self.list_TV.append(real_roomid)
-        print('appended TV')
+        #print('appended TV')
         return
         
     def append2list_activity(self, giftId, text1, text2):
         #print('welcome to appending') 
         self.list_activity.append([giftId, text1, text2])
-        print('appended activity')
+        #print('appended activity')
         return
         
          

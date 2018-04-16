@@ -266,6 +266,7 @@ class bilibiliClient():
                     giftId = dic['giftId']
                     Printer().printlist_append(['join_lottery', '', 'user', "检测到房间{:^9}的{}活动抽奖".format(text1, bilibili().get_giftids_raffle(str(giftId)))], True)
                     Rafflehandler().append2list_activity(giftId, text1, text2)
+                    Statistics().append2pushed_activitylist()
                             
                 elif dic['giftId'] == 39:
                     Printer().printlist_append(['join_lottery', '', 'user', "节奏风暴"])
@@ -287,6 +288,7 @@ class bilibiliClient():
                         giftId = dic['giftId']
                         Printer().printlist_append(['join_lottery', '', 'user', "检测到房间{:^9}的{}活动抽奖".format(text1, bilibili().get_giftids_raffle(str(giftId)))], True)
                         Rafflehandler().append2list_activity(giftId, text1, text2)
+                        Statistics().append2pushed_activitylist()
                                 
                     except :
                         pass
@@ -304,13 +306,14 @@ class bilibiliClient():
                     Printer().printlist_append(['join_lottery', '小电视', 'user', "检测到房间{:^9}的小电视抽奖".format(real_roomid)], True)
                     # url = "https://api.live.bilibili.com/AppSmallTV/index?access_key=&actionKey=appkey&appkey=1d8b6e7d45233436&build=5230003&device=android&mobi_app=android&platform=android&roomid=939654&ts=1521734039&sign=4f85e1d3ce0e1a3acd46fcf9ca3cbeed"
                     Rafflehandler().append2list_TV(real_roomid)
+                    Statistics().append2pushed_TVlist()
                     
                             
                                 
                                 
                                 
                 except:
-                    pass
+                    print('请联系开发者', dic)
         if cmd == 'GUARD_MSG':
             print(dic)
             try:
