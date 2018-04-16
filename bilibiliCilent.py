@@ -233,13 +233,14 @@ class bilibiliClient():
                             
                 elif dic['giftId'] == 39:
                     Printer().printlist_append(['join_lottery', '', 'user', "节奏风暴"])
-                    response = bilibili().get_giftlist_of_storm(dic)
-                    temp = response.json()
+                    response = await bilibili().get_giftlist_of_storm(dic)
+                    temp = await response.json()
                     check = len(temp['data'])
                     if check != 0 and temp['data']['hasJoin'] != 1:
                         id = temp['data']['id']
-                        response1 = bilibili().get_gift_of_storm(id)
-                        print(response1.json())
+                        response1 = await bilibili().get_gift_of_storm(id)
+                        json_response1 = await response1.json()
+                        print(json_response1)
                     else:
                         Printer().printlist_append(['join_lottery','','debug', [dic, "请联系开发者"]])
                 else:
