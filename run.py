@@ -25,7 +25,7 @@ bilibili()
 Statistics()
 
 rafflehandler = Rafflehandler()
-
+biliconsole.Biliconsole()
 
 task = OnlineHeart()
 task1 = Silver()
@@ -34,7 +34,7 @@ task3 = LotteryResult()
 task4 = connect()
 
 
-console_thread = threading.Thread(target=biliconsole.main)
+console_thread = threading.Thread(target=biliconsole.controler)
 
 console_thread.start()
 
@@ -50,7 +50,8 @@ tasks = [
     task4.connect(),
     task3.query(),
     printer.clean_printlist(),
-    rafflehandler.run()
+    rafflehandler.run(),
+    biliconsole.Biliconsole().run()
     
 ]
 

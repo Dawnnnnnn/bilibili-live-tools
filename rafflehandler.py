@@ -45,8 +45,10 @@ class Rafflehandler:
                 
             del self.list_activity[:len_list_activity]
             del self.list_TV[:len_list_TV]
-                
-            await asyncio.sleep(5)
+            if len_list_activity == 0 and len_list_TV == 0:
+                await asyncio.sleep(5)
+            else:
+                await asyncio.sleep(1)
             
             
             

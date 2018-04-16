@@ -60,7 +60,7 @@ async def fetch_medal(printer=True):
         return roomid,today_feed,day_limit
 async def send_danmu_msg_andriod(msg, roomId):
     response = await bilibili().request_send_danmu_msg_andriod(msg, roomId)
-    print('ggghhhjj')
+    # print('ggghhhjj')
     print(await response.json())
 
 async def send_danmu_msg_web(msg, roomId):
@@ -128,9 +128,9 @@ async def fetch_bag_list(verbose=False, bagid=None,printer=True):
     # print(temp)
     return temp,gift_list
     
-def check_taskinfo():
-    response = bilibili().request_check_taskinfo()
-    json_response = response.json()
+async def check_taskinfo():
+    response = await bilibili().request_check_taskinfo()
+    json_response = await response.json()
     # print(json_response)
     if json_response['code'] == 0:
         data = json_response['data']
@@ -181,7 +181,7 @@ def check_taskinfo():
             
 async def check_room(roomid):
     response = await bilibili().request_check_room(roomid)
-    json_response = await response.json()
+    json_response = await response.json(content_type=None)
     if json_response['code'] == 0:
         print('查询结果:')
         data = json_response['data']
@@ -206,15 +206,15 @@ async def send_gift_web(roomid, giftid, giftnum, bagid):
         print("# 错误", json_response1['msg'])
         
 async def check_room_true(roomid):
-        response = await bilibili().request_check_room(roomid)
-        json_response = await response.json(content_type=None)
-        
-        if json_response['code'] == 0:
-            data = json_response['data']
-            param1 = data['is_hidden']
-            param2 = data['is_locked']
-            param3 = data['encrypted']
-            # print(param1, param2, param3)
-            return param1, param2, param3
+    response = await bilibili().request_check_room(roomid)
+    json_response = await response.json(content_type=None)
+    
+    if json_response['code'] == 0:
+        data = json_response['data']
+        param1 = data['is_hidden']
+        param2 = data['is_locked']
+        param3 = data['encrypted']
+        # print(param1, param2, param3)
+        return param1, param2, param3
     
 

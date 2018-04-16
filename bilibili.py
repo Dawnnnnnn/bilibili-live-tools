@@ -210,7 +210,7 @@ class bilibili():
             # 必须为 "json"
             'type': "json"
         }
-        print('send msg app')
+        # print('send msg app')
 
         response = await self.bili_section_post(url, headers=self.dic_bilibili['appheaders'], data=data)
         return response
