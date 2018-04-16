@@ -3,6 +3,7 @@ from Silver import Silver
 from LotteryResult import LotteryResult
 from Tasks import Tasks
 from connect import connect
+from rafflehandler import Rafflehandler
 import asyncio
 import utils
 from printer import Printer
@@ -23,7 +24,7 @@ bilibili()
 
 Statistics()
 
-
+rafflehandler = Rafflehandler()
 
 
 task = OnlineHeart()
@@ -48,7 +49,9 @@ tasks = [
     task2.run(),
     task4.connect(),
     task3.query(),
-    printer.clean_printlist()
+    printer.clean_printlist(),
+    rafflehandler.run()
+    
 ]
 
 loop.run_until_complete(asyncio.wait(tasks))

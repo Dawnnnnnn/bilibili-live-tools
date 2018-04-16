@@ -42,7 +42,7 @@ class connect():
     def reconnect(self, roomid):
         self.tag_reconnect = True
         if self.danmuji is not None:
-            self.danmuji.connected = False
+            self.danmuji.close_connection()
         bilibili().dic_bilibili['roomid'] = roomid
         print('已经切换roomid')
         self.tag_reconnect = False
