@@ -125,12 +125,13 @@ class Biliconsole():
             else:
                 #print('本批次轮空')
                 pass
-            self.lock.acquire()
-            del self.list_console[:len_list_console]
-            self.lock.release()
+                
             if len_list_console == 0:
                 await asyncio.sleep(1)
             else:
+                self.lock.acquire()
+                del self.list_console[:len_list_console]
+                self.lock.release()
                 await asyncio.sleep(0.3)
         
         
