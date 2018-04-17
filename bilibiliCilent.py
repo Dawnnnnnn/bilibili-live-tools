@@ -145,7 +145,7 @@ class bilibiliClient():
         while self.connected == False:
             await asyncio.sleep(0.5)
 
-        Printer().printlist_append(['join_lottery', '', 'user', '弹幕模块开始心跳'], True)
+        Printer().printlist_append(['join_lottery', '', 'user', '弹幕模块开始心跳（由于弹幕心跳间隔为30s，所以后续正常心跳不再提示）'], True)
 
         while self.connected == True:
             await self.SendSocketData(0, 16, self.bilibili.dic_bilibili['_protocolversion'], 2, 1, "")

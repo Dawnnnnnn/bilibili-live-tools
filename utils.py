@@ -73,20 +73,28 @@ async def fetch_user_info():
     json_response = await response.json()
     if (json_response['code'] == 0):
         data = json_response['data']
-        uname = data['userInfo']['uname']
+        # print(data)
+        userInfo = data['userInfo']
+        userCoinIfo = data['userCoinIfo']
+        uname = userInfo['uname']
         achieve = data['achieves']
-        user_level = data['userCoinIfo']['user_level']
-        silver = data['userCoinIfo']['silver']
-        gold = data['userCoinIfo']['gold']
-        user_next_level = data['userCoinIfo']['user_next_level']
-        user_intimacy = data['userCoinIfo']['user_intimacy']
-        user_next_intimacy = data['userCoinIfo']['user_next_intimacy']
-        user_level_rank = data['userCoinIfo']['user_level_rank']
-        billCoin = data['userCoinIfo']['coins']
+        user_level = userCoinIfo['user_level']
+        silver = userCoinIfo['silver']
+        gold = userCoinIfo['gold']
+        identification = bool(userInfo['identification'])
+        mobile_verify =  bool(userInfo['mobile_verify'])
+        user_next_level = userCoinIfo['user_next_level']
+        user_intimacy = userCoinIfo['user_intimacy']
+        user_next_intimacy = userCoinIfo['user_next_intimacy']
+        user_level_rank = userCoinIfo['user_level_rank']
+        billCoin = userCoinIfo['coins']
+        bili_coins = userCoinIfo['bili_coins']
         print('# 用户名', uname)
+        print('# 手机认证状况 {} | 实名认证状况 {}'.format(mobile_verify, identification))
         print('# 银瓜子', silver)
         print('# 金瓜子', gold)
         print('# 硬币数', billCoin)
+        print('# b币数', bili_coins)
         print('# 成就值', achieve)
         print('# 等级值', user_level, '———>', user_next_level)
         print('# 经验值', user_intimacy)
