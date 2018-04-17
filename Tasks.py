@@ -104,6 +104,14 @@ class Tasks():
                     await utils.send_gift_web(roomid, gift_id, tmp, bag_id)
                     left_num = left_num - tmp1
             Printer().printlist_append(['join_lottery', '', 'user', "# 自动送礼共送出亲密度为%s的礼物" % int(calculate)])
+            
+    async def doublegain_coin2silver(self):
+        if self.dic_user['doublegain_coin2silver']['on/off'] == "1":
+            response0 = await bilibili().request_doublegain_coin2silver()
+            json_response0 = await response0.json()
+            response1 = await bilibili().request_doublegain_coin2silver()
+            json_response1 = await response1.json()
+            print(json_response0['msg'], json_response1['msg'])
 
     async def sliver2coin(self):
         if self.dic_user['coin']['on/off'] == '1':
@@ -118,6 +126,7 @@ class Tasks():
         while 1:
             Printer().printlist_append(['join_lottery', '', 'user', "每日任务"], True)
             await self.sliver2coin()
+            await self.doublegain_coin2silver()
             await self.DoSign()
             await self.Daily_bag()
             await self.Daily_Task()

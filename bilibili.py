@@ -93,6 +93,14 @@ class bilibili():
                 #print('当前网络不好，正在重试，请反馈开发者!!!!')
                 #print(sys.exc_info()[0], sys.exc_info()[1])
                 continue
+                
+    #1:900兑换
+    async def request_doublegain_coin2silver(self):
+        #url: "/exchange/coin2silver",
+        data = {'coin': 10}
+        url = "https://api.live.bilibili.com/exchange/coin2silver"
+        response = await self.bili_section_post(url, data=data, headers=self.dic_bilibili['pcheaders'])
+        return response
 
     async def post_watching_history(self, room_id):
         data = {

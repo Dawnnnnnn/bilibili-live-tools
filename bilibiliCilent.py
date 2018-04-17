@@ -327,6 +327,13 @@ class bilibiliClient():
                 json_response1 = await response1.json()
                 print(json_response1)
                 num = len(json_response1['data']['guard'])
+                if num == 0:
+                    print('尝试解决总督')
+                    await asyncio.sleep(10)
+                    response1 = await bilibili().get_giftlist_of_captain(roomid)
+                    json_response1 = await response1.json()
+                    print(json_response1)
+                    num = len(json_response1['data']['guard'])
                 for i in range(0, num):
                     id = json_response1['data']['guard'][i]['id']
                     print(id)
