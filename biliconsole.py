@@ -52,6 +52,9 @@ def change_printer_dic_user():
         Printer().dic_user['print_control']['弹幕'] = True
     else:
         Printer().dic_user['print_control']['弹幕'] = False
+def preprocess_fetch_liveuser_info():
+    real_roomid = input('请输入roomid')
+    Biliconsole().append2list_console([[real_roomid], utils.fetch_liveuser_info])
     
 
 options ={
@@ -67,6 +70,7 @@ options ={
     '10': process_send_gift_web,#input async !!!
     '11': preprocess_change_danmuji_roomid,
     '12': change_printer_dic_user,
+    '13': preprocess_fetch_liveuser_info,
     'help': guide_of_console
 }
 
@@ -77,7 +81,7 @@ def controler():
     while True:
         x = input('')
         # input and async
-        if x == ['7', '8', '9', '10']:
+        if x == ['7', '8', '9', '10', '13']:
             # func = options.get(x, return_error)
             args, func = options.get(x, return_error)()
             #print(args)

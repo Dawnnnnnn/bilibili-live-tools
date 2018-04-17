@@ -3,6 +3,8 @@ from printer import Printer
 import time
 import datetime
 import math
+from PIL import Image
+from io import BytesIO
 
 def adjust_for_chinese(str):
     SPACE = '\N{IDEOGRAPHIC SPACE}'
@@ -95,6 +97,14 @@ async def fetch_user_info():
         billCoin = userCoinIfo['coins']
         bili_coins = userCoinIfo['bili_coins']
         print('# 用户名', uname)
+        size = 100, 100
+        response_face = bilibili().request_load_img(userInfo['face'])
+        img = Image.open(BytesIO(response_face.content))
+        img.thumbnail(size)
+        try: 
+            img.show()
+        except :
+            pass
         print('# 手机认证状况 {} | 实名认证状况 {}'.format(mobile_verify, identification))
         print('# 银瓜子', silver)
         print('# 通用金瓜子', gold)
@@ -197,6 +207,7 @@ async def check_room(roomid):
     response = await bilibili().request_check_room(roomid)
     json_response = await response.json(content_type=None)
     if json_response['code'] == 0:
+        print(json_response)
         print('查询结果:')
         data = json_response['data']
         print('# 真实房间号为:{}'.format(data['room_id']))
@@ -218,7 +229,28 @@ async def send_gift_web(roomid, giftid, giftnum, bagid):
         print("# 送出礼物:", json_response1['data']['gift_name'] + "X" + str(json_response1['data']['gift_num']))
     else:
         print("# 错误", json_response1['msg'])
+ 
         
+async def fetch_liveuser_info(real_roomid):
+    response = await bilibili().request_fetch_liveuser_info(real_roomid)
+    json_response = await response.json()
+    if json_response['code'] == 0:
+        data = json_response['data']
+        print('# 主播姓名 {}'.format(data['info']['uname']))
+        size = 100, 100
+        response_face = bilibili().request_load_img(data['info']['face'])
+        img = Image.open(BytesIO(response_face.content))
+        img.thumbnail(size)
+        try: 
+            img.show()
+        except :
+            pass
+
+        
+        
+         
+              
+                        
 async def check_room_true(roomid):
     response = await bilibili().request_check_room(roomid)
     json_response = await response.json(content_type=None)
