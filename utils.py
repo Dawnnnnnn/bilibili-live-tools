@@ -69,8 +69,13 @@ async def send_danmu_msg_web(msg, roomId):
 
 async def fetch_user_info():
     response = await bilibili().request_fetch_user_info()
+    response_ios = await bilibili().request_fetch_user_infor_ios()
     print('[{}] 查询用户信息'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
     json_response = await response.json()
+    json_response_ios = await response_ios.json()
+    if json_response_ios['code'] == 0:
+        gold_ios = json_response_ios['data']['gold']
+    # print(json_response_ios)
     if (json_response['code'] == 0):
         data = json_response['data']
         # print(data)
@@ -92,7 +97,8 @@ async def fetch_user_info():
         print('# 用户名', uname)
         print('# 手机认证状况 {} | 实名认证状况 {}'.format(mobile_verify, identification))
         print('# 银瓜子', silver)
-        print('# 金瓜子', gold)
+        print('# 通用金瓜子', gold)
+        print('# ios可用金瓜子', gold_ios)
         print('# 硬币数', billCoin)
         print('# b币数', bili_coins)
         print('# 成就值', achieve)
@@ -102,7 +108,7 @@ async def fetch_user_info():
         arrow = int(user_intimacy * 30 / user_next_intimacy)
         line = 30 - arrow
         percent = user_intimacy / user_next_intimacy * 100.0
-        process_bar = '[' + '>' * arrow + '-' * line + ']' + '%.2f' % percent + '%'
+        process_bar = '# [' + '>' * arrow + '-' * line + ']' + '%.2f' % percent + '%'
         print(process_bar)
         print('# 等级榜', user_level_rank)
 
