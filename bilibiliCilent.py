@@ -52,12 +52,12 @@ async def handle_1_activity_raffle(num, giftId, text1, text2, raffleid):
         
 async def handle_1_room_TV(real_roomid):   
     await asyncio.sleep(random.uniform(3, 5))
-    await bilibili().post_watching_history(real_roomid)
     result = await utils.check_room_true(real_roomid)
     if True in result:
         Printer().printlist_append(['join_lottery', '钓鱼提醒', 'user', "WARNING:检测到房间{:^9}的钓鱼操作".format(real_roomid)], True)
     else:
         # print(True)
+        await bilibili().post_watching_history(real_roomid)
         response = await bilibili().get_giftlist_of_TV(real_roomid)
         json_response = await response.json()
         checklen = json_response['data']['unjoin']
@@ -79,12 +79,12 @@ async def handle_1_room_TV(real_roomid):
 
 async def handle_1_room_activity(giftId, text1, text2):
     await asyncio.sleep(random.uniform(3, 5))
-    await bilibili().post_watching_history(text1)
     result = await utils.check_room_true(text1)
     if True in result:
         Printer().printlist_append(['join_lottery', '钓鱼提醒', 'user', "WARNING:检测到房间{:^9}的钓鱼操作".format(text1)], True)
     else:
         # print(True)
+        await bilibili().post_watching_history(text1)
         response = await bilibili().get_giftlist_of_events(text1)
         json_response = await response.json()
         checklen = json_response['data']
