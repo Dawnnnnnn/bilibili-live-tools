@@ -182,7 +182,12 @@ class bilibiliClient():
             try:
                 tmp = await asyncio.wait_for(self._reader.read(len_remain), timeout=35.0)
             except asyncio.TimeoutError:
-                print('TIMEOUT，稍后重连')
+                print('# 由于心跳包30s一次，但是发现35内没有收到任何包，说明已经悄悄失联了，主动断开')
+                self._writer.close()
+                self.connected = False
+                return None
+            except ConnectionResetError:
+                print('# RESET，网络不稳定或者远端不正常断开')
                 self._writer.close()
                 self.connected = False
                 return None
@@ -194,7 +199,7 @@ class bilibiliClient():
                 return None
                 
             if not tmp:
-                print("# 主动关闭或者远端主动发来FIN，稍后将重连")
+                print("# 主动关闭或者远端主动发来FIN")
                 self._writer.close()
                 self.connected = False
                 return None
