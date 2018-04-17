@@ -11,6 +11,7 @@ import rsa
 import base64
 from urllib import parse
 import aiohttp
+import asyncio
 
 reload(sys)
 
@@ -34,7 +35,14 @@ def calc_name_passw(key, Hash, username, password):
     username = parse.quote_plus(username)
     return username, password
 
-    
+async def replay_request(response):
+    json_response = await response.json(content_type=None)
+    if json_response['code'] == 1024:
+        print('b站炸了，暂停所有请求5s后重试，请耐心等待')
+        await asyncio.sleep(5)
+        return True
+    else:
+        return False
 
 
 
@@ -77,6 +85,9 @@ class bilibili():
         while True:
             try:
                 response = await self.bili_section.post(url, headers=headers, data=data)
+                tag = await replay_request(response)
+                if tag:
+                    continue
                 return response
             except :
                 #print('当前网络不好，正在重试，请反馈开发者!!!!')
@@ -88,6 +99,9 @@ class bilibili():
         while True:
             try:
                 response = await self.bili_section.get(url, headers=headers, data=data, params=params)
+                tag = await replay_request(response)
+                if tag:
+                    continue
                 return response
             except :
                 #print('当前网络不好，正在重试，请反馈开发者!!!!')
