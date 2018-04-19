@@ -20,29 +20,7 @@ def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
 
-def cnn_captcha(img):
-    url = "http://101.236.6.31:8080/code"
-    data = {"image": img}
-    ressponse = requests.post(url, data=data)
-    captcha = ressponse.text
-    print("此次登录出现验证码,识别结果为%s"%(captcha))
-    return captcha
 
-def calc_name_passw(key, Hash, username, password):
-    pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode())
-    password = base64.b64encode(rsa.encrypt((Hash + password).encode('utf-8'), pubkey))
-    password = parse.quote_plus(password)
-    username = parse.quote_plus(username)
-    return username, password
-
-async def replay_request(response):
-    json_response = await response.json(content_type=None)
-    if json_response['code'] == 1024:
-        print('b站炸了，暂停所有请求5s后重试，请耐心等待')
-        await asyncio.sleep(5)
-        return True
-    else:
-        return False
 
 
 
@@ -58,12 +36,6 @@ class bilibili():
             file_bilibili = fileDir + "/conf/bilibili.conf"
             cls.instance.dic_bilibili = configloader.load_bilibili(file_bilibili)
             cls.instance.bili_session = None
-            print('正在登陆中...')
-            tag, msg = cls.instance.login()
-            if tag:
-                print("[{}] 登陆成功".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
-            else:
-                print("[{}] 登录失败,错误信息为:{}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), msg))
         return cls.instance
     
     @property
@@ -80,12 +52,36 @@ class bilibili():
         hash.update(str.encode('utf-8'))
         sign = hash.hexdigest()
         return sign
+
+    def cnn_captcha(self,img):
+        url = "http://101.236.6.31:8080/code"
+        data = {"image": img}
+        ressponse = requests.post(url, data=data)
+        captcha = ressponse.text
+        print("此次登录出现验证码,识别结果为%s" % (captcha))
+        return captcha
+
+    def calc_name_passw(self,key, Hash, username, password):
+        pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode())
+        password = base64.b64encode(rsa.encrypt((Hash + password).encode('utf-8'), pubkey))
+        password = parse.quote_plus(password)
+        username = parse.quote_plus(username)
+        return username, password
+
+    async def replay_request(self,response):
+        json_response = await response.json(content_type=None)
+        if json_response['code'] == 1024:
+            print('b站炸了，暂停所有请求5s后重试，请耐心等待')
+            await asyncio.sleep(5)
+            return True
+        else:
+            return False
     
     async def bili_section_post(self, url, headers=None, data=None):
         while True:
             try:
                 response = await self.bili_section.post(url, headers=headers, data=data)
-                tag = await replay_request(response)
+                tag = await self.replay_request(response)
                 if tag:
                     continue
                 return response
@@ -99,7 +95,7 @@ class bilibili():
         while True:
             try:
                 response = await self.bili_section.get(url, headers=headers, data=data, params=params)
-                tag = await replay_request(response)
+                tag = await self.replay_request(response)
                 if tag:
                     continue
                 return response
@@ -196,77 +192,6 @@ class bilibili():
         return requests.get(url)
 
 
-    async def request_send_danmu_msg_andriod(self, msg, roomId):
-        url = 'https://api.live.bilibili.com/api/sendmsg?'
-        # page ??
-        time = CurrentTime()
-        list_url = ["access_key=" + self.dic_bilibili['access_key'], "appkey=" + self.dic_bilibili['appkey'], 'aid=',
-                    'page=1', "build=" + self.dic_bilibili['build']]
-        sign = self.calc_sign('&'.join(sorted(list_url)))
-
-        url = url + '&'.join(list_url[:3] + ['sign=' + sign] + list_url[3:])
-
-        data = {
-            'access_key': self.dic_bilibili['access_key'],
-            'actionKey': "appkey",
-            'appkey': self.dic_bilibili['appkey'],
-            'build': self.dic_bilibili['build'],
-            # 房间号
-            'cid': roomId,
-            # 颜色
-            'color': '16777215',
-            'device': self.dic_bilibili['device'],
-            # 字体大小
-            'fontsize': '25',
-            # 实际上并不需要包含 mid 就可以正常发送弹幕, 但是真实的 Android 客户端确实发送了 mid
-            # 自己的用户 ID!!!!
-            'from': '',
-            # 'mid': '1008****'
-            'mobi_app': self.dic_bilibili['mobi_app'],
-            # 弹幕模式
-            # 1 普通  4 底端  5 顶端 6 逆向  7 特殊   9 高级
-            # 一些模式需要 VIP
-            'mode': '1',
-            # 内容
-            "msg": msg,
-            'platform': self.dic_bilibili['platform'],
-            # 播放时间
-            'playTime': '0.0',
-            # 弹幕池  尚且只见过为 0 的情况
-            'pool': '0',
-            # random   随机数
-            # 在 web 端发送弹幕, 该字段是固定的, 为用户进入直播页面的时间的时间戳. 但是在 Android 端, 这是一个随机数
-            # 该随机数不包括符号位有 9 位
-            # '1367301983632698015'
-            'rnd': str((int)(1000000000000000000.0 + 2000000000000000000.0 * random.random())),
-            "screen_state": '',
-            # 反正不管用 没实现的
-            'sign': sign,
-            'ts': time,
-            # 必须为 "json"
-            'type': "json"
-        }
-        # print('send msg app')
-
-        response = await self.bili_section_post(url, headers=self.dic_bilibili['appheaders'], data=data)
-        return response
-
-    async def request_send_danmu_msg_web(self, msg, roomId):
-        url = 'https://api.live.bilibili.com/msg/send'
-        data = {
-            'color': '16777215',
-            'fontsize': '25',
-            'mode': '1',
-            'msg': msg,
-            'rnd': '0',
-            'roomid': roomId,
-            'csrf_token': self.dic_bilibili['csrf']
-        }
-
-        response = await self.bili_section_post(url, headers=self.dic_bilibili['pcheaders'], data=data)
-        return response
-
-
     async def request_fetchmedal(self):
         url = 'https://api.live.bilibili.com/i/api/medal?page=1&pageSize=50'
         response = await self.bili_section_post(url, headers=self.dic_bilibili['pcheaders'])
@@ -280,96 +205,6 @@ class bilibili():
         response = requests.post(url, data=params)
         return response
         
-        
-        
-    def normal_login(self, username, password):
-        # url = 'https://passport.bilibili.com/api/oauth2/login'   //旧接口
-        url = "https://passport.bilibili.com/api/v2/oauth2/login"
-        temp_params = 'appkey=' + self.dic_bilibili['appkey'] + '&password=' + password + '&username=' + username
-        sign = self.calc_sign(temp_params)
-        headers = {"Content-type": "application/x-www-form-urlencoded"}
-        payload = "appkey=" + self.dic_bilibili[
-            'appkey'] + "&password=" + password + "&username=" + username + "&sign=" + sign
-        response = requests.post(url, data=payload, headers=headers)
-        return response
-        
-    def login_with_captcha(self, username, password):
-        headers = {
-            'Accept': 'application/json, text/plain, */*',
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
-            'Host': 'passport.bilibili.com',
-            'cookie':"sid=hxt5szbb"
-        }
-        s = requests.session()
-        url = "https://passport.bilibili.com/captcha"
-        res = s.get(url,headers=headers)
-        tmp1 = base64.b64encode(res.content)
-        
-        captcha = cnn_captcha(tmp1)
-        temp_params = 'actionKey=' + self.dic_bilibili[
-            'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
-                          'build'] + '&captcha='+captcha+'&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&password='+ password +'&platform=' + self.dic_bilibili[
-                          'platform'] +'&username='+username
-        sign = self.calc_sign(temp_params)
-        payload = temp_params + '&sign=' + sign
-        headers['Content-type'] = "application/x-www-form-urlencoded"
-        headers['cookie'] = "sid=hxt5szbb"
-        url = "https://passport.bilibili.com/api/v2/oauth2/login"
-        response = s.post(url,data=payload,headers=headers)
-        return response
-        
-    
-    def login(self):
-        username = str(self.dic_bilibili['account']['username'])
-        password = str(self.dic_bilibili['account']['password'])
-
-        if username != "":
-            response = self.request_getkey()
-            value = response.json()['data']
-            key = value['key']
-            Hash = str(value['hash'])
-            username, password = calc_name_passw(key, Hash, username, password)
-            
-            response = self.normal_login(username, password)
-            while response.json()['code'] == -105:
-                
-                response = self.login_with_captcha(username, password)
-            try:
-                access_key = response.json()['data']['token_info']['access_token']
-                cookie = (response.json()['data']['cookie_info']['cookies'])
-                cookie_format = ""
-                for i in range(0, len(cookie)):
-                    cookie_format = cookie_format + cookie[i]['name'] + "=" + cookie[i]['value'] + ";"
-                self.dic_bilibili['csrf'] = cookie[0]['value']
-                self.dic_bilibili['access_key'] = access_key
-                self.dic_bilibili['cookie'] = cookie_format
-                self.dic_bilibili['uid'] = cookie[1]['value']
-                self.dic_bilibili['pcheaders']['cookie'] = cookie_format
-                self.dic_bilibili['appheaders']['cookie'] = cookie_format     
-                return True, None           
-                
-            except:
-                return False, response.json()['message']
-
-
-    async def get_giftlist_of_storm(self, dic):
-        roomid = dic['roomid']
-        get_url = "https://api.live.bilibili.com/lottery/v1/Storm/check?roomid=" + str(roomid)
-        response = await self.bili_section_get(get_url, headers=self.dic_bilibili['pcheaders'])
-        return response
-        
-    async def get_gift_of_storm(self, id):
-        storm_url = 'https://api.live.bilibili.com/lottery/v1/Storm/join'
-        payload = {
-            "id": id,
-            "color": "16777215",
-            "captcha_token": "",
-            "captcha_phrase": "",
-            "token": "",
-            "csrf_token": self.dic_bilibili['csrf']}
-        response1 = await self.bili_section_post(storm_url, data=payload, headers=self.dic_bilibili['pcheaders'])
-        return response1
-        
     async def get_gift_of_events_web(self, text1, text2, raffleid):
         headers = {
             'Accept': 'application/json, text/plain, */*',
@@ -380,7 +215,6 @@ class bilibili():
         pc_url = 'https://api.live.bilibili.com/activity/v1/Raffle/join?roomid=' + str(
             text1) + '&raffleId=' + str(raffleid)
         pc_response = await self.bili_section_get(pc_url, headers=headers)
-
         return pc_response
 
     async def get_gift_of_events_app(self, text1, text2, raffleid):
@@ -392,7 +226,7 @@ class bilibili():
         }
         temp_params = 'access_key=' + self.dic_bilibili['access_key'] + '&actionKey=' + self.dic_bilibili[
             'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
-                          'build'] + '&device=' + self.dic_bilibili['device'] + '&event_type=flower_rain-' + str(
+                          'build'] + '&device=' + self.dic_bilibili['device'] + '&event_type='+self.dic_bilibili['activity_name']+'-'+ str(
             raffleid) + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&platform=' + self.dic_bilibili[
                           'platform'] + '&room_id=' + str(
             text1) + '&ts=' + CurrentTime()
@@ -430,7 +264,6 @@ class bilibili():
         }
         url = 'https://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
         response = await self.bili_section_get(url, headers=headers)
-
         return response
 
     async def get_giftlist_of_TV(self, real_roomid):
@@ -446,7 +279,6 @@ class bilibili():
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
         }
         response = await self.bili_section_get(check_url, headers=headers)
-
         return response
 
     async def get_giftlist_of_captain(self, roomid):
@@ -600,4 +432,8 @@ class bilibili():
         url = "https://api.live.bilibili.com/gift/v2/live/room_gift_list?roomid=2721650&area_v2_id=86"
         res = await self.bili_section_get(url)
         return res
-        
+
+    async def check_activity_exist(self):
+        url = "https://api.live.bilibili.com/activity/v1/Common/roomInfo?roomid=128666&ruid=18174739"
+        response = await self.bili_section_get(url)
+        return response

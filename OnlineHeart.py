@@ -1,6 +1,5 @@
 from bilibili import bilibili
-import requests
-import hashlib
+from login import login
 import time
 import datetime
 import asyncio
@@ -18,7 +17,8 @@ class OnlineHeart():
         await bilibili().apppost_heartbeat()
 
     async def pcpost_heartbeat(self):
-        await bilibili().pcpost_heartbeat()
+        response = await bilibili().pcpost_heartbeat()
+        return response
 
     async def heart_gift(self):
         await bilibili().heart_gift()
@@ -26,7 +26,7 @@ class OnlineHeart():
 
     # 因为休眠时间差不多,所以放到这里,此为实验性功能
     async def draw_lottery(self):
-        for i in range(60,80):
+        for i in range(68,90):
             response  = await bilibili().get_lotterylist(i)
             json_response = await response.json()
             if json_response['code'] == 0:
@@ -53,11 +53,14 @@ class OnlineHeart():
     async def run(self):
         while 1:
             Printer().printlist_append(['join_lottery', '', 'user', "心跳"], True)
+            response = await self.pcpost_heartbeat()
+            json_response = await response.json()
+            if json_response['code'] == 3:
+                print("cookie过期,将重新登录")
+                await login().login()
             await self.apppost_heartbeat()
-            await self.pcpost_heartbeat()
             await self.heart_gift()           
             await self.draw_lottery()
-            # print('OnlineHeart is over')
             await asyncio.sleep(300)
 
 

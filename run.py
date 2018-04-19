@@ -5,6 +5,7 @@ from Tasks import Tasks
 from connect import connect
 from rafflehandler import Rafflehandler
 import asyncio
+from login import login
 import utils
 from printer import Printer
 from statistics import Statistics
@@ -13,17 +14,11 @@ import threading
 import biliconsole
 
 
-
-loop = asyncio.get_event_loop() 
-
-# print('Hello world.')
+loop = asyncio.get_event_loop()
+loop1 = asyncio.get_event_loop()
 printer = Printer()
 bilibili()
-
-# print('ok')
-
 Statistics()
-
 rafflehandler = Rafflehandler()
 biliconsole.Biliconsole()
 
@@ -38,12 +33,15 @@ console_thread = threading.Thread(target=biliconsole.controler)
 
 console_thread.start()
 
-loop = asyncio.get_event_loop() 
+tasks1 = [
+    login().login()
+]
+loop.run_until_complete(asyncio.wait(tasks1))
+
 tasks = [
     utils.fetch_user_info(),
     utils.fetch_bag_list(),
     utils.fetch_medal(),
-
     task.run(), 
     task1.run(),
     task2.run(),

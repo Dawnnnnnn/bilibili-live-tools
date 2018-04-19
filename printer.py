@@ -28,7 +28,7 @@ def timestamp(tag_time):
     else:
         return None
 
-class Printer():       
+class Printer():
     instance = None
 
     def __new__(cls, *args, **kw):
@@ -108,10 +108,7 @@ class Printer():
                 del self.printlist[:len_printlist]
                 self.lock.release()
             await asyncio.sleep(0.1)
-                        
-            
-            
-        
+
     def print_danmu_msg(self, dic):
         info = dic['info']
         # tmp = dic['info'][2][1] + ':' + dic['info'][1]

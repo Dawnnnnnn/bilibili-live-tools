@@ -3,8 +3,7 @@ from printer import Printer
 import time
 import datetime
 import math
-from PIL import Image
-from io import BytesIO
+
 
 def adjust_for_chinese(str):
     SPACE = '\N{IDEOGRAPHIC SPACE}'
@@ -24,6 +23,7 @@ def adjust_for_chinese(str):
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
+
 def seconds_until_tomorrow():
      today = datetime.date.today()
      tomorrow = today + datetime.timedelta(days=1)
@@ -60,14 +60,6 @@ async def fetch_medal(printer=True):
         if printer:
             Printer().printlist_append(['join_lottery', '', 'user', printlist], True)
         return roomid,today_feed,day_limit
-async def send_danmu_msg_andriod(msg, roomId):
-    response = await bilibili().request_send_danmu_msg_andriod(msg, roomId)
-    # print('ggghhhjj')
-    print(await response.json())
-
-async def send_danmu_msg_web(msg, roomId):
-    response = await bilibili().request_send_danmu_msg_web(msg, roomId)
-    print(await response.json())
 
 async def fetch_user_info():
     response = await bilibili().request_fetch_user_info()
@@ -97,20 +89,12 @@ async def fetch_user_info():
         billCoin = userCoinIfo['coins']
         bili_coins = userCoinIfo['bili_coins']
         print('# 用户名', uname)
-        size = 100, 100
-        response_face = bilibili().request_load_img(userInfo['face'])
-        img = Image.open(BytesIO(response_face.content))
-        img.thumbnail(size)
-        try: 
-            img.show()
-        except :
-            pass
         print('# 手机认证状况 {} | 实名认证状况 {}'.format(mobile_verify, identification))
         print('# 银瓜子', silver)
         print('# 通用金瓜子', gold)
         print('# ios可用金瓜子', gold_ios)
         print('# 硬币数', billCoin)
-        print('# b币数', bili_coins)
+        print('# B币数', bili_coins)
         print('# 成就值', achieve)
         print('# 等级值', user_level, '———>', user_next_level)
         print('# 经验值', user_intimacy)
@@ -229,28 +213,8 @@ async def send_gift_web(roomid, giftid, giftnum, bagid):
         print("# 送出礼物:", json_response1['data']['gift_name'] + "X" + str(json_response1['data']['gift_num']))
     else:
         print("# 错误", json_response1['msg'])
- 
-        
-async def fetch_liveuser_info(real_roomid):
-    response = await bilibili().request_fetch_liveuser_info(real_roomid)
-    json_response = await response.json()
-    if json_response['code'] == 0:
-        data = json_response['data']
-        print('# 主播姓名 {}'.format(data['info']['uname']))
-        size = 100, 100
-        response_face = bilibili().request_load_img(data['info']['face'])
-        img = Image.open(BytesIO(response_face.content))
-        img.thumbnail(size)
-        try: 
-            img.show()
-        except :
-            pass
 
-        
-        
-         
-              
-                        
+
 async def check_room_true(roomid):
     response = await bilibili().request_check_room(roomid)
     json_response = await response.json(content_type=None)
