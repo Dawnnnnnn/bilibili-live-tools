@@ -91,13 +91,13 @@ class Tasks():
                 gift_id = int(temp[i][0])
                 gift_num = int(temp[i][1])
                 bag_id = int(temp[i][2])
-                if (gift_num * (temp_dic[gift_id] / 100) < left_num) and (gift_id != 4 and gift_id != 3):
+                if (gift_num * (temp_dic[gift_id] / 100) < left_num) and (gift_id != 4 and gift_id != 3 and gift_id != 9 and gift_id != 10):
                     calculate = calculate + temp_dic[gift_id] / 100 * gift_num
                     # tmp = calculate / (temp_dic[gift_id] / 100)
                     tmp2 = temp_dic[gift_id] / 100 * gift_num
                     await utils.send_gift_web(roomid,gift_id,gift_num,bag_id)
                     left_num = left_num-tmp2
-                elif left_num - temp_dic[gift_id] / 100 >= 0 and (gift_id != 4 and gift_id != 3):
+                elif left_num - temp_dic[gift_id] / 100 >= 0 and (gift_id != 4 and gift_id != 3 and gift_id != 9 and gift_id != 10):
                     tmp = (left_num) / (temp_dic[gift_id] / 100)
                     tmp1 = (temp_dic[gift_id] / 100) * int(tmp)
                     calculate = calculate + tmp1
