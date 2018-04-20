@@ -53,5 +53,7 @@
 
 感谢:https://github.com/czp3009/bilibili-api
 
+感谢:https://github.com/lzghzr/bilive_client
+
 
 本项目采用MIT开源协议
