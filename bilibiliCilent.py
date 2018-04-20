@@ -266,8 +266,6 @@ class bilibiliClient():
                 Rafflehandler().append2list_activity(text1,text2)
                 Statistics().append2pushed_activitylist()
             except:
-                with open("log.txt","a+")as f:
-                    f.write(str(dic)+"\n")
                 pass
             return
         if cmd == 'SYS_MSG':
