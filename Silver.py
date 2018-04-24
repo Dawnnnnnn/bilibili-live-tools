@@ -22,7 +22,7 @@ class Silver():
         temp = await response.json()
         # print (temp['code'])    #宝箱领完返回的code为-10017
         if temp['code'] == -10017:
-            Printer().printlist_append(['join_lottery', '', 'user', "# 今日宝箱领取完毕"])            
+            Printer().printlist_append(['join_lottery', '', 'user', "今日宝箱领取完毕"],True)
         else:
             time_start = temp['data']['time_start']
             return str(time_start)

@@ -1,4 +1,5 @@
 from bilibili import bilibili
+from printer import Printer
 import base64
 import requests
 
@@ -70,7 +71,7 @@ class login():
                     activity_name = (list((json_res['data']['eventList'][0]['lottery']['config']).keys()))[0]
                     bilibili().dic_bilibili['activity_name'] = activity_name
                 else:
-                    print("# 自动查询没有查询到新活动")
-                print("# 登录成功")
+                    Printer().printlist_append(['join_lottery', '', 'user', "自动查询没有查询到新活动"], True)
+                Printer().printlist_append(['join_lottery', '', 'user', "登录成功"], True)
             except:
-                print("# 登录失败,错误信息为:",response.json()['message'])
+                Printer().printlist_append(['join_lottery', '', 'user', "登录失败,错误信息为:",response.json()['message']], True)

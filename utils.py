@@ -1,8 +1,9 @@
 from bilibili import bilibili
 from printer import Printer
 import time
+import random
+import re
 import datetime
-import math
 
 
 def adjust_for_chinese(str):
@@ -39,10 +40,9 @@ async def fetch_medal(printer=True):
                                                  adjust_for_chinese('排名'), '勋章状态'))
     dic_worn = {'1': '正在佩戴', '0': '待机状态'}
     response = await bilibili().request_fetchmedal()
-    # print(response.json())
     json_response = await response.json()
     roomid = 0
-    today_feed =0
+    today_feed = 0
     day_limit = 0
     if json_response['code'] == 0:
         for i in json_response['data']['fansMedalList']:
@@ -59,7 +59,7 @@ async def fetch_medal(printer=True):
                                                            dic_worn[str(i['status'])]))
         if printer:
             Printer().printlist_append(['join_lottery', '', 'user', printlist], True)
-        return roomid,today_feed,day_limit
+        return roomid, today_feed, day_limit
 
 async def fetch_user_info():
     response = await bilibili().request_fetch_user_info()
@@ -119,20 +119,25 @@ async def fetch_bag_list(verbose=False, bagid=None,printer=True):
         gift_num = str((json_response['data']['list'][i]['gift_num'])).center(4)
         gift_name = json_response['data']['list'][i]['gift_name']
         expireat = (json_response['data']['list'][i]['expire_at'])
-        left_time = (expireat - int(CurrentTime()))
-        left_days = (expireat - int(CurrentTime())) / 86400
-        gift_list.append([gift_id, gift_num, bag_id])
+        if expireat != 0:
+            left_time = (expireat - int(CurrentTime()))
+            left_days = (expireat - int(CurrentTime())) / 86400
+            gift_list.append([gift_id, gift_num, bag_id, expireat])
+        else:
+            left_time = 999999999999999999
+            left_days = 999999999999999999
+            gift_list.append([gift_id, gift_num, bag_id, expireat])
         if bagid is not None:
             if bag_id == int(bagid):
                 return gift_id
         else:
             if verbose:
-                print("# 编号为" + str(bag_id) + '的'+ gift_name + 'X' + gift_num, '(在' + str(math.ceil(left_days)) + '天后过期)')
+                print("# 编号为" + str(bag_id) + '的'+ gift_name + 'X' + gift_num, '(在' + str((left_days)) + '天后过期)')
             elif printer == True:
-                print("# " + gift_name + 'X' + gift_num, '(在' + str(math.ceil(left_days)) + '天后过期)')
+                print("# " + gift_name + 'X' + gift_num, '(在' + str((left_days)) + '天后过期)')
 
         if 0 < int(left_time) < 43200:   # 剩余时间少于半天时自动送礼
-            temp.append([gift_id, gift_num, bag_id])
+            temp.append([gift_id, gift_num, bag_id, expireat])
     # print(temp)
     return temp,gift_list
     
@@ -228,3 +233,20 @@ async def check_room_true(roomid):
         return param1, param2, param3
     
 
+async def check_up_name(name):
+    roomid = 0
+    response = await bilibili().query_guard(name)
+    json_response = await response.json()
+    while json_response['code'] == -111:
+        temp = random.randint(0, len(name) - 1)
+        split_str = name[temp:min(temp + 2, len(name))]
+        response = await bilibili().query_guard(split_str)
+        json_response = await response.json
+    for i in range(0, len(json_response['result'])):
+        uname = json_response['result'][i]['uname']
+        temp = re.compile(r'<[^>]+>', re.S)
+        ser_name = temp.sub('', uname)
+        if ser_name == name:
+            roomid = json_response['result'][i]['roomid']
+            break
+    return roomid

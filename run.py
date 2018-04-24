@@ -41,15 +41,13 @@ loop.run_until_complete(asyncio.wait(tasks1))
 tasks = [
     utils.fetch_user_info(),
     utils.fetch_bag_list(),
-    utils.fetch_medal(),
     task.run(), 
     task1.run(),
     task2.run(),
+    biliconsole.Biliconsole().run(),
     task4.connect(),
     task3.query(),
-    printer.clean_printlist(),
-    rafflehandler.run(),
-    biliconsole.Biliconsole().run()
+    rafflehandler.run()
     
 ]
 

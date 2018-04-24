@@ -1,7 +1,6 @@
 import utils
 from statistics import Statistics
 from connect import connect
-from printer import Printer
 import threading
 import asyncio
 
@@ -96,9 +95,3 @@ class Biliconsole():
                 del self.list_console[:len_list_console]
                 self.lock.release()
                 await asyncio.sleep(0.3)
-        
-        
-        
-    
-    
-    

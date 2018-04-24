@@ -1,5 +1,6 @@
 import datetime
 from bilibili import bilibili
+from printer import Printer
 # 13:30  --->  13.5
 def decimal_time():
     now = datetime.datetime.now()
@@ -64,7 +65,7 @@ class Statistics:
                 try:
                     if json_response['code'] == 0:
                         data = json_response['data']
-                        print("# 房间{:^9}网页端活动抽奖结果: {}X{}".format(self.activity_roomid_list[0], data['gift_name'], data['gift_num']))
+                        Printer().printlist_append(['join_lottery', '', 'user', "房间{:^9}网页端活动抽奖结果: {}X{}".format(self.activity_roomid_list[0], data['gift_name'], data['gift_num'])], True)
                         self.add_to_result(data['gift_name'], int(data['gift_num']))
     
                         self.delete_0st_activitylist()
@@ -85,6 +86,7 @@ class Statistics:
             return
 
     async def clean_TV(self):
+        printlist = []
         # print(self.TV_raffleid_list)
         if self.TV_raffleid_list:
             for i in range(0, len(self.TV_roomid_list)):
@@ -99,9 +101,8 @@ class Statistics:
                     if json_response['data']['gift_id'] == '-1':
                         return
                     elif json_response['data']['gift_id'] != '-1':
-    
                         data = json_response['data']
-                        print("# 房间{:^9}小电视道具抽奖结果: {}X{}".format(self.TV_roomid_list[0], data['gift_name'], data['gift_num']))
+                        Printer().printlist_append(['join_lottery', '', 'user', "房间{:^9}小电视道具抽奖结果: {}X{}".format(self.TV_roomid_list[0], data['gift_name'], data['gift_num'])], True)
                         self.add_to_result(data['gift_name'], int(data['gift_num']))
     
                         self.delete_0st_TVlist()

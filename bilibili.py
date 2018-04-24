@@ -3,7 +3,6 @@ from imp import reload
 import configloader
 import os
 import hashlib
-import random
 import datetime
 import time
 import requests
@@ -19,11 +18,6 @@ reload(sys)
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
-
-
-
-
-
 
 
 class bilibili():
@@ -436,4 +430,8 @@ class bilibili():
     async def check_activity_exist(self):
         url = "https://api.live.bilibili.com/activity/v1/Common/roomInfo?roomid=128666&ruid=18174739"
         response = await self.bili_section_get(url)
+        return response
+    async def query_guard(self,name):
+        search_url = "https://search.bilibili.com/live?keyword=" + str(name) + "&page=1&search_type=live_user"
+        response = await self.bili_section_get(search_url)
         return response

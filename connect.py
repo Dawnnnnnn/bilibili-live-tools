@@ -16,7 +16,7 @@ class connect():
         
     async def connect(self):
         while True:
-            print('# 正在启动弹幕姬')
+            Printer().printlist_append(['join_lottery', '', 'user', "正在启动弹幕姬"], True)
             time_start = int(utils.CurrentTime())
             self.danmuji = bilibiliClient()
             task_main = asyncio.ensure_future(self.danmuji.connectServer())
@@ -47,8 +47,3 @@ class connect():
         bilibili().dic_bilibili['roomid'] = roomid
         print('已经切换roomid')
         self.tag_reconnect = False
-        
-        
-        
-        
-            
