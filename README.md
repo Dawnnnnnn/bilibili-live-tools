@@ -7,6 +7,7 @@
 
 //时隔多日打算学一下图形化，说不定会以这个项目作为样本(flag)
 
+同级项目开坑: https://github.com/Dawnnnnnn/bilibili-tools
 
 开放识别登录验证码接口:
 
