@@ -12,6 +12,9 @@ from statistics import Statistics
 from bilibili import bilibili
 import threading
 import biliconsole
+import io , sys
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 
 
 loop = asyncio.get_event_loop()
