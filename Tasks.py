@@ -116,10 +116,11 @@ class Tasks():
 
     async def sliver2coin(self):
         if self.dic_user['coin']['on/off'] == '1':
-            response = await bilibili().silver2coin_web()
             response1 = await bilibili().silver2coin_app()
-            json_response = await response.json()
+            response = await bilibili().silver2coin_web()
             json_response1 = await response1.json()
+            json_response = await response.json()
+
             Printer().printlist_append(['join_lottery', '', 'user',"", json_response['msg']])
             Printer().printlist_append(['join_lottery', '', 'user', "", json_response1['msg']])
 
