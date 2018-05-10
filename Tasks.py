@@ -19,7 +19,7 @@ class Tasks():
         response = await bilibili().get_dailybag()
         json_response = await response.json()
         for i in range(0,len(json_response['data']['bag_list'])):
-            Printer().printlist_append(['join_lottery', '', 'user', "# 获得-" + json_response['data']['bag_list'][i]['bag_name'] + "-成功"],True)
+            Printer().printlist_append(['join_lottery', '', 'user', "获得-" + json_response['data']['bag_list'][i]['bag_name'] + "-成功"],True)
 
 
     def CurrentTime(self):
@@ -69,7 +69,7 @@ class Tasks():
                 roomID = self.dic_user['gift']['send_to_room']
                 await utils.send_gift_web(roomID,giftID,giftNum,bagID)
             if not argvs:
-                Printer().printlist_append(['join_lottery', '', 'user', "# 没有将要过期的礼物~"])
+                Printer().printlist_append(['join_lottery', '', 'user', "没有将要过期的礼物~"])
 
     async def auto_send_gift(self):
         if self.dic_user['auto-gift']['on/off'] == "1":
@@ -104,7 +104,7 @@ class Tasks():
                         calculate = calculate + tmp1
                         await utils.send_gift_web(roomid, gift_id, tmp, bag_id)
                         left_num = left_num - tmp1
-            Printer().printlist_append(['join_lottery', '', 'user', "# 自动送礼共送出亲密度为%s的礼物" % int(calculate)])
+            Printer().printlist_append(['join_lottery', '', 'user', "自动送礼共送出亲密度为%s的礼物" % int(calculate)])
             
     async def doublegain_coin2silver(self):
         if self.dic_user['doublegain_coin2silver']['on/off'] == "1":
@@ -120,18 +120,18 @@ class Tasks():
             response1 = await bilibili().silver2coin_app()
             json_response = await response.json()
             json_response1 = await response1.json()
-            Printer().printlist_append(['join_lottery', '', 'user',"# ", json_response['msg']])
-            Printer().printlist_append(['join_lottery', '', 'user', "# ", json_response1['msg']])
+            Printer().printlist_append(['join_lottery', '', 'user',"", json_response['msg']])
+            Printer().printlist_append(['join_lottery', '', 'user', "", json_response1['msg']])
 
     async def run(self):
         while 1:
             Printer().printlist_append(['join_lottery', '', 'user', "执行每日任务"], True)
+            await self.link_sign()
             await self.sliver2coin()
             await self.doublegain_coin2silver()
             await self.DoSign()
             await self.Daily_bag()
             await self.Daily_Task()
-            await self.link_sign()
             await self.send_gift()
             await self.auto_send_gift()
             await asyncio.sleep(21600)

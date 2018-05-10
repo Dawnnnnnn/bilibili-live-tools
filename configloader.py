@@ -19,9 +19,8 @@ def load_bilibili(file):
     cf_bilibili.read_file(codecs.open(file, "r", "utf8"))
     dic_bilibili = cf_bilibili._sections
     dic_nomalised_bilibili = dic_bilibili['normal'].copy()
+    dic_nomalised_bilibili['saved-session'] = dic_bilibili['saved-session'].copy()
     dic_nomalised_bilibili['account'] = dic_bilibili['account'].copy()
-    # activity_name = bilibili().check_activity_exist()
-    # cf_bilibili.set('normal','activity_name', activity_name)
     if dic_nomalised_bilibili['account']['username']:
         pass
     else:
@@ -53,7 +52,7 @@ def load_color(file):
                 i[j] = hex_to_rgb_percent(i[j])
             else:
                 i[j] = rgb_to_percent(i[j])
-                    
+
     return dic_color
 
 
@@ -62,18 +61,30 @@ def load_user(file):
     cf_user.read_file(codecs.open(file, "r", "utf8"))
     dic_user = cf_user._sections
     dictionary ={
-            'True':True, 
+            'True':True,
             'False': False,
             'user': 0,
             'debug': 1
         }
-            
+
     for i in dic_user['print_control'].keys():
         dic_user['print_control'][i] = dictionary[dic_user['print_control'][i]]
-            
+
     return dic_user
-            
-       
-        
+
+
+
+def write2bilibili(dic):
+    # print(dic)
+    cf_bilibili = configparser.ConfigParser(interpolation=None)
+    cf_bilibili.optionxform = str
+
+    cf_bilibili.read_file(codecs.open("conf/bilibili.conf", "r", "utf8"))
+
+    for i in dic.keys():
+        # print('%r'%(dic[i]))
+        cf_bilibili.set('saved-session', i, dic[i])
+
+    cf_bilibili.write(codecs.open("conf/bilibili.conf", "w+", "utf8"))
 
 

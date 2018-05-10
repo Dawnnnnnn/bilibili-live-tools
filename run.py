@@ -12,9 +12,6 @@ from statistics import Statistics
 from bilibili import bilibili
 import threading
 import biliconsole
-import io , sys
-sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
-sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 
 
 loop = asyncio.get_event_loop()
@@ -31,33 +28,27 @@ task2 = Tasks()
 task3 = LotteryResult()
 task4 = connect()
 
-
 console_thread = threading.Thread(target=biliconsole.controler)
 
 console_thread.start()
 
 tasks1 = [
-    login().login()
+    login().login_new()
 ]
 loop.run_until_complete(asyncio.wait(tasks1))
 
 tasks = [
-    utils.fetch_user_info(),
-    utils.fetch_bag_list(),
-    task.run(), 
+    task.run(),
     task1.run(),
     task2.run(),
     biliconsole.Biliconsole().run(),
     task4.connect(),
     task3.query(),
     rafflehandler.run()
-    
+
 ]
 
 loop.run_until_complete(asyncio.wait(tasks))
 console_thread.join()
 
 loop.close()
-    
-
-

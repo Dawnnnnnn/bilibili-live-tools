@@ -34,9 +34,9 @@ class Rafflehandler:
             del self.list_activity[:len_list_activity]
             del self.list_TV[:len_list_TV]
             if len_list_activity == 0 and len_list_TV == 0:
-                await asyncio.sleep(5)
+                await asyncio.sleep(1.5)
             else:
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
 
     def append2list_TV(self, real_roomid):
         self.list_TV.append(real_roomid)

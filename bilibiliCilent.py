@@ -102,7 +102,7 @@ async def handle_1_room_activity(text1, text2):
             tasklist.append(task)
         if tasklist:
             await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
-                                                          
+
 
 
 class bilibiliClient():
@@ -123,7 +123,7 @@ class bilibiliClient():
     def close_connection(self):
         self._writer.close()
         self._connected = False
-        
+
 
     async def connectServer(self):
         try:
@@ -194,7 +194,7 @@ class bilibiliClient():
                 self._writer.close()
                 self.connected = False
                 return None
-                
+
             if not tmp:
                 print("主动关闭或者远端主动发来FIN")
                 self._writer.close()
@@ -203,15 +203,15 @@ class bilibiliClient():
             else:
                 bytes_data = bytes_data + tmp
                 len_remain = len_remain - len(tmp)
-                
+
         return bytes_data
-        
+
     async def ReceiveMessageLoop(self):
         while self.connected == True:
             tmp = await self.ReadSocketData(16)
             if tmp is None:
                 break
-            
+
             expr, = struct.unpack('!I', tmp[:4])
 
             num, = struct.unpack('!I', tmp[8:12])
@@ -242,10 +242,7 @@ class bilibiliClient():
                         pass
                     else:
                         continue
-                        
-    
 
-   
     async def parseDanMu(self, messages):
         try:
             dic = json.loads(messages)

@@ -1,6 +1,7 @@
 from bilibili import bilibili
 from printer import Printer
 import base64
+import configloader
 import requests
 
 class login():
@@ -41,7 +42,7 @@ class login():
         response = s.post(url, data=payload, headers=headers)
         return response
 
-    async def login(self):
+    def login(self):
         username = str(bilibili().dic_bilibili['account']['username'])
         password = str(bilibili().dic_bilibili['account']['password'])
         if username != "":
@@ -65,13 +66,29 @@ class login():
                 bilibili().dic_bilibili['uid'] = cookie[1]['value']
                 bilibili().dic_bilibili['pcheaders']['cookie'] = cookie_format
                 bilibili().dic_bilibili['appheaders']['cookie'] = cookie_format
-                response = await bilibili().check_activity_exist()
-                json_res = await response.json()
-                if json_res['code'] == 0:
-                    activity_name = (list((json_res['data']['eventList'][0]['lottery']['config']).keys()))[0]
-                    bilibili().dic_bilibili['activity_name'] = activity_name
-                else:
-                    Printer().printlist_append(['join_lottery', '', 'user', "自动查询没有查询到新活动"], True)
+                dic_saved_session = {
+                    'csrf': cookie[0]['value'],
+                    'access_key': access_key,
+                    'cookie': cookie_format,
+                    'uid': cookie[1]['value']
+                }
+                configloader.write2bilibili(dic_saved_session)
                 Printer().printlist_append(['join_lottery', '', 'user', "登录成功"], True)
             except:
                 Printer().printlist_append(['join_lottery', '', 'user', "登录失败,错误信息为:",response.json()['message']], True)
+
+    async def login_new(self):
+        response = await bilibili().check_activity_exist()
+        json_res = await response.json()
+        if json_res['code'] == 0:
+            activity_name = (list((json_res['data']['eventList'][0]['lottery']['config']).keys()))[0]
+            bilibili().dic_bilibili['activity_name'] = activity_name
+        else:
+            Printer().printlist_append(['join_lottery', '', 'user', "自动查询没有查询到新活动"], True)
+        if bilibili().dic_bilibili['saved-session']['cookie']:
+            Printer().printlist_append(['join_lottery', '', 'user', "复用cookie"], True)
+            bilibili().load_session(bilibili().dic_bilibili['saved-session'])
+        else:
+            return self.login()
+
+

@@ -215,9 +215,9 @@ async def send_gift_web(roomid, giftid, giftnum, bagid):
     json_response1 = await response1.json()
     if json_response1['code'] == 0:
         # print(json_response1['data'])
-        print("# 送出礼物:", json_response1['data']['gift_name'] + "X" + str(json_response1['data']['gift_num']))
+        print("送出礼物:", json_response1['data']['gift_name'] + "X" + str(json_response1['data']['gift_num']))
     else:
-        print("# 错误", json_response1['msg'])
+        print("错误", json_response1['msg'])
 
 
 async def check_room_true(roomid):
@@ -243,10 +243,10 @@ async def check_up_name(name):
         response = await bilibili().query_guard(split_str)
         json_response = await response.json
     for i in range(0, len(json_response['result'])):
-        uname = json_response['result'][i]['uname']
+        uname = str(json_response['result'][i]['uname'])
         temp = re.compile(r'<[^>]+>', re.S)
         ser_name = temp.sub('', uname)
-        if ser_name == name:
+        if str(ser_name) == str(name):
             roomid = json_response['result'][i]['roomid']
-            break
+            return roomid
     return roomid

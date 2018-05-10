@@ -38,8 +38,17 @@ class bilibili():
             self.bili_session = aiohttp.ClientSession()
             # print(0)
         return self.bili_session
-        
-        
+
+    @staticmethod
+    def load_session(dic):
+        inst = bilibili.instance
+        for i in dic.keys():
+            inst.dic_bilibili[i] = dic[i]
+            if i == 'cookie':
+                inst.dic_bilibili['pcheaders']['cookie'] = dic[i]
+                inst.dic_bilibili['appheaders']['cookie'] = dic[i]
+
+
     def calc_sign(self, str):
         str = str + self.dic_bilibili['app_secret']
         hash = hashlib.md5()
@@ -431,7 +440,10 @@ class bilibili():
         url = "https://api.live.bilibili.com/activity/v1/Common/roomInfo?roomid=128666&ruid=18174739"
         response = await self.bili_section_get(url)
         return response
-    async def query_guard(self,name):
-        search_url = "https://search.bilibili.com/live?keyword=" + str(name) + "&page=1&search_type=live_user"
+
+    async def query_guard(self, name):
+        search_url = "https://search.bilibili.com/api/search?search_type=live_user&keyword=" + str(name) + "&page=1"
         response = await self.bili_section_get(search_url)
         return response
+
+

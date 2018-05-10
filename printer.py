@@ -138,5 +138,3 @@ class Printer():
         list_msg.append(':' + info[1])
         list_color.append([])
         return list_msg, list_color
-
-

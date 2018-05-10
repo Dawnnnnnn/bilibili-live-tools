@@ -31,8 +31,8 @@ class OnlineHeart():
             json_response = await response.json()
             if json_response['code'] == 0:
                 temp = json_response['data']['title']
-                for i in black_list:
-                    if i in temp:
+                for k in black_list:
+                    if k in temp:
                         print("检测到疑似钓鱼类测试抽奖，默认不参与，请自行判断抽奖可参与性")
                 else:
                     check = len(json_response['data']['typeB'])
@@ -57,7 +57,7 @@ class OnlineHeart():
             json_response = await response.json()
             if json_response['code'] == 3:
                 Printer().printlist_append(['join_lottery', '', 'user', "cookie过期,将重新登录"], True)
-                await login().login()
+                login().login()
             await self.apppost_heartbeat()
             await self.heart_gift()           
             await self.draw_lottery()
