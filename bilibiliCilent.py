@@ -11,15 +11,14 @@ import re
 import requests
 import sys
 
-async def handle_1_TV_raffle(num, real_roomid, raffleid):
-    #print('参与')
+async def handle_1_TV_raffle(type,num, real_roomid, raffleid):
+
     await asyncio.sleep(random.uniform(0.5, min(10, num * 1)))
-    response2 = await bilibili().get_gift_of_TV(real_roomid, raffleid)
+    response2 = await bilibili().get_gift_of_TV(type,real_roomid, raffleid)
     Printer().printlist_append(['join_lottery', '小电视', 'user', "参与了房间{:^9}的小电视抽奖".format(real_roomid)], True)
     json_response2 = await response2.json()
     Printer().printlist_append(
         ['join_lottery', '小电视', 'user', "小电视道具抽奖状态: ", json_response2['msg']],True)
-    # -400不存在
     if json_response2['code'] == 0:
         Statistics().append_to_TVlist(raffleid, real_roomid)
     else:
@@ -55,23 +54,21 @@ async def handle_1_room_TV(real_roomid):
     if True in result:
         Printer().printlist_append(['join_lottery', '钓鱼提醒', 'user', "WARNING:检测到房间{:^9}的钓鱼操作".format(real_roomid)], True)
     else:
-        # print(True)
         await bilibili().post_watching_history(real_roomid)
         response = await bilibili().get_giftlist_of_TV(real_roomid)
         json_response = await response.json()
-        checklen = json_response['data']['unjoin']
+        checklen = json_response['data']['list']
         num = len(checklen)
         list_available_raffleid = []
         for j in range(0, num):
-            # await asyncio.sleep(random.uniform(0.5, 1))
-            resttime = json_response['data']['unjoin'][j]['dtime']
-            raffleid = json_response['data']['unjoin'][j]['id']
+            raffleid = json_response['data']['list'][j]['raffleId']
+            type = json_response['data']['list'][j]['type']
             if Statistics().check_TVlist(raffleid):
-                list_available_raffleid.append(raffleid)
+                list_available_raffleid.append([type,raffleid])
         tasklist = []
         num_available = len(list_available_raffleid)
-        for raffleid in list_available_raffleid:
-            task = asyncio.ensure_future(handle_1_TV_raffle(num_available, real_roomid, raffleid))
+        for k in list_available_raffleid:
+            task = asyncio.ensure_future(handle_1_TV_raffle(k[0],num_available, real_roomid, k[1]))
             tasklist.append(task)
         if tasklist:
             await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
@@ -91,7 +88,6 @@ async def handle_1_room_activity(text1, text2):
         list_available_raffleid = []
         for j in range(0, num):
             # await asyncio.sleep(random.uniform(0.5, 1))
-            resttime = checklen[j]['time']
             raffleid = checklen[j]['raffleId']
             if Statistics().check_activitylist(raffleid):
                 list_available_raffleid.append(raffleid)      

@@ -239,16 +239,16 @@ class bilibili():
         response1 = await self.bili_section_get(true_url, params=params, headers=headers)
         return response1
 
-    async def get_gift_of_TV(self, real_roomid, raffleid):
-        temp_params = 'access_key=' + self.dic_bilibili['access_key'] + '&actionKey=' + self.dic_bilibili[
-            'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
-                          'build'] + '&device=' + self.dic_bilibili['device'] + '&id=' + str(
-            raffleid) + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&platform=' + self.dic_bilibili[
-                          'platform'] + '&roomid=' + str(
-            real_roomid) + '&ts=' + CurrentTime()
-        sign = self.calc_sign(temp_params)
-        true_url = 'https://api.live.bilibili.com/AppSmallTV/join?' + temp_params + '&sign=' + sign
-        response2 = await self.bili_section_get(true_url, headers=self.dic_bilibili['appheaders'])
+    async def get_gift_of_TV(self,type,real_roomid, raffleid):
+        url = "https://api.live.bilibili.com/gift/v3/smalltv/join"
+        data = {
+            "roomid": real_roomid,
+            "raffleId": raffleid,
+            "type": type,
+            "csrf_token":  self.dic_bilibili['csrf'],
+            "visit_id": "8u0aig7b8100"
+        }
+        response2 = await self.bili_section_post(url,data=data,headers=self.dic_bilibili['pcheaders'])
         return response2
 
     async def get_gift_of_captain(self, roomid, id):
@@ -270,18 +270,11 @@ class bilibili():
         return response
 
     async def get_giftlist_of_TV(self, real_roomid):
-        temp_params = 'access_key=' + self.dic_bilibili['access_key'] + '&actionKey=' + self.dic_bilibili[
-            'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
-                          'build'] + '&device=' + self.dic_bilibili['device'] + \
-                      '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&platform=' + self.dic_bilibili[
-                          'platform'] + '&roomid=' + str(
-            real_roomid) + '&ts=' + CurrentTime()
-        sign = self.calc_sign(temp_params)
-        check_url = 'https://api.live.bilibili.com/AppSmallTV/index?' + temp_params + '&sign=' + sign
+        url = "https://api.live.bilibili.com/gift/v3/smalltv/check?roomid="+str(real_roomid)
         headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
         }
-        response = await self.bili_section_get(check_url, headers=headers)
+        response = await self.bili_section_get(url, headers=headers)
         return response
 
     async def get_giftlist_of_captain(self, roomid):
@@ -324,8 +317,7 @@ class bilibili():
         return response
 
     async def get_TV_result(self, TV_roomid, TV_raffleid):
-        url = "https://api.live.bilibili.com/gift/v2/smalltv/notice?roomid=" + str(TV_roomid) + "&raffleId=" + str(
-            TV_raffleid)
+        url = "https://api.live.bilibili.com/gift/v3/smalltv/notice?raffleId="+str(TV_raffleid)
         headers = {
             'Accept': 'application/json, text/plain, */*',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
