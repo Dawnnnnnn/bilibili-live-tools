@@ -16,7 +16,7 @@ class Auto_Run():
 
         try:
             while 1:
-                time.sleep(sleep_time * 6)
+                time.sleep(sleep_time * 20)
                 self.poll = self.p.poll()
                 if self.p.poll() is None:
                     print("restarting......")

@@ -26,7 +26,7 @@ class OnlineHeart():
     # 因为休眠时间差不多,所以放到这里,此为实验性功能
     async def draw_lottery(self):
         black_list = ["测试","test"]
-        for i in range(72,90):
+        for i in range(74,90):
             response = await bilibili().get_lotterylist(i)
             json_response = await response.json()
             if json_response['code'] == 0:

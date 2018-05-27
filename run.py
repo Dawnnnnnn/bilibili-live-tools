@@ -6,7 +6,6 @@ from connect import connect
 from rafflehandler import Rafflehandler
 import asyncio
 from login import login
-import utils
 from printer import Printer
 from statistics import Statistics
 from bilibili import bilibili
@@ -42,7 +41,7 @@ tasks = [
     task1.run(),
     task2.run(),
     biliconsole.Biliconsole().run(),
-    task4.connect(),
+    task4.create(),
     task3.query(),
     rafflehandler.run()
 

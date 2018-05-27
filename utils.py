@@ -1,5 +1,6 @@
 from bilibili import bilibili
 from printer import Printer
+from connect import connect
 import time
 import random
 import re
@@ -250,3 +251,6 @@ async def check_up_name(name):
             roomid = json_response['result'][i]['roomid']
             return roomid
     return roomid
+
+async def reconnect():
+    await connect().recreate()

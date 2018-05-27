@@ -8,7 +8,6 @@ import random
 import struct
 import json
 import re
-import requests
 import sys
 
 async def handle_1_TV_raffle(type,num, real_roomid, raffleid):
@@ -103,7 +102,7 @@ async def handle_1_room_activity(text1, text2):
 
 class bilibiliClient():
 
-    def __init__(self):
+    def __init__(self,roomid):
         self.bilibili = bilibili()
         self._reader = None
         self._writer = None
@@ -116,6 +115,8 @@ class bilibiliClient():
             'rep': 'int',
             'url': 'str'
         }
+        self._roomId = roomid
+
     def close_connection(self):
         self._writer.close()
         self._connected = False
@@ -129,7 +130,7 @@ class bilibiliClient():
             return
         self._reader = reader
         self._writer = writer
-        if (await self.SendJoinChannel(self.bilibili.dic_bilibili['roomid']) == True):
+        if (await self.SendJoinChannel(self._roomId) == True):
             self.connected = True
             Printer().printlist_append(['join_lottery', '', 'user', '连接弹幕服务器成功'], True)
             await self.ReceiveMessageLoop()
@@ -138,7 +139,7 @@ class bilibiliClient():
         while self.connected == False:
             await asyncio.sleep(0.5)
 
-        Printer().printlist_append(['join_lottery', '', 'user', '弹幕模块开始心跳（由于弹幕心跳间隔为30s，所以后续正常心跳不再提示）'], True)
+        Printer().printlist_append(['join_lottery', '', 'user', '弹幕模块开始心跳'], True)
 
         while self.connected == True:
             await self.SendSocketData(0, 16, self.bilibili.dic_bilibili['_protocolversion'], 2, 1, "")
@@ -183,6 +184,9 @@ class bilibiliClient():
                 print('RESET，网络不稳定或者远端不正常断开')
                 self._writer.close()
                 self.connected = False
+                return None
+            except asyncio.CancelledError:
+
                 return None
             except :
                 print(sys.exc_info()[0], sys.exc_info()[1])
@@ -242,9 +246,14 @@ class bilibiliClient():
     async def parseDanMu(self, messages):
         try:
             dic = json.loads(messages)
+
         except:
             return
         cmd = dic['cmd']
+
+        if cmd == 'PREPARING':
+            Printer().printlist_append(['join_lottery', '', 'user', "房间{0}下播！将切换监听房间".format(self._roomId)], True)
+            await utils.reconnect()
 
         if cmd == 'DANMU_MSG':
             # print(dic)
@@ -275,6 +284,7 @@ class bilibiliClient():
         if cmd == 'GUARD_MSG':
             print(dic)
             try:
+                await asyncio.sleep(10)
                 a = re.compile(r"(?<=在主播 )\S+(?= 的直播间开通了总督)")
                 res = a.findall(str(dic))
                 name = res[0]
