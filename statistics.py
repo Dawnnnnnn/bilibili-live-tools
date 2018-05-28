@@ -1,6 +1,8 @@
 import datetime
 from bilibili import bilibili
 from printer import Printer
+
+
 # 13:30  --->  13.5
 def decimal_time():
     now = datetime.datetime.now()
@@ -18,9 +20,12 @@ class Statistics:
             # cls.instance.activity_time_list = []
             cls.instance.TV_raffleid_list = []
             cls.instance.TV_roomid_list = []
+
             # cls.instance.TV_time_list = []
+
             cls.instance.pushed_event = []
             cls.instance.pushed_TV = []
+
             cls.instance.joined_event = []
             cls.instance.joined_TV = []
             cls.instance.result = {}
@@ -59,15 +64,19 @@ class Statistics:
         # print(self.activity_raffleid_list)
         if self.activity_raffleid_list:
             for i in range(0, len(self.activity_roomid_list)):
-                response = await bilibili().get_activity_result(self.activity_roomid_list[0], self.activity_raffleid_list[0])
+                response = await bilibili().get_activity_result(self.activity_roomid_list[0],
+                                                                self.activity_raffleid_list[0])
                 json_response = await response.json()
                 # print(json_response)
                 try:
                     if json_response['code'] == 0:
                         data = json_response['data']
-                        Printer().printlist_append(['join_lottery', '', 'user', "房间{:^9}网页端活动抽奖结果: {}X{}".format(self.activity_roomid_list[0], data['gift_name'], data['gift_num'])], True)
+                        Printer().printlist_append(['join_lottery', '', 'user',
+                                                    "房间{:^9}网页端活动抽奖结果: {}X{}".format(self.activity_roomid_list[0],
+                                                                                     data['gift_name'],
+                                                                                     data['gift_num'])], True)
                         self.add_to_result(data['gift_name'], int(data['gift_num']))
-    
+
                         self.delete_0st_activitylist()
                     # {'code': -400, 'msg': '尚未开奖，请耐心等待！', 'message': '尚未开奖，请耐心等待！', 'data': []}
                     elif json_response['code'] == -400:
@@ -75,11 +84,11 @@ class Statistics:
                         # sleepseconds = self.activity_time_list[0] - int(CurrentTime())
                         # return sleepsecondsq
                         return
-    
+
                     else:
                         print('未知情况')
                         print(json_response)
-                except :
+                except:
                     print(json_response)
 
         else:
@@ -102,11 +111,14 @@ class Statistics:
                         return
                     elif json_response['data']['gift_id'] != '-1':
                         data = json_response['data']
-                        Printer().printlist_append(['join_lottery', '', 'user', "房间{:^9}小电视道具抽奖结果: {}X{}".format(self.TV_roomid_list[0], data['gift_name'], data['gift_num'])], True)
+                        Printer().printlist_append(['join_lottery', '', 'user',
+                                                    "房间{:^9}广播道具抽奖结果: {}X{}".format(self.TV_roomid_list[0],
+                                                                                     data['gift_name'],
+                                                                                     data['gift_num'])], True)
                         self.add_to_result(data['gift_name'], int(data['gift_num']))
-    
+
                         self.delete_0st_TVlist()
-                except :
+                except:
                     print(json_response)
             # else:
             # print(int(CurrentTime()))
@@ -134,12 +146,15 @@ class Statistics:
         # self.TV_time_list.append(int(CurrentTime()))
         self.joined_TV.append(decimal_time())
         # print("tv加入成功", self.joined_TV)
-        
+
     def append2pushed_activitylist(self):
         self.pushed_event.append(decimal_time())
-        
+
     def append2pushed_TVlist(self):
         self.pushed_TV.append(decimal_time())
+
+
+
 
     def check_TVlist(self, raffleid):
         if raffleid not in self.TV_raffleid_list:
@@ -150,3 +165,4 @@ class Statistics:
         if raffleid not in self.activity_raffleid_list:
             return True
         return False
+

@@ -8,6 +8,7 @@ import time
 import os
 import codecs
 
+
 # "#969696"
 def hex_to_rgb_percent(hex_str):
     color = webcolors.hex_to_rgb_percent(hex_str)

@@ -12,7 +12,6 @@ from bilibili import bilibili
 import threading
 import biliconsole
 
-
 loop = asyncio.get_event_loop()
 loop1 = asyncio.get_event_loop()
 printer = Printer()

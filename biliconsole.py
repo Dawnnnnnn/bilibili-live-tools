@@ -4,6 +4,7 @@ from connect import connect
 import threading
 import asyncio
 
+
 def guide_of_console():
     print('___________________________')
     print('| 欢迎使用本控制台           |')
@@ -13,45 +14,39 @@ def guide_of_console():
     print('|4 查看持有勋章状态          |')
     print('|5 获取直播个人的基本信息     |')
     print('|6 检查今日任务的完成情况     |')
-    print('|7 改变当前弹幕监听房间       |')
     print('￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣')
 
-def preprocess_change_danmuji_roomid():
-    roomid = input('请输入roomid:')
-    connect().reconnect(roomid)
 
 
-options ={
+
+
+options = {
     '1': Statistics().getlist,
     '2': Statistics().getresult,
-    '3': utils.fetch_bag_list,#async
-    '4': utils.fetch_medal,#async
-    '5': utils.fetch_user_info,#async
-    '6': utils.check_taskinfo,#async
-    '7': preprocess_change_danmuji_roomid,
+    '3': utils.fetch_bag_list,  # async
+    '4': utils.fetch_medal,  # async
+    '5': utils.fetch_user_info,  # async
+    '6': utils.check_taskinfo,  # async
     'help': guide_of_console
 }
 
+
 def return_error():
     print('命令无法识别，请重新输入')
+
 
 def controler():
     while True:
         x = input('')
         # input and async
-        if x == ['7']:
-            # func = options.get(x, return_error)
-            args, func = options.get(x, return_error)()
-            #print(args)
-            #Biliconsole().append2list_console(answer)
-        # async
-        elif x in ['3', '4', '5', '6']:
+        if x in ['3', '4', '5', '6']:
             answer = options.get(x, return_error)
             Biliconsole().append2list_console(answer)
         # normal
         else:
             options.get(x, return_error)()
-        
+
+
 class Biliconsole():
     instance = None
 
@@ -61,12 +56,12 @@ class Biliconsole():
             cls.instance.list_console = []
             cls.lock = threading.Lock()
         return cls.instance
-        
+
     def append2list_console(self, request):
         self.lock.acquire()
         self.list_console.append(request)
         self.lock.release()
-        
+
     async def run(self):
         while True:
             len_list_console = len(self.list_console)
@@ -81,13 +76,13 @@ class Biliconsole():
                 else:
                     task = asyncio.ensure_future(i())
                 tasklist.append(task)
-            if tasklist:  
+            if tasklist:
                 await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
-                #print('本批次结束')
+                # print('本批次结束')
             else:
-                #print('本批次轮空')
+                # print('本批次轮空')
                 pass
-                
+
             if len_list_console == 0:
                 await asyncio.sleep(1)
             else:

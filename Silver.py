@@ -22,7 +22,7 @@ class Silver():
         temp = await response.json()
         # print (temp['code'])    #宝箱领完返回的code为-10017
         if temp['code'] == -10017:
-            Printer().printlist_append(['join_lottery', '', 'user', "今日宝箱领取完毕"],True)
+            Printer().printlist_append(['join_lottery', '', 'user', "今日宝箱领取完毕"], True)
         else:
             time_start = temp['data']['time_start']
             return str(time_start)
@@ -43,7 +43,7 @@ class Silver():
             timeend = await self.time_end()
             timestart = await self.time_start()
             response = await bilibili().get_silver(timestart, timeend)
-            #print(response.json())
+            # print(response.json())
             json_response = await response.json()
             return json_response['code']
         except:
@@ -59,5 +59,5 @@ class Silver():
                 Printer().printlist_append(['join_lottery', '', 'user', "# 打开了宝箱"])
                 await self.GetAward()
             else:
-                Printer().printlist_append(['join_lottery', '', 'user',"# 继续等待宝箱冷却..."])
+                Printer().printlist_append(['join_lottery', '', 'user', "# 继续等待宝箱冷却..."])
                 await asyncio.sleep(181)

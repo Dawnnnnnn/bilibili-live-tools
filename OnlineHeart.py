@@ -5,6 +5,7 @@ import datetime
 import asyncio
 from printer import Printer
 
+
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
@@ -22,11 +23,10 @@ class OnlineHeart():
     async def heart_gift(self):
         await bilibili().heart_gift()
 
-
     # 因为休眠时间差不多,所以放到这里,此为实验性功能
     async def draw_lottery(self):
-        black_list = ["测试","test"]
-        for i in range(74,90):
+        black_list = ["测试", "test"]
+        for i in range(74, 90):
             response = await bilibili().get_lotterylist(i)
             json_response = await response.json()
             if json_response['code'] == 0:
@@ -44,7 +44,7 @@ class OnlineHeart():
                             response1 = await bilibili().get_gift_of_lottery(i, g)
                             json_response1 = await response1.json()
                             print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-                            print("参与实物抽奖回显：",json_response1)
+                            print("参与实物抽奖回显：", json_response1)
                         else:
                             pass
             else:
@@ -59,6 +59,6 @@ class OnlineHeart():
                 Printer().printlist_append(['join_lottery', '', 'user', "cookie过期,将重新登录"], True)
                 login().login()
             await self.apppost_heartbeat()
-            await self.heart_gift()           
+            await self.heart_gift()
             await self.draw_lottery()
             await asyncio.sleep(300)

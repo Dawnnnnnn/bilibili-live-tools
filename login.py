@@ -4,6 +4,7 @@ import base64
 import configloader
 import requests
 
+
 class login():
 
     def normal_login(self, username, password):
@@ -31,8 +32,10 @@ class login():
         captcha = bilibili().cnn_captcha(tmp1)
         temp_params = 'actionKey=' + bilibili().dic_bilibili[
             'actionKey'] + '&appkey=' + bilibili().dic_bilibili['appkey'] + '&build=' + bilibili().dic_bilibili[
-                          'build'] + '&captcha=' + captcha + '&device=' + bilibili().dic_bilibili['device'] + '&mobi_app=' + \
-                      bilibili().dic_bilibili['mobi_app'] + '&password=' + password + '&platform=' + bilibili().dic_bilibili[
+                          'build'] + '&captcha=' + captcha + '&device=' + bilibili().dic_bilibili[
+                          'device'] + '&mobi_app=' + \
+                      bilibili().dic_bilibili['mobi_app'] + '&password=' + password + '&platform=' + \
+                      bilibili().dic_bilibili[
                           'platform'] + '&username=' + username
         sign = bilibili().calc_sign(temp_params)
         payload = temp_params + '&sign=' + sign
@@ -75,7 +78,8 @@ class login():
                 configloader.write2bilibili(dic_saved_session)
                 Printer().printlist_append(['join_lottery', '', 'user', "登录成功"], True)
             except:
-                Printer().printlist_append(['join_lottery', '', 'user', "登录失败,错误信息为:",response.json()['message']], True)
+                Printer().printlist_append(['join_lottery', '', 'user', "登录失败,错误信息为:", response.json()['message']],
+                                           True)
 
     async def login_new(self):
         response = await bilibili().check_activity_exist()
@@ -90,5 +94,3 @@ class login():
             bilibili().load_session(bilibili().dic_bilibili['saved-session'])
         else:
             return self.login()
-
-

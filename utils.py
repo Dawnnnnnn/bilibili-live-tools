@@ -22,23 +22,28 @@ def adjust_for_chinese(str):
     md = '{:^10}'.format(str[0])
     return md.translate(full)
 
+
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
 
+
 def seconds_until_tomorrow():
-     today = datetime.date.today()
-     tomorrow = today + datetime.timedelta(days=1)
-     tomorrow_start_time = int(time.mktime(time.strptime(str(tomorrow), '%Y-%m-%d')))
-     current_time = int(time.mktime(datetime.datetime.now().timetuple()))
-     return tomorrow_start_time - current_time
+    today = datetime.date.today()
+    tomorrow = today + datetime.timedelta(days=1)
+    tomorrow_start_time = int(time.mktime(time.strptime(str(tomorrow), '%Y-%m-%d')))
+    current_time = int(time.mktime(datetime.datetime.now().timetuple()))
+    return tomorrow_start_time - current_time
+
 
 async def fetch_medal(printer=True):
     printlist = []
     if printer == True:
         printlist.append('查询勋章信息')
-        printlist.append('{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度', '今日的亲密度',
-                                                 adjust_for_chinese('排名'), '勋章状态'))
+        printlist.append(
+            '{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度',
+                                                   '今日的亲密度',
+                                                   adjust_for_chinese('排名'), '勋章状态'))
     dic_worn = {'1': '正在佩戴', '0': '待机状态'}
     response = await bilibili().request_fetchmedal()
     json_response = await response.json()
@@ -52,7 +57,8 @@ async def fetch_medal(printer=True):
                 today_feed = i['today_feed']
                 day_limit = i['day_limit']
             if printer == True:
-                printlist.append('{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name'] + '|' + str(i['level'])),
+                printlist.append(
+                    '{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name'] + '|' + str(i['level'])),
                                                            adjust_for_chinese(i['anchorInfo']['uname']),
                                                            str(i['intimacy']) + '/' + str(i['next_intimacy']),
                                                            str(i['todayFeed']) + '/' + str(i['dayLimit']),
@@ -61,6 +67,7 @@ async def fetch_medal(printer=True):
         if printer:
             Printer().printlist_append(['join_lottery', '', 'user', printlist], True)
         return roomid, today_feed, day_limit
+
 
 async def fetch_user_info():
     response = await bilibili().request_fetch_user_info()
@@ -82,7 +89,7 @@ async def fetch_user_info():
         silver = userCoinIfo['silver']
         gold = userCoinIfo['gold']
         identification = bool(userInfo['identification'])
-        mobile_verify =  bool(userInfo['mobile_verify'])
+        mobile_verify = bool(userInfo['mobile_verify'])
         user_next_level = userCoinIfo['user_next_level']
         user_intimacy = userCoinIfo['user_intimacy']
         user_next_intimacy = userCoinIfo['user_next_intimacy']
@@ -107,7 +114,8 @@ async def fetch_user_info():
         print(process_bar)
         print('# 等级榜', user_level_rank)
 
-async def fetch_bag_list(verbose=False, bagid=None,printer=True):
+
+async def fetch_bag_list(verbose=False, bagid=None, printer=True):
     response = await bilibili().request_fetch_bag_list()
     temp = []
     gift_list = []
@@ -133,15 +141,16 @@ async def fetch_bag_list(verbose=False, bagid=None,printer=True):
                 return gift_id
         else:
             if verbose:
-                print("# 编号为" + str(bag_id) + '的'+ gift_name + 'X' + gift_num, '(在' + str((left_days)) + '天后过期)')
+                print("# 编号为" + str(bag_id) + '的' + gift_name + 'X' + gift_num, '(在' + str((left_days)) + '天后过期)')
             elif printer == True:
                 print("# " + gift_name + 'X' + gift_num, '(在' + str((left_days)) + '天后过期)')
 
-        if 0 < int(left_time) < 43200:   # 剩余时间少于半天时自动送礼
+        if 0 < int(left_time) < 43200:  # 剩余时间少于半天时自动送礼
             temp.append([gift_id, gift_num, bag_id, expireat])
     # print(temp)
-    return temp,gift_list
-    
+    return temp, gift_list
+
+
 async def check_taskinfo():
     response = await bilibili().request_check_taskinfo()
     json_response = await response.json()
@@ -151,7 +160,7 @@ async def check_taskinfo():
         double_watch_info = data['double_watch_info']
         box_info = data['box_info']
         sign_info = data['sign_info']
-        live_time_info= data['live_time_info']
+        live_time_info = data['live_time_info']
         print('双端观看直播：')
         if double_watch_info['status'] == 1:
             print('# 该任务已完成，但未领取奖励')
@@ -163,36 +172,38 @@ async def check_taskinfo():
                 print('## 网页端观看任务已完成')
             else:
                 print('## 网页端观看任务未完成')
-            
+
             if double_watch_info['mobile_watch'] == 1:
                 print('## 移动端观看任务已完成')
             else:
                 print('## 移动端观看任务未完成')
-                
+
         print('直播在线宝箱：')
         if box_info['status'] == 1:
             print('# 该任务已完成')
         else:
             print('# 该任务未完成')
-            print('## 一共{}次重置次数，当前为第{}次第{}个礼包(每次3个礼包)'.format(box_info['max_times'], box_info['freeSilverTimes'], box_info['type']))
-            
+            print('## 一共{}次重置次数，当前为第{}次第{}个礼包(每次3个礼包)'.format(box_info['max_times'], box_info['freeSilverTimes'],
+                                                              box_info['type']))
+
         print('每日签到：')
         if sign_info['status'] == 1:
             print('# 该任务已完成')
         else:
             print('# 该任务未完成')
-            
+
         if sign_info['signDaysList'] == list(range(1, sign_info['curDay'] + 1)):
             print('# 当前全勤')
         else:
             print('# 出现断签')
-        
-        print('直播奖励：')    
+
+        print('直播奖励：')
         if live_time_info['status'] == 1:
             print('# 已完成')
         else:
             print('# 未完成(目前本项目未实现自动完成直播任务)')
-            
+
+
 async def check_room(roomid):
     response = await bilibili().request_check_room(roomid)
     json_response = await response.json(content_type=None)
@@ -205,8 +216,8 @@ async def check_room(roomid):
             print('# 此房间无短房号')
         else:
             print('# 短号为:{}'.format(data['short_id']))
-            
-            
+
+
 async def send_gift_web(roomid, giftid, giftnum, bagid):
     response = await bilibili().request_check_room(roomid)
     json_response = await response.json()
@@ -224,7 +235,7 @@ async def send_gift_web(roomid, giftid, giftnum, bagid):
 async def check_room_true(roomid):
     response = await bilibili().request_check_room(roomid)
     json_response = await response.json(content_type=None)
-    
+
     if json_response['code'] == 0:
         data = json_response['data']
         param1 = data['is_hidden']
@@ -232,7 +243,7 @@ async def check_room_true(roomid):
         param3 = data['encrypted']
         # print(param1, param2, param3)
         return param1, param2, param3
-    
+
 
 async def check_up_name(name):
     roomid = 0
@@ -251,6 +262,7 @@ async def check_up_name(name):
             roomid = json_response['result'][i]['roomid']
             return roomid
     return roomid
+
 
 async def reconnect():
     await connect().recreate()
