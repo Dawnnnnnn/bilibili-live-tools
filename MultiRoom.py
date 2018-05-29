@@ -13,7 +13,9 @@ class MultiRoom():
         if state == 1:
             return [asmr_area_room,"娱乐分区"]
         else:
-            self.asmr_area()
+            print("检测到房间未开播，立即尝试重新获取")
+            tmp = self.asmr_area()
+            return tmp
 
 
     def game_area(self):
@@ -25,7 +27,9 @@ class MultiRoom():
         if state == 1:
             return [game_area_room,"游戏分区"]
         else:
-            self.game_area()
+            print("检测到房间未开播，立即尝试重新获取")
+            tmp = self.game_area()
+            return tmp
 
     def mobile_area(self):
         url = "https://api.live.bilibili.com/room/v1/area/getRoomList?platform=web&parent_area_id=3&cate_id=0&area_id=0&sort_type=online&page=1&page_size=30"
@@ -36,7 +40,9 @@ class MultiRoom():
         if state == 1:
             return [mobile_area_room,"手游分区"]
         else:
-            self.mobile_area()
+            print("检测到房间未开播，立即尝试重新获取")
+            tmp = self.mobile_area()
+            return tmp
 
     def draw_area(self):
         url = "https://api.live.bilibili.com/room/v1/area/getRoomList?platform=web&parent_area_id=4&cate_id=0&area_id=0&sort_type=online&page=1&page_size=30"
@@ -47,7 +53,9 @@ class MultiRoom():
         if state == 1:
             return [draw_area_room,"绘画分区"]
         else:
-            self.draw_area()
+            print("检测到房间未开播，立即尝试重新获取")
+            tmp = self.draw_area()
+            return tmp
 
     def check_state(self,roomid):
         url = "https://api.live.bilibili.com/room/v1/Room/room_init?id="+str(roomid)
