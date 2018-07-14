@@ -82,13 +82,13 @@ class login():
                                            True)
 
     async def login_new(self):
-        response = await bilibili().check_activity_exist()
-        json_res = await response.json()
-        if json_res['code'] == 0:
-            activity_name = (list((json_res['data']['eventList'][0]['lottery']['config']).keys()))[0]
-            bilibili().dic_bilibili['activity_name'] = activity_name
-        else:
-            Printer().printlist_append(['join_lottery', '', 'user', "自动查询没有查询到新活动"], True)
+        # response = await bilibili().check_activity_exist()
+        # json_res = await response.json()
+        # if json_res['code'] == 0:
+        #     activity_name = (list((json_res['data']['eventList'][0]['lottery']['config']).keys()))[0]
+        #     bilibili().dic_bilibili['activity_name'] = activity_name
+        # else:
+        #     Printer().printlist_append(['join_lottery', '', 'user', "自动查询没有查询到新活动"], True)
         if bilibili().dic_bilibili['saved-session']['cookie']:
             Printer().printlist_append(['join_lottery', '', 'user', "复用cookie"], True)
             bilibili().load_session(bilibili().dic_bilibili['saved-session'])
