@@ -217,17 +217,16 @@ class bilibili():
         pc_response = await self.bili_section_get(pc_url, headers=headers)
         return pc_response
 
-    async def get_gift_of_events_app(self, text1, text2, raffleid):
+    async def get_gift_of_events_app(self, text1, raffleid):
         headers = {
             'Accept': 'application/json, text/plain, */*',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
             'cookie': self.dic_bilibili['cookie'],
-            'referer': text2
+            # 'referer': text2
         }
         temp_params = 'access_key=' + self.dic_bilibili['access_key'] + '&actionKey=' + self.dic_bilibili[
             'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
-                          'build'] + '&device=' + self.dic_bilibili['device'] + '&event_type=' + self.dic_bilibili[
-                          'activity_name'] + '-' + str(
+                          'build'] + '&device=' + self.dic_bilibili['device'] + '&event_type=' + str(
             raffleid) + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&platform=' + self.dic_bilibili[
                           'platform'] + '&room_id=' + str(
             text1) + '&ts=' + CurrentTime()
@@ -263,8 +262,17 @@ class bilibili():
             'accept-encoding': 'gzip, async deflate',
             'Host': 'api.live.bilibili.com',
         }
-        url = 'https://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
-        response = await self.bili_section_get(url, headers=headers)
+        # url = f'{base_url}/activity/v1/Raffle/check?roomid={text1}'
+        temp_params = 'access_key=' + self.dic_bilibili['access_key'] + '&actionKey=' + self.dic_bilibili[
+            'actionKey'] + '&appkey=' + self.dic_bilibili['appkey'] + '&build=' + self.dic_bilibili[
+                          'build'] + '&device=' + self.dic_bilibili['device'] + '&mobi_app=' + self.dic_bilibili['mobi_app'] + '&platform=' + self.dic_bilibili[
+                          'platform'] + '&roomid=' + str(
+            text1) + '&ts=' + CurrentTime()
+        sign = self.calc_sign(temp_params)
+        url = "https://api.live.bilibili.com/activity/v1/Common/mobileRoomInfo?"+temp_params+"&sign="+sign
+        response = await bilibili.instance.bili_section_get(url, headers=self.dic_bilibili['appheaders'])
+        # url = 'https://api.live.bilibili.com/activity/v1/Raffle/check?roomid=' + str(text1)
+        # response = await self.bili_section_get(url, headers=headers)
         return response
 
     async def get_giftlist_of_TV(self, real_roomid):
