@@ -1,5 +1,7 @@
 FROM python:3.6-alpine
 
+MAINTAINER zsnmwy <szlszl35622@gmail.com>
+
 ENV LIBRARY_PATH=/lib:/usr/lib \
     USER_NAME='' \
     USER_PASSWORD=''
