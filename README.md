@@ -34,12 +34,22 @@
 环境:
 ------  
         python3.6
-  
-    
+
+
 使用方法:
 ------
 
         看Wiki
+
+        ---
+
+        Docker快速启动
+
+        docker run -itd --rm -e USER_NAME=你的B站账号 -e USER_PASSWORD=你的B站密码 zsnmwy/bilibili-live-tools
+
+        -it  # 不后台
+        -itd # 后台
+
 
 因主项目追求稳定和兼容性,故删除了些个人认为不太实用的功能,保留下来了tools的一些常见基本功能,用于在服务器上长时间挂机。
 
