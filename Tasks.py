@@ -119,22 +119,24 @@ class Tasks():
     async def sliver2coin(self):
         if self.dic_user['coin']['on/off'] == '1':
             response1 = await bilibili().silver2coin_app()
-            response = await bilibili().silver2coin_web()
+            # response = await bilibili().silver2coin_web()
             json_response1 = await response1.json()
-            json_response = await response.json()
+            # print(json_response1)
+            # json_response = await response.json()
+            # print(json_response)
 
-            Printer().printlist_append(['join_lottery', '', 'user', "", json_response['msg']])
+            # Printer().printlist_append(['join_lottery', '', 'user', "", json_response['msg']])
             Printer().printlist_append(['join_lottery', '', 'user', "", json_response1['msg']])
 
     async def run(self):
         while 1:
             Printer().printlist_append(['join_lottery', '', 'user', "执行每日任务"], True)
-            await self.link_sign()
-            await self.sliver2coin()
-            await self.doublegain_coin2silver()
             await self.DoSign()
+            await self.link_sign()
             await self.Daily_bag()
             await self.Daily_Task()
             await self.send_gift()
+            await self.sliver2coin()
+            await self.doublegain_coin2silver()
             await self.auto_send_gift()
             await asyncio.sleep(21600)
