@@ -5,7 +5,7 @@
 
 开放识别登录验证码接口:
 
-        POST API:http://101.236.6.31:8080/code
+        POST API:http://47.95.255.188:5000/code
         data = {"image":base64.b64decode(response.content)}
         1g1h1m学生机，慢点请求......
 
