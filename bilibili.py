@@ -249,7 +249,7 @@ class bilibili():
         return response2
 
     async def get_gift_of_captain(self, roomid, id):
-        join_url = "https://api.live.bilibili.com/lottery/v1/lottery/join"
+        join_url = "https://api.live.bilibili.com/lottery/v2/lottery/join"
         payload = {"roomid": roomid, "id": id, "type": "guard", "csrf_token": self.dic_bilibili['csrf']}
         response2 = await self.bili_section_post(join_url, data=payload, headers=self.dic_bilibili['pcheaders'])
         return response2
@@ -284,7 +284,7 @@ class bilibili():
         return response
 
     async def get_giftlist_of_captain(self, roomid):
-        true_url = 'https://api.live.bilibili.com/lottery/v1/lottery/check?roomid=' + str(roomid)
+        true_url = 'https://api.live.bilibili.com/lottery/v1/lottery/guard_check?roomid=' + str(roomid)
         headers = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q = 0.8",
             "Accept-Encoding": "gzip,async deflate,br",
@@ -355,6 +355,11 @@ class bilibili():
     async def heart_gift(self):
         url = "https://api.live.bilibili.com/gift/v2/live/heart_gift_receive?roomid=3&area_v2_id=34"
         response = await self.bili_section_get(url, headers=self.dic_bilibili['pcheaders'])
+        return response
+
+    async def guard_list(self):
+        url = "http://118.25.108.153:8080/guard"
+        response = requests.get(url)
         return response
 
     async def get_lotterylist(self, i):

@@ -273,7 +273,6 @@ class bilibiliClient():
             Printer().printlist_append(['danmu', '弹幕', 'user', dic])
             return
         if cmd == 'SYS_GIFT':
-            print(dic)
             try:
                 text1 = dic['real_roomid']
                 text2 = dic['url']
@@ -284,7 +283,6 @@ class bilibiliClient():
                 pass
             return
         if cmd == 'SYS_MSG':
-            print(dic)
             if set(self.dic_bulletin) == set(dic):
                 Printer().printlist_append(['join_lottery', '系统公告', 'user', dic['msg']])
             else:
@@ -300,34 +298,29 @@ class bilibiliClient():
                 except:
                     print('SYS_MSG出错，请联系开发者', dic)
 
-        if cmd == 'GUARD_MSG':
-            # {'cmd': 'GUARD_MSG', 'msg': '用户 :?苏油条:? 在主播 -猫大人- 的直播间开通了总督'
-            # , 'buy_type': 1, 'msg_new': '用户<%苏油条%>在主播<%-猫大人-%>的直播间开通了总督
-            # 并触发了抽奖，点击前往TA的房间去抽奖吧', 'url': 'https://live.bilibili.com/77353
-            # 93', 'roomid': '7735393'}
-            print(dic)
-            try:
-                await  asyncio.sleep(10)
-                roomid = dic['roomid']
-                response1 = await bilibili().get_giftlist_of_captain(roomid)
-                json_response1 = await response1.json()
-                print(json_response1)
-                num = len(json_response1['data']['guard'])
-                if num == 0:
-                    await asyncio.sleep(10)
-                    response1 = await bilibili().get_giftlist_of_captain(roomid)
-                    json_response1 = await response1.json()
-                    print(json_response1)
-                    num = len(json_response1['data']['guard'])
-                for i in range(0, num):
-                    id = json_response1['data']['guard'][i]['id']
-                    print(id)
-                    response2 = await bilibili().get_gift_of_captain(roomid, id)
-                    json_response2 = await response2.json()
-                    payload = {"roomid": roomid, "id": id, "type": "guard", "csrf_token": ''}
-                    print(payload)
-                    print("获取到房间 %s 的总督奖励: " % (roomid), json_response2)
-            except:
-                Printer().printlist_append(['join_lotter', '', 'user', "没领取到奖励,请联系开发者"])
-                pass
+        # if cmd == 'GUARD_MSG':
+        #     try:
+        #         await  asyncio.sleep(10)
+        #         roomid = dic['roomid']
+        #         response1 = await bilibili().get_giftlist_of_captain(roomid)
+        #         json_response1 = await response1.json()
+        #         print(json_response1)
+        #         num = len(json_response1['data']['guard'])
+        #         if num == 0:
+        #             await asyncio.sleep(10)
+        #             response1 = await bilibili().get_giftlist_of_captain(roomid)
+        #             json_response1 = await response1.json()
+        #             print(json_response1)
+        #             num = len(json_response1['data']['guard'])
+        #         for i in range(0, num):
+        #             id = json_response1['data']['guard'][i]['id']
+        #             print(id)
+        #             response2 = await bilibili().get_gift_of_captain(roomid, id)
+        #             json_response2 = await response2.json()
+        #             payload = {"roomid": roomid, "id": id, "type": "guard", "csrf_token": ''}
+        #             print(payload)
+        #             print("获取到房间 %s 的总督奖励: " % (roomid), json_response2)
+        #     except:
+        #         Printer().printlist_append(['join_lotter', '', 'user', "没领取到奖励,请联系开发者"])
+        #         pass
             return

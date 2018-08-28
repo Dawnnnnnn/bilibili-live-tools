@@ -23,10 +23,32 @@ class OnlineHeart():
     async def heart_gift(self):
         await bilibili().heart_gift()
 
+    async def guard_lottery(self):
+        response = await bilibili().guard_list()
+        json_response = response.json()
+        for i in range(0,len(json_response)):
+            if json_response[i]['Status'] == True:
+                GuardId = json_response[i]['GuardId']
+                OriginRoomId = json_response[i]['OriginRoomId']
+                response2 = await bilibili().get_gift_of_captain(OriginRoomId, GuardId)
+                json_response2 = await response2.json()
+                if json_response2['code'] == 0:
+                    Printer().printlist_append(['join_lottery', '', 'user', f"获取到房间{OriginRoomId},编号{GuardId}的上船亲密度:{json_response2['data']['message']}"], True)
+                elif json_response2['code'] == 400:
+                    Printer().printlist_append(['join_lottery', '', 'user',
+                                                f"房间{OriginRoomId},编号{GuardId}的上船亲密度已领过"],
+                                               True)
+                else:
+                    Printer().printlist_append(['join_lottery', '', 'user',
+                                                f"房间{OriginRoomId},编号{GuardId}的上船亲密度领取出错,{json_response2}"],
+                                               True)
+            else:
+                pass
+
     # 因为休眠时间差不多,所以放到这里,此为实验性功能
     async def draw_lottery(self):
         black_list = ["测试", "test"]
-        for i in range(87, 95):
+        for i in range(169, 200):
             response = await bilibili().get_lotterylist(i)
             json_response = await response.json()
             if json_response['code'] == 0:
@@ -60,5 +82,6 @@ class OnlineHeart():
                 login().login()
             await self.apppost_heartbeat()
             await self.heart_gift()
+            await self.guard_lottery()
             await self.draw_lottery()
             await asyncio.sleep(300)
