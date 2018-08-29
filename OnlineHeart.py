@@ -1,6 +1,7 @@
 from bilibili import bilibili
 from login import login
 import time
+import traceback
 import datetime
 import asyncio
 from printer import Printer
@@ -74,14 +75,19 @@ class OnlineHeart():
 
     async def run(self):
         while 1:
-            Printer().printlist_append(['join_lottery', '', 'user', "心跳"], True)
-            response = await self.pcpost_heartbeat()
-            json_response = await response.json()
-            if json_response['code'] == 3:
-                Printer().printlist_append(['join_lottery', '', 'user', "cookie过期,将重新登录"], True)
-                login().login()
-            await self.apppost_heartbeat()
-            await self.heart_gift()
-            await self.guard_lottery()
-            await self.draw_lottery()
-            await asyncio.sleep(300)
+            try:
+                Printer().printlist_append(['join_lottery', '', 'user', "心跳"], True)
+                response = await self.pcpost_heartbeat()
+                json_response = await response.json()
+                if json_response['code'] == 3:
+                    Printer().printlist_append(['join_lottery', '', 'user', "cookie过期,将重新登录"], True)
+                    login().login()
+                await self.apppost_heartbeat()
+                await self.heart_gift()
+                await self.guard_lottery()
+                await self.draw_lottery()
+                await asyncio.sleep(300)
+            except:
+                await asyncio.sleep(10)
+                traceback.print_exc()
+

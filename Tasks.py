@@ -2,6 +2,7 @@ from bilibili import bilibili
 import datetime
 import time
 import asyncio
+import traceback
 import os
 import configloader
 import utils
@@ -124,13 +125,17 @@ class Tasks():
 
     async def run(self):
         while 1:
-            Printer().printlist_append(['join_lottery', '', 'user', "执行每日任务"], True)
-            await self.DoSign()
-            await self.link_sign()
-            await self.Daily_bag()
-            await self.Daily_Task()
-            await self.send_gift()
-            await self.sliver2coin()
-            await self.doublegain_coin2silver()
-            await self.auto_send_gift()
-            await asyncio.sleep(21600)
+            try:
+                Printer().printlist_append(['join_lottery', '', 'user', "执行每日任务"], True)
+                await self.DoSign()
+                await self.link_sign()
+                await self.Daily_bag()
+                await self.Daily_Task()
+                await self.send_gift()
+                await self.sliver2coin()
+                await self.doublegain_coin2silver()
+                await self.auto_send_gift()
+                await asyncio.sleep(21600)
+            except:
+                await asyncio.sleep(10)
+                traceback.print_exc()
