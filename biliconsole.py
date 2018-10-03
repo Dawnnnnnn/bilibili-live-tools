@@ -1,6 +1,5 @@
 import utils
 from statistics import Statistics
-from connect import connect
 import threading
 import asyncio
 

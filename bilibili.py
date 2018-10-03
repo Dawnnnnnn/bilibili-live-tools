@@ -9,6 +9,7 @@ import requests
 import rsa
 import base64
 from urllib import parse
+from printer import Printer
 import aiohttp
 import asyncio
 
@@ -60,7 +61,7 @@ class bilibili():
         data = {"image": img}
         ressponse = requests.post(url, data=data)
         captcha = ressponse.text
-        print("此次登录出现验证码,识别结果为%s" % (captcha))
+        Printer().printer(f"此次登录出现验证码,识别结果为{captcha}","Info","green")
         return captcha
 
     def calc_name_passw(self, key, Hash, username, password):
@@ -73,7 +74,7 @@ class bilibili():
     async def replay_request(self, response):
         json_response = await response.json(content_type=None)
         if json_response['code'] == 1024:
-            print('b站炸了，暂停所有请求5s后重试，请耐心等待')
+            Printer().printer(f'b站炸了,暂停所有请求5s后重试,请耐心等待',"Error","red")
             await asyncio.sleep(5)
             return True
         else:
@@ -359,7 +360,10 @@ class bilibili():
 
     async def guard_list(self):
         url = "http://118.25.108.153:8080/guard"
-        response = requests.get(url)
+        headers = {
+            "User-Agent": "bilibili-live-tools/" + str(self.dic_bilibili['uid'])
+        }
+        response = requests.get(url, headers=headers)
         return response
 
     async def get_lotterylist(self, i):

@@ -37,10 +37,9 @@ def seconds_until_tomorrow():
 
 
 async def fetch_medal(printer=True):
-    printlist = []
-    if printer == True:
-        printlist.append('查询勋章信息')
-        printlist.append(
+    if printer:
+        Printer().printer('查询勋章信息',"Info","green")
+        print(
             '{} {} {:^12} {:^10} {} {:^6} '.format(adjust_for_chinese('勋章'), adjust_for_chinese('主播昵称'), '亲密度',
                                                    '今日的亲密度',
                                                    adjust_for_chinese('排名'), '勋章状态'))
@@ -56,16 +55,14 @@ async def fetch_medal(printer=True):
                 roomid = i['roomid']
                 today_feed = i['today_feed']
                 day_limit = i['day_limit']
-            if printer == True:
-                printlist.append(
+            if printer:
+                print(
                     '{} {} {:^14} {:^14} {} {:^6} '.format(adjust_for_chinese(i['medal_name'] + '|' + str(i['level'])),
                                                            adjust_for_chinese(i['anchorInfo']['uname']),
                                                            str(i['intimacy']) + '/' + str(i['next_intimacy']),
                                                            str(i['todayFeed']) + '/' + str(i['dayLimit']),
                                                            adjust_for_chinese(str(i['rank'])),
                                                            dic_worn[str(i['status'])]))
-        if printer:
-            Printer().printlist_append(['join_lottery', '', 'user', printlist], True)
         return roomid, today_feed, day_limit
 
 
@@ -204,20 +201,6 @@ async def check_taskinfo():
             print('# 未完成(目前本项目未实现自动完成直播任务)')
 
 
-async def check_room(roomid):
-    response = await bilibili().request_check_room(roomid)
-    json_response = await response.json(content_type=None)
-    if json_response['code'] == 0:
-        print(json_response)
-        print('查询结果:')
-        data = json_response['data']
-        print('# 真实房间号为:{}'.format(data['room_id']))
-        if data['short_id'] == 0:
-            print('# 此房间无短房号')
-        else:
-            print('# 短号为:{}'.format(data['short_id']))
-
-
 async def send_gift_web(roomid, giftid, giftnum, bagid):
     response = await bilibili().request_check_room(roomid)
     json_response = await response.json()
@@ -226,10 +209,9 @@ async def send_gift_web(roomid, giftid, giftnum, bagid):
     response1 = await bilibili().request_send_gift_web(giftid, giftnum, bagid, ruid, biz_id)
     json_response1 = await response1.json()
     if json_response1['code'] == 0:
-        # print(json_response1['data'])
-        print("送出礼物:", json_response1['data']['gift_name'] + "X" + str(json_response1['data']['gift_num']))
+        Printer().printer(f"送出礼物{json_response1['data']['gift_name']}x{json_response1['data']['gift_num']}","Info","green")
     else:
-        print("错误", json_response1['msg'])
+        Printer().printer(f"错误:{json_response1['msg']}","Error","red")
 
 
 async def check_room_true(roomid):
@@ -241,7 +223,6 @@ async def check_room_true(roomid):
         param1 = data['is_hidden']
         param2 = data['is_locked']
         param3 = data['encrypted']
-        # print(param1, param2, param3)
         return param1, param2, param3
 
 

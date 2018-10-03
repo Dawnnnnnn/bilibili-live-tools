@@ -16,14 +16,10 @@ class Rafflehandler:
         while True:
             len_list_activity = len(self.list_activity)
             len_list_TV = len(self.list_TV)
-            set_activity = set(self.list_activity)
             set_TV = set(self.list_TV)
             tasklist = []
             for i in set_TV:
                 task = asyncio.ensure_future(bilibiliCilent.handle_1_room_TV(i))
-                tasklist.append(task)
-            for i in set_activity:
-                task = asyncio.ensure_future(bilibiliCilent.handle_1_room_activity(i))
                 tasklist.append(task)
             if tasklist:
                 await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)

@@ -12,7 +12,7 @@ def CurrentTime():
     return str(currenttime)
 
 
-class OnlineHeart():
+class OnlineHeart:
 
     async def apppost_heartbeat(self):
         await bilibili().apppost_heartbeat()
@@ -27,36 +27,37 @@ class OnlineHeart():
     async def guard_lottery(self):
         response = await bilibili().guard_list()
         json_response = response.json()
-        for i in range(0,len(json_response)):
-            if json_response[i]['Status'] == True:
+        for i in range(0, len(json_response)):
+            if json_response[i]['Status']:
                 GuardId = json_response[i]['GuardId']
                 OriginRoomId = json_response[i]['OriginRoomId']
                 response2 = await bilibili().get_gift_of_captain(OriginRoomId, GuardId)
                 json_response2 = await response2.json()
                 if json_response2['code'] == 0:
-                    Printer().printlist_append(['join_lottery', '', 'user', f"获取到房间{OriginRoomId},编号{GuardId}的上船亲密度:{json_response2['data']['message']}"], True)
+                    Printer().printer(f"获取到房间[{OriginRoomId}]编号[{GuardId}]的上船亲密度:{json_response2['data']['message']}",
+                                      "Lottery", "blue")
                 elif json_response2['code'] == 400:
-                    Printer().printlist_append(['join_lottery', '', 'user',
-                                                f"房间{OriginRoomId},编号{GuardId}的上船亲密度已领过"],
-                                               True)
+                    Printer().printer(
+                        f"房间[{OriginRoomId}]编号[{GuardId}]的上船亲密度已领过",
+                        "Info", "green")
                 else:
-                    Printer().printlist_append(['join_lottery', '', 'user',
-                                                f"房间{OriginRoomId},编号{GuardId}的上船亲密度领取出错,{json_response2}"],
-                                               True)
+                    Printer().printer(
+                        f"房间[{OriginRoomId}]编号[{GuardId}] 的上船亲密度领取出错,{json_response2}",
+                        "Error", "red")
             else:
                 pass
 
-    # 因为休眠时间差不多,所以放到这里,此为实验性功能
+
     async def draw_lottery(self):
         black_list = ["测试", "test"]
-        for i in range(169, 200):
+        for i in range(200, 300):
             response = await bilibili().get_lotterylist(i)
             json_response = await response.json()
             if json_response['code'] == 0:
                 temp = json_response['data']['title']
                 for k in black_list:
                     if k in temp:
-                        print("检测到疑似钓鱼类测试抽奖，默认不参与，请自行判断抽奖可参与性")
+                        Printer().printer(f"检测到疑似钓鱼类测试抽奖，默认不参与，请自行判断抽奖可参与性","Warning","red")
                 else:
                     check = len(json_response['data']['typeB'])
                     for g in range(0, check):
@@ -66,8 +67,7 @@ class OnlineHeart():
                         if int(join_end_time) > int(ts) > int(join_start_time):
                             response1 = await bilibili().get_gift_of_lottery(i, g)
                             json_response1 = await response1.json()
-                            print("当前时间:", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-                            print("参与实物抽奖回显：", json_response1)
+                            Printer().printer(f"参与实物抽奖回显:{json_response1}", "Lottery","blue")
                         else:
                             pass
             else:
@@ -76,11 +76,11 @@ class OnlineHeart():
     async def run(self):
         while 1:
             try:
-                Printer().printlist_append(['join_lottery', '', 'user', "心跳"], True)
+                Printer().printer("心跳", "Info","green")
                 response = await self.pcpost_heartbeat()
                 json_response = await response.json()
                 if json_response['code'] == 3:
-                    Printer().printlist_append(['join_lottery', '', 'user', "cookie过期,将重新登录"], True)
+                    Printer().printer(f"cookie过期,将重新登录","Error","red")
                     login().login()
                 await self.apppost_heartbeat()
                 await self.heart_gift()
@@ -90,4 +90,3 @@ class OnlineHeart():
             except:
                 await asyncio.sleep(10)
                 traceback.print_exc()
-

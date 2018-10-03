@@ -3,7 +3,7 @@ import traceback
 from MultiRoom import MultiRoom
 from bilibiliCilent import bilibiliClient
 from printer import Printer
-from bilibili import bilibili
+
 
 
 class connect():
@@ -35,7 +35,7 @@ class connect():
                 connect.roomids.append(tmp[i][0])
             for n in range(len(tmp)):
                 connect.area_name.append(tmp[n][1])
-            Printer().printlist_append(['join_lottery', '', 'user', "获取新的四个分区房间{0}[{1}]".format(connect.roomids,connect.area_name)], True)
+            Printer().printer(f"获取新的四个分区房间{connect.roomids}[{connect.area_name}]","Info","green")
             for roomid, area_name in zip(connect.roomids, connect.area_name):
                 self.danmuji = bilibiliClient(roomid,area_name)
                 task1 = asyncio.ensure_future(self.danmuji.connectServer())
@@ -73,10 +73,3 @@ class connect():
                     task22 = asyncio.ensure_future(danmuji.HeartbeatLoop())
                     connect.tasks[roomid] = [task11, task22]
 
-    def reconnect(self, roomid):
-        self.tag_reconnect = True
-        if self.danmuji is not None:
-            self.danmuji.close_connection()
-        bilibili().dic_bilibili['roomid'] = roomid
-        print('已经切换roomid')
-        self.tag_reconnect = False

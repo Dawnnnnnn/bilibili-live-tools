@@ -7,55 +7,26 @@ import asyncio
 import random
 import struct
 import json
-import re
 import sys
 
 
 async def handle_1_TV_raffle(type, num, real_roomid, raffleid):
-    # await asyncio.sleep(random.uniform(0.1, min(1, num * 1)))
+    await asyncio.sleep(random.uniform(1, 3)
     response2 = await bilibili().get_gift_of_TV(type, real_roomid, raffleid)
-    # response1 = await bilibili().get_gift_of_events_app(real_roomid,raffleid)
-    Printer().printlist_append(['join_lottery', '广播道具', 'user', "参与了房间{:^9}的广播抽奖".format(real_roomid)], True)
-    # json_response1 = await response1.json()
+    Printer().printer(f"参与了房间 {real_roomid} 的广播抽奖", "Lottery", "blue")
     json_response2 = await response2.json()
-    # print(json_response1)
-    Printer().printlist_append(
-        ['join_lottery', '广播道具', 'user', "广播道具抽奖状态: ", json_response2['msg']], True)
+    Printer().printer(f"广播道具抽奖状态:{json_response2['msg']}", "Lottery", "blue")
     if json_response2['code'] == 0:
         Statistics().append_to_TVlist(raffleid, real_roomid)
     else:
         print(json_response2)
 
 
-async def handle_1_activity_raffle(num, text1, raffleid):
-    # await asyncio.sleep(random.uniform(0.1, min(1, num * 1)))
-    response1 = await bilibili().get_gift_of_events_app(text1, raffleid)
-    # pc_response = await bilibili().get_gift_of_events_web(text1, raffleid)
-
-    Printer().printlist_append(['join_lottery', '', 'user', "参与了房间{:^9}的活动抽奖".format(text1)], True)
-
-    json_response1 = await response1.json()
-    # json_pc_response = await pc_response.json()
-    # print(json_pc_response)
-    if json_response1['code'] == 0:
-        Printer().printlist_append(['join_lottery', '', 'user', "移动端活动抽奖结果: ",
-                                    json_response1['data']['gift_desc']], True)
-        Statistics().add_to_result(*(json_response1['data']['gift_desc'].split('X')))
-    else:
-        print(json_response1)
-        Printer().printlist_append(['join_lottery', '', 'user', "移动端活动抽奖结果: ", json_response1['message']], True)
-    # if json_pc_response['code'] == 0:
-    #     Statistics().append_to_activitylist(raffleid, text1)
-    # else:
-    #     print(json_pc_response)
-
-
 async def handle_1_room_TV(real_roomid):
-    # await asyncio.sleep(random.uniform(0.1, 0.15))
+    await asyncio.sleep(random.uniform(1, 2))
     result = await utils.check_room_true(real_roomid)
     if True in result:
-        Printer().printlist_append(['join_lottery', '钓鱼提醒', 'user', "WARNING:检测到房间{:^9}的钓鱼操作".format(real_roomid)],
-                                   True)
+        Printer().printer(f"检测到房间 {real_roomid} 的钓鱼操作", "Warning", "red")
     else:
         await bilibili().post_watching_history(real_roomid)
         response = await bilibili().get_giftlist_of_TV(real_roomid)
@@ -77,37 +48,9 @@ async def handle_1_room_TV(real_roomid):
             await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
 
 
-async def handle_1_room_activity(text1):
-    # await asyncio.sleep(random.uniform(0.5, 1))
-    result = await utils.check_room_true(text1)
-    if True in result:
-        Printer().printlist_append(['join_lottery', '钓鱼提醒', 'user', "WARNING:检测到房间{:^9}的钓鱼操作".format(text1)], True)
-    else:
-        # print(True)
-        await bilibili().post_watching_history(text1)
-        response = await bilibili().get_giftlist_of_events(text1)
-        json_response = await response.json()
-        checklen = json_response['data']['lotteryInfo']
-        num = len(checklen)
-        list_available_raffleid = []
-        for j in range(0, num):
-            # await asyncio.sleep(random.uniform(0.5, 1))
-            raffleid = checklen[j]['eventType']
-            if Statistics().check_activitylist(raffleid):
-                list_available_raffleid.append(raffleid)
-        tasklist = []
-        num_available = len(list_available_raffleid)
-        for raffleid in list_available_raffleid:
-            task = asyncio.ensure_future(handle_1_activity_raffle(num_available, text1, raffleid))
-            tasklist.append(task)
-        if tasklist:
-            await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
+class bilibiliClient:
 
-
-
-class bilibiliClient():
-
-    def __init__(self, roomid,area_name):
+    def __init__(self, roomid, area_name):
         self.bilibili = bilibili()
         self._reader = None
         self._writer = None
@@ -138,16 +81,14 @@ class bilibiliClient():
         self._writer = writer
         if (await self.SendJoinChannel(self._roomId) == True):
             self.connected = True
-            Printer().printlist_append(['join_lottery', '', 'user', '连接 {0:^9} [{1}]弹幕服务器成功'.format(self._roomId,self.area_name)], True)
+            Printer().printer(f'连接 {self._roomId} [{self.area_name}]弹幕服务器成功', "Info", "green")
             await self.ReceiveMessageLoop()
 
     async def HeartbeatLoop(self):
-        while self.connected == False:
+        while not self.connected:
             await asyncio.sleep(0.5)
 
-        # Printer().printlist_append(['join_lottery', '', 'user', '弹幕模块开始心跳'], True)
-
-        while self.connected == True:
+        while self.connected:
             await self.SendSocketData(0, 16, self.bilibili.dic_bilibili['_protocolversion'], 2, 1, "")
             await asyncio.sleep(30)
 
@@ -164,7 +105,6 @@ class bilibiliClient():
         sendbytes = struct.pack('!IHHII', packetlength, magic, ver, action, param)
         if len(bytearr) != 0:
             sendbytes = sendbytes + bytearr
-        # print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), sendbytes)
         try:
             self._writer.write(sendbytes)
         except:
@@ -259,41 +199,32 @@ class bilibiliClient():
 
         if cmd == 'PREPARING':
 
-            Printer().printlist_append(['join_lottery', '', 'user', "房间 {:^9} 下播！将切换监听房间".format(self._roomId)], True)
+            Printer().printer(f"房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
             try:
                 await utils.reconnect()
             except:
-                print("切换房间失败,休眠5s后再次尝试")
+                Printer().printer(f"切换房间失败,休眠5s后再次尝试", "Error", "red")
                 await asyncio.sleep(5)
                 await utils.reconnect()
 
         elif cmd == 'DANMU_MSG':
-            # print(dic)
-            Printer().printlist_append(['danmu', '弹幕', 'user', dic])
+            Printer().printer(f"{dic}", "Message", "Cyan", printable=False)
             return
         elif cmd == 'SYS_GIFT':
             try:
-                text1 = dic['real_roomid']
-                text2 = dic['url']
-                Printer().printlist_append(['join_lottery', '', 'user', "检测到房间{:^9}的活动抽奖".format(text1)], True)
-                Rafflehandler().append2list_activity(text1)
-                Statistics().append2pushed_activitylist()
+                Printer().printer(f"出现了远古的SYS_GIFT,请尽快联系开发者{dic}", "Warning", "red")
             except:
                 pass
             return
         elif cmd == 'SYS_MSG':
             if set(self.dic_bulletin) == set(dic):
-                Printer().printlist_append(['join_lottery', '系统公告', 'user', dic['msg']])
+                Printer().printer(dic['msg'], "Info", "green")
             else:
                 try:
-                    TV_url = dic['url']
                     real_roomid = dic['real_roomid']
-                    Printer().printlist_append(['join_lottery', '小电视', 'user', "检测到房间{:^9}的广播抽奖".format(real_roomid)],
-                                               True)
+                    Printer().printer(f"检测到房间 {real_roomid} 的广播抽奖", "Lottery", "blue")
                     Rafflehandler().append2list_TV(real_roomid)
-                    Rafflehandler().append2list_activity(real_roomid)
                     Statistics().append2pushed_TVlist()
-                    Statistics().append2pushed_activitylist()
                 except:
                     print('SYS_MSG出错，请联系开发者', dic)
             return
@@ -317,6 +248,25 @@ class bilibiliClient():
             pass
         elif cmd == "SPECIAL_GIFT":
             pass
+        elif cmd == "NOTICE_MSG":
+            pass
+        elif cmd == "GUARD_MSG":
+            pass
+        elif cmd == "GUARD_BUY":
+            pass
+        elif cmd == "GUARD_LOTTERY_START":
+            pass
+        elif cmd == "PK_INVITE_INIT":
+            pass
+        elif cmd == "PK_CLICK_AGAIN":
+            pass
+        elif cmd == "PK_AGAIN":
+            pass
+        elif cmd == "PK_MATCH":
+            pass
+        elif cmd == "PK_MIC_END":
+            pass
+        elif cmd == "PK_PRE":
+            pass
         else:
-            Printer().printlist_append(['join_lottery', '小电视', 'user', "出现一个未知msg{}".format(dic)],
-                                       True)
+            Printer().printer(f"出现一个未知msg{dic}", "Info", "red")

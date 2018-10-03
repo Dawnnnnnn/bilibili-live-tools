@@ -76,21 +76,13 @@ class login():
                     'uid': cookie[1]['value']
                 }
                 configloader.write2bilibili(dic_saved_session)
-                Printer().printlist_append(['join_lottery', '', 'user', "登录成功"], True)
+                Printer().printer(f"登录成功", "Info","green")
             except:
-                Printer().printlist_append(['join_lottery', '', 'user', "登录失败,错误信息为:", response.json()['message']],
-                                           True)
+                Printer().printer(f"登录失败,错误信息为:{response.json()['message']}","Error","red")
 
     async def login_new(self):
-        # response = await bilibili().check_activity_exist()
-        # json_res = await response.json()
-        # if json_res['code'] == 0:
-        #     activity_name = (list((json_res['data']['eventList'][0]['lottery']['config']).keys()))[0]
-        #     bilibili().dic_bilibili['activity_name'] = activity_name
-        # else:
-        #     Printer().printlist_append(['join_lottery', '', 'user', "自动查询没有查询到新活动"], True)
         if bilibili().dic_bilibili['saved-session']['cookie']:
-            Printer().printlist_append(['join_lottery', '', 'user', "复用cookie"], True)
+            Printer().printer(f"复用cookie","Info","green")
             bilibili().load_session(bilibili().dic_bilibili['saved-session'])
         else:
             return self.login()
