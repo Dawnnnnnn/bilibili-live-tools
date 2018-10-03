@@ -11,7 +11,7 @@ import sys
 
 
 async def handle_1_TV_raffle(type, num, real_roomid, raffleid):
-    await asyncio.sleep(random.uniform(1, 3)
+    await asyncio.sleep(random.uniform(1, 2))
     response2 = await bilibili().get_gift_of_TV(type, real_roomid, raffleid)
     Printer().printer(f"参与了房间 {real_roomid} 的广播抽奖", "Lottery", "blue")
     json_response2 = await response2.json()
@@ -48,7 +48,7 @@ async def handle_1_room_TV(real_roomid):
             await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
 
 
-class bilibiliClient:
+class bilibiliClient():
 
     def __init__(self, roomid, area_name):
         self.bilibili = bilibili()
