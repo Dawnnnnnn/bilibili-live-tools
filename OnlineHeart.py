@@ -36,7 +36,7 @@ class OnlineHeart:
                 if json_response2['code'] == 0:
                     Printer().printer(f"获取到房间[{OriginRoomId}]编号[{GuardId}]的上船亲密度:{json_response2['data']['message']}",
                                       "Lottery", "blue")
-                elif json_response2['code'] == 400:
+                elif json_response2['code'] == 400 and json_response2['msg'] == "你已经领取过啦":
                     Printer().printer(
                         f"房间[{OriginRoomId}]编号[{GuardId}]的上船亲密度已领过",
                         "Info", "green")

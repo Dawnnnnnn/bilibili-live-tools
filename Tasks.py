@@ -58,7 +58,7 @@ class Tasks:
                 if (response.json()['data']['status']) == 0:
                     Printer().printer(f"应援团{i1}应援成功,获得{response.json()['data']['add_num']}点亲密度", "Info", "green")
             else:
-                Printer().printer(f"应援团{i1}应援失败", "Error", "red")
+                Printer().printer(f"应援团{i1}应援失败,{response.json()}", "Error", "red")
 
     async def send_gift(self):
         if self.dic_user['gift']['on/off'] == '1':
