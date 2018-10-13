@@ -65,7 +65,7 @@ class MultiRoom:
 
     def get_all(self):
         try:
-            asmr = [23058, "娱乐分区"]
+            asmr = self.asmr_area()
             game = self.game_area()
             mobile = self.mobile_area()
             draw = self.draw_area()
