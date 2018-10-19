@@ -268,5 +268,18 @@ class bilibiliClient():
             pass
         elif cmd == "PK_PRE":
             pass
+        elif cmd == "LIVE":                     #新增
+            pass
+        elif cmd == "PK_PROCESS":
+            pass
+        elif cmd == "PK_END":
+            pass
+        elif cmd == "PK_SETTLE":
+            pass
+        elif cmd == "PK_START":
+            pass
+        elif cmd == "SYS_GIFT":
+            pass
         else:
             Printer().printer(f"出现一个未知msg{dic}", "Info", "red")
+            pass
