@@ -262,23 +262,29 @@ class bilibiliClient():
             pass
         elif cmd == "PK_AGAIN":
             pass
-        elif cmd == "PK_MATCH":
+        elif cmd == "PK_MATCH":  # pk匹配
             pass
         elif cmd == "PK_MIC_END":
             pass
-        elif cmd == "PK_PRE":
+        elif cmd == "PK_PRE":  # pk预备阶段
             pass
-        elif cmd == "LIVE":                     #新增
+        elif cmd == "LIVE":  # 开播
             pass
-        elif cmd == "PK_PROCESS":
+        elif cmd == "PK_PROCESS":  # pk 过程值
             pass
-        elif cmd == "PK_END":
+        elif cmd == "PK_END":  # pk结束
             pass
-        elif cmd == "PK_SETTLE":
+        elif cmd == "PK_SETTLE":  # pk settle
             pass
-        elif cmd == "PK_START":
+        elif cmd == "PK_START":  # pk开始
             pass
-        elif cmd == "SYS_GIFT":
+        elif cmd == "ACTIVITY_EVENT":  # 没有用的充能值信息
+            pass
+        elif cmd == "WARNING":  # {'cmd': 'WARNING', 'msg': '违反直播分区规范，请立即更换至游戏区', 'roomid': 69956}
+            pass
+        elif cmd == "RAFFLE_END":  # 抽奖结束
+            pass
+        elif cmd == "RAFFLE_START":  # 抽奖开始
             pass
         else:
             Printer().printer(f"出现一个未知msg{dic}", "Info", "red")
