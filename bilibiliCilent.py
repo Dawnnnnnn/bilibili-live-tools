@@ -286,6 +286,8 @@ class bilibiliClient():
             pass
         elif cmd == "RAFFLE_START":  # 抽奖开始
             pass
+        elif cmd=="ROOM_SHIELD":             #未知msg{'cmd': 'ROOM_SHIELD', 'type': 1, 'user': '', 'keyword': '', 'roomid': 3051144}
+            pass
         else:
             Printer().printer(f"出现一个未知msg{dic}", "Info", "red")
             pass
