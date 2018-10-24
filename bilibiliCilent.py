@@ -288,6 +288,12 @@ class bilibiliClient():
             pass
         elif cmd=="ROOM_SHIELD":             #未知msg{'cmd': 'ROOM_SHIELD', 'type': 1, 'user': '', 'keyword': '', 'roomid': 3051144}
             pass
+        elif cmd == "TV_START":             # 未知msg{'cmd': 'TV_START', 'data': {'id': '159720', 'dtime': 180, 'msg': {'cmd': 'SYS_MSG', 'msg': 'もやしパワー:? 送给:? 管珩心-中间的字念横:? 1个小电视飞船
+            pass
+        elif cmd == "TV_END":               #未知msg{'cmd': 'TV_END', 'data': {'id': '159720', 'uname': '顾惜大哥哥', 'sname': 'もやしパワー', 'giftName': '100000x银瓜子', 'mobileTips': '恭喜 顾惜大哥哥 获得100000x银瓜子'
+            pass
+        elif cmd == "ROOM_ADMINS":         #未知msg{'cmd': 'ROOM_ADMINS', 'uids': [25866878, 7026393, 240404878, 52054996]}
+            pass
         else:
             Printer().printer(f"出现一个未知msg{dic}", "Info", "red")
             pass
