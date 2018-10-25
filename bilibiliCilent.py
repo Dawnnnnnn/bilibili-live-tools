@@ -296,6 +296,10 @@ class bilibiliClient():
             pass
         elif cmd == "ROOM_ADMINS":         #未知msg{'cmd': 'ROOM_ADMINS', 'uids': [25866878, 7026393, 240404878, 52054996]}
             pass
+        elif cmd=="ROOM_SILENT_ON":         #msg{'cmd': 'ROOM_SILENT_ON', 'data': {'type': 'level', 'level': 1, 'second': -1}, 'roomid': 5225}
+            pass
+        elif cmd=="ROOM_SILENT_OFF":        #msg{'cmd': 'ROOM_SILENT_OFF', 'data': [], 'roomid': 5225}
+            pass
         else:
             Printer().printer(f"出现一个未知msg{dic}", "Info", "red")
             pass
