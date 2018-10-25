@@ -234,6 +234,8 @@ class bilibiliClient():
             pass
         elif cmd == "WELCOME_GUARD":
             pass
+         elif cmd=="WELCOME_ACTIVITY":      #欢迎来到活动
+            pass
         elif cmd == "WISH_BOTTLE":
             pass
         elif cmd == "COMBO_END":
