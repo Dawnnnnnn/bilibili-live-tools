@@ -8,6 +8,9 @@ CMD = "run.py"
 
 class Auto_Run():
     def __init__(self, sleep_time, cmd):
+        if sys.version_info < (3, 6):
+            print("only support python 3.6 and later version")
+            return 1111
         self.sleep_time = sleep_time
         self.cmd = cmd
         self.ext = (cmd[-3:]).lower()
@@ -32,7 +35,9 @@ class Auto_Run():
     def run(self):
         if self.ext == ".py":
             print('start OK!')
-            self.p = subprocess.Popen(['python', '%s' % self.cmd], stdin=sys.stdin, stdout=sys.stdout,
+            # use now running python version, think multiple python installed and now use python3.6 to run
+            python_version = 'python' + str(sys.version_info[0]) + '.' + str(sys.version_info[1])
+            self.p = subprocess.Popen([python_version, '%s' % self.cmd], stdin=sys.stdin, stdout=sys.stdout,
                                       stderr=sys.stderr, shell=False)
         else:
             pass
