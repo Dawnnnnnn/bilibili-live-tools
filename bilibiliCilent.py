@@ -13,9 +13,9 @@ import sys
 async def handle_1_TV_raffle(type, num, real_roomid, raffleid):
     await asyncio.sleep(random.uniform(1, 2))
     response2 = await bilibili().get_gift_of_TV(type, real_roomid, raffleid)
-    Printer().printer(f"参与了房间 {real_roomid} 的广播抽奖", "Lottery", "blue")
+    Printer().printer(f"参与了房间 {real_roomid} 的广播抽奖", "Lottery", "cyan")
     json_response2 = await response2.json(content_type=None)
-    Printer().printer(f"广播道具抽奖状态:{json_response2['msg']}", "Lottery", "blue")
+    Printer().printer(f"广播道具抽奖状态:{json_response2['msg']}", "Lottery", "cyan")
     if json_response2['code'] == 0:
         Statistics().append_to_TVlist(raffleid, real_roomid)
     else:
@@ -205,7 +205,7 @@ class bilibiliClient():
             Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
             await utils.reconnect(self.area_name)
         elif cmd == 'DANMU_MSG':
-            Printer().printer(f"{dic}", "Message", "Cyan", printable=False)
+            Printer().printer(f"{dic}", "Message", "cyan", printable=False)
             return
         elif cmd == 'SYS_GIFT':
             try:
@@ -219,7 +219,7 @@ class bilibiliClient():
             else:
                 try:
                     real_roomid = dic['real_roomid']
-                    Printer().printer(f"检测到房间 {real_roomid} 的广播抽奖", "Lottery", "blue")
+                    Printer().printer(f"检测到房间 {real_roomid} 的广播抽奖", "Lottery", "cyan")
                     Rafflehandler().append2list_TV(real_roomid)
                     Statistics().append2pushed_TVlist()
                 except:
