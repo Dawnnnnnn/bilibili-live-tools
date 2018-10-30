@@ -245,5 +245,5 @@ async def check_up_name(name):
     return roomid
 
 
-async def reconnect():
-    await connect().recreate()
+async def reconnect(area):
+    await connect().recreate(area)

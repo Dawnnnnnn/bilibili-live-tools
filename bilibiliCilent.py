@@ -76,6 +76,7 @@ class bilibiliClient():
                                                            self.bilibili.dic_bilibili['_ChatPort'])
         except:
             print("连接无法建立，请检查本地网络状况")
+            await asyncio.sleep(5)
             return
         self._reader = reader
         self._writer = writer
@@ -125,11 +126,13 @@ class bilibiliClient():
                 print('由于心跳包30s一次，但是发现35内没有收到任何包，说明已经悄悄失联了，主动断开')
                 self._writer.close()
                 self.connected = False
+                await asyncio.sleep(1)
                 return None
             except ConnectionResetError:
                 print('RESET，网络不稳定或者远端不正常断开')
                 self._writer.close()
                 self.connected = False
+                await asyncio.sleep(5)
                 return None
             except asyncio.CancelledError:
 
@@ -145,6 +148,7 @@ class bilibiliClient():
                 print("主动关闭或者远端主动发来FIN")
                 self._writer.close()
                 self.connected = False
+                await asyncio.sleep(1)
                 return None
             else:
                 bytes_data = bytes_data + tmp
@@ -198,15 +202,8 @@ class bilibiliClient():
         cmd = dic['cmd']
 
         if cmd == 'PREPARING':
-
-            Printer().printer(f"房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
-            try:
-                await utils.reconnect()
-            except:
-                Printer().printer(f"切换房间失败,休眠5s后再次尝试", "Error", "red")
-                await asyncio.sleep(5)
-                await utils.reconnect()
-
+            Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
+            await utils.reconnect(self.area_name)
         elif cmd == 'DANMU_MSG':
             Printer().printer(f"{dic}", "Message", "Cyan", printable=False)
             return
