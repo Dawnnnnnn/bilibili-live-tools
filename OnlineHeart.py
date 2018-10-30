@@ -39,7 +39,7 @@ class OnlineHeart:
                     json_response2 = await response2.json(content_type=None)
                     if json_response2['code'] == 0:
                         Printer().printer(f"获取到房间[{OriginRoomId}]编号[{GuardId}]的上船亲密度:{json_response2['data']['message']}",
-                                          "Lottery", "blue")
+                                          "Lottery", "cyan")
                     elif json_response2['code'] == 400 and json_response2['msg'] == "你已经领取过啦":
                         Printer().printer(
                             f"房间[{OriginRoomId}]编号[{GuardId}]的上船亲密度已领过",
@@ -71,7 +71,7 @@ class OnlineHeart:
                         if int(join_end_time) > int(ts) > int(join_start_time):
                             response1 = await bilibili().get_gift_of_lottery(i, g)
                             json_response1 = await response1.json()
-                            Printer().printer(f"参与实物抽奖回显:{json_response1}", "Lottery","blue")
+                            Printer().printer(f"参与实物抽奖回显:{json_response1}", "Lottery","cyan")
                         else:
                             pass
             else:

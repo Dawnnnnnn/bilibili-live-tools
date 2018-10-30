@@ -65,7 +65,7 @@ class Statistics:
                     elif json_response['data']['gift_id'] != '-1':
                         data = json_response['data']
                         Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖结果: {data['gift_name']}X{data['gift_num']}",
-                                          "Lottery", "blue")
+                                          "Lottery", "cyan")
                         self.add_to_result(data['gift_name'], int(data['gift_num']))
 
                         self.delete_0st_TVlist()

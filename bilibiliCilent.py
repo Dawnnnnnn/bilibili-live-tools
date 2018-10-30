@@ -123,13 +123,13 @@ class bilibiliClient():
             try:
                 tmp = await asyncio.wait_for(self._reader.read(len_remain), timeout=35.0)
             except asyncio.TimeoutError:
-                print('由于心跳包30s一次，但是发现35内没有收到任何包，说明已经悄悄失联了，主动断开')
+                Printer().printer(f'由于心跳包30s一次，但是发现35内没有收到任何包，说明已经悄悄失联了，主动断开 {self._roomId}',"Error","red")
                 self._writer.close()
                 self.connected = False
                 await asyncio.sleep(1)
                 return None
             except ConnectionResetError:
-                print('RESET，网络不稳定或者远端不正常断开')
+                Printer().printer(f'RESET，网络不稳定或者远端不正常断开 {self._roomId}',"Error","red")
                 self._writer.close()
                 self.connected = False
                 await asyncio.sleep(5)
@@ -138,14 +138,14 @@ class bilibiliClient():
 
                 return None
             except:
-                print(sys.exc_info()[0], sys.exc_info()[1])
-                print('请联系开发者')
+                Printer().printer(f"{sys.exc_info()[0]}, {sys.exc_info()[1]}","Error","red")
+                Printer().printer(f'请联系开发者',"Error","red")
                 self._writer.close()
                 self.connected = False
                 return None
 
             if not tmp:
-                print("主动关闭或者远端主动发来FIN")
+                Printer().printer(f"主动关闭或者远端主动发来FIN {self._roomId}","Error","red")
                 self._writer.close()
                 self.connected = False
                 await asyncio.sleep(1)
