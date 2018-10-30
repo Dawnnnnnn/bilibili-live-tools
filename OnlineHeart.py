@@ -7,6 +7,8 @@ import asyncio
 from printer import Printer
 
 
+had_gotted_guard = []
+
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
@@ -30,27 +32,29 @@ class OnlineHeart:
         for i in range(0, len(json_response)):
             if json_response[i]['Status']:
                 GuardId = json_response[i]['GuardId']
-                OriginRoomId = json_response[i]['OriginRoomId']
-                response2 = await bilibili().get_gift_of_captain(OriginRoomId, GuardId)
-                json_response2 = await response2.json()
-                if json_response2['code'] == 0:
-                    Printer().printer(f"获取到房间[{OriginRoomId}]编号[{GuardId}]的上船亲密度:{json_response2['data']['message']}",
-                                      "Lottery", "blue")
-                elif json_response2['code'] == 400 and json_response2['msg'] == "你已经领取过啦":
-                    Printer().printer(
-                        f"房间[{OriginRoomId}]编号[{GuardId}]的上船亲密度已领过",
-                        "Info", "green")
-                else:
-                    Printer().printer(
-                        f"房间[{OriginRoomId}]编号[{GuardId}] 的上船亲密度领取出错,{json_response2}",
-                        "Error", "red")
+                if GuardId not in had_gotted_guard:
+                    had_gotted_guard.append(GuardId)
+                    OriginRoomId = json_response[i]['OriginRoomId']
+                    response2 = await bilibili().get_gift_of_captain(OriginRoomId, GuardId)
+                    json_response2 = await response2.json(content_type=None)
+                    if json_response2['code'] == 0:
+                        Printer().printer(f"获取到房间[{OriginRoomId}]编号[{GuardId}]的上船亲密度:{json_response2['data']['message']}",
+                                          "Lottery", "blue")
+                    elif json_response2['code'] == 400 and json_response2['msg'] == "你已经领取过啦":
+                        Printer().printer(
+                            f"房间[{OriginRoomId}]编号[{GuardId}]的上船亲密度已领过",
+                            "Info", "green")
+                    else:
+                        Printer().printer(
+                            f"房间[{OriginRoomId}]编号[{GuardId}] 的上船亲密度领取出错,{json_response2}",
+                            "Error", "red")
             else:
                 pass
 
 
     async def draw_lottery(self):
-        black_list = ["测试", "test"]
-        for i in range(200, 300):
+        black_list = ["测试", "test", "12345"]
+        for i in range(212, 300):
             response = await bilibili().get_lotterylist(i)
             json_response = await response.json()
             if json_response['code'] == 0:
