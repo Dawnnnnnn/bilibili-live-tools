@@ -14,7 +14,7 @@ async def handle_1_TV_raffle(type, num, real_roomid, raffleid):
     await asyncio.sleep(random.uniform(1, 2))
     response2 = await bilibili().get_gift_of_TV(type, real_roomid, raffleid)
     Printer().printer(f"参与了房间 {real_roomid} 的广播抽奖", "Lottery", "blue")
-    json_response2 = await response2.json()
+    json_response2 = await response2.json(content_type=None)
     Printer().printer(f"广播道具抽奖状态:{json_response2['msg']}", "Lottery", "blue")
     if json_response2['code'] == 0:
         Statistics().append_to_TVlist(raffleid, real_roomid)
@@ -30,7 +30,7 @@ async def handle_1_room_TV(real_roomid):
     else:
         await bilibili().post_watching_history(real_roomid)
         response = await bilibili().get_giftlist_of_TV(real_roomid)
-        json_response = await response.json()
+        json_response = await response.json(content_type=None)
         checklen = json_response['data']['list']
         num = len(checklen)
         list_available_raffleid = []
@@ -76,6 +76,7 @@ class bilibiliClient():
                                                            self.bilibili.dic_bilibili['_ChatPort'])
         except:
             print("连接无法建立，请检查本地网络状况")
+            await asyncio.sleep(5)
             return
         self._reader = reader
         self._writer = writer
@@ -125,11 +126,13 @@ class bilibiliClient():
                 print('由于心跳包30s一次，但是发现35内没有收到任何包，说明已经悄悄失联了，主动断开')
                 self._writer.close()
                 self.connected = False
+                await asyncio.sleep(1)
                 return None
             except ConnectionResetError:
                 print('RESET，网络不稳定或者远端不正常断开')
                 self._writer.close()
                 self.connected = False
+                await asyncio.sleep(5)
                 return None
             except asyncio.CancelledError:
 
@@ -145,6 +148,7 @@ class bilibiliClient():
                 print("主动关闭或者远端主动发来FIN")
                 self._writer.close()
                 self.connected = False
+                await asyncio.sleep(1)
                 return None
             else:
                 bytes_data = bytes_data + tmp
@@ -198,15 +202,8 @@ class bilibiliClient():
         cmd = dic['cmd']
 
         if cmd == 'PREPARING':
-
-            Printer().printer(f"房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
-            try:
-                await utils.reconnect()
-            except:
-                Printer().printer(f"切换房间失败,休眠5s后再次尝试", "Error", "red")
-                await asyncio.sleep(5)
-                await utils.reconnect()
-
+            Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
+            await utils.reconnect(self.area_name)
         elif cmd == 'DANMU_MSG':
             Printer().printer(f"{dic}", "Message", "Cyan", printable=False)
             return
@@ -234,7 +231,7 @@ class bilibiliClient():
             pass
         elif cmd == "WELCOME_GUARD":
             pass
-        elif cmd=="WELCOME_ACTIVITY":      #欢迎来到活动
+        elif cmd == "WELCOME_ACTIVITY":  # 欢迎来到活动
             pass
         elif cmd == "WISH_BOTTLE":
             pass
@@ -288,17 +285,17 @@ class bilibiliClient():
             pass
         elif cmd == "RAFFLE_START":  # 抽奖开始
             pass
-        elif cmd=="ROOM_SHIELD":             #未知msg{'cmd': 'ROOM_SHIELD', 'type': 1, 'user': '', 'keyword': '', 'roomid': 3051144}
+        elif cmd == "ROOM_SHIELD":  # 屏蔽{'cmd': 'ROOM_SHIELD', 'type': 1, 'user': '', 'keyword': '', 'roomid': 3051144}
             pass
-        elif cmd == "TV_START":             # 未知msg{'cmd': 'TV_START', 'data': {'id': '159720', 'dtime': 180, 'msg': {'cmd': 'SYS_MSG', 'msg': 'もやしパワー:? 送给:? 管珩心-中间的字念横:? 1个小电视飞船
+        elif cmd == "TV_START":  # 小电视开始{'cmd': 'TV_START', 'data': {'id': '159720', 'dtime': 180, 'msg': {'cmd': 'SYS_MSG', 'msg': 'もやしパワー:? 送给:? 管珩心-中间的字念横:? 1个小电视飞船
             pass
-        elif cmd == "TV_END":               #未知msg{'cmd': 'TV_END', 'data': {'id': '159720', 'uname': '顾惜大哥哥', 'sname': 'もやしパワー', 'giftName': '100000x银瓜子', 'mobileTips': '恭喜 顾惜大哥哥 获得100000x银瓜子'
+        elif cmd == "TV_END":  # 小电视关闭{'cmd': 'TV_END', 'data': {'id': '159720', 'uname': '顾惜大哥哥', 'sname': 'もやしパワー', 'giftName': '100000x银瓜子', 'mobileTips': '恭喜 顾惜大哥哥 获得100000x银瓜子'
             pass
-        elif cmd == "ROOM_ADMINS":         #未知msg{'cmd': 'ROOM_ADMINS', 'uids': [25866878, 7026393, 240404878, 52054996]}
+        elif cmd == "ROOM_ADMINS":  # 房管列表{'cmd': 'ROOM_ADMINS', 'uids': [25866878, 7026393, 240404878, 52054996]}
             pass
-        elif cmd=="ROOM_SILENT_ON":         #msg{'cmd': 'ROOM_SILENT_ON', 'data': {'type': 'level', 'level': 1, 'second': -1}, 'roomid': 5225}
+        elif cmd == "ROOM_SILENT_ON":  # 禁言开启{'cmd': 'ROOM_SILENT_ON', 'data': {'type': 'level', 'level': 1, 'second': -1}, 'roomid': 5225}
             pass
-        elif cmd=="ROOM_SILENT_OFF":        #msg{'cmd': 'ROOM_SILENT_OFF', 'data': [], 'roomid': 5225}
+        elif cmd == "ROOM_SILENT_OFF":  # 禁言关闭{'cmd': 'ROOM_SILENT_OFF', 'data': [], 'roomid': 5225}
             pass
         else:
             Printer().printer(f"出现一个未知msg{dic}", "Info", "red")
