@@ -124,14 +124,12 @@ class bilibiliClient():
                 tmp = await asyncio.wait_for(self._reader.read(len_remain), timeout=35.0)
             except asyncio.TimeoutError:
                 Printer().printer(f'由于心跳包30s一次，但是发现35内没有收到任何包，说明已经悄悄失联了，主动断开 {self._roomId}',"Error","red")
-                self._writer.close()
-                self.connected = False
+                self.close_connection()
                 await asyncio.sleep(1)
                 return None
             except ConnectionResetError:
                 Printer().printer(f'RESET，网络不稳定或者远端不正常断开 {self._roomId}',"Error","red")
-                self._writer.close()
-                self.connected = False
+                self.close_connection()
                 await asyncio.sleep(5)
                 return None
             except asyncio.CancelledError:
@@ -140,14 +138,12 @@ class bilibiliClient():
             except:
                 Printer().printer(f"{sys.exc_info()[0]}, {sys.exc_info()[1]}","Error","red")
                 Printer().printer(f'请联系开发者',"Error","red")
-                self._writer.close()
-                self.connected = False
+                self.close_connection()
                 return None
 
             if not tmp:
                 Printer().printer(f"主动关闭或者远端主动发来FIN {self._roomId}","Error","red")
-                self._writer.close()
-                self.connected = False
+                self.close_connection()
                 await asyncio.sleep(1)
                 return None
             else:
@@ -203,6 +199,7 @@ class bilibiliClient():
 
         if cmd == 'PREPARING':
             Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
+            self.close_connection()
             await utils.reconnect(self.area_name)
         elif cmd == 'DANMU_MSG':
             Printer().printer(f"{dic}", "Message", "cyan", printable=False)
