@@ -19,7 +19,7 @@ class MultiRoom:
                     return [asmr_area_room, "娱乐分区"]
                 else:
                     Printer().printer("检测到房间未开播，立即尝试重新获取", "Error", "red")
-            except Exception:
+            except Exception as e:
                 Printer().printer(f"获取 [娱乐分区] 房间列表失败，5s后进行下次尝试 {repr(e)}", "Error", "red")
                 await asyncio.sleep(5)
 
@@ -53,7 +53,7 @@ class MultiRoom:
                     return [mobile_area_room, "手游分区"]
                 else:
                     Printer().printer("检测到房间未开播，立即尝试重新获取", "Error", "red")
-            except Exception:
+            except Exception as e:
                 Printer().printer(f"获取 [手游分区] 房间列表失败，5s后进行下次尝试 {repr(e)}", "Error", "red")
                 await asyncio.sleep(5)
 
@@ -70,7 +70,7 @@ class MultiRoom:
                     return [draw_area_room, "绘画分区"]
                 else:
                     Printer().printer(f"检测到房间未开播，立即尝试重新获取", "Error", "red")
-            except Exception:
+            except Exception as e:
                 Printer().printer(f"获取 [绘画分区] 房间列表失败，5s后进行下次尝试 {repr(e)}", "Error", "red")
                 await asyncio.sleep(5)
 
