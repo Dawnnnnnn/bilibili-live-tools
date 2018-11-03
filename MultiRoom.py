@@ -13,7 +13,7 @@ class MultiRoom:
                 response = await bilibili().bili_section_get(url)
                 json_response = await response.json(content_type=None)
                 checklen = len(json_response['data'])
-                asmr_area_room = json_response['data'][random.randint(0, checklen)]['roomid']
+                asmr_area_room = json_response['data'][random.randint(0, checklen-1)]['roomid']
                 state = await bilibili().check_room_state(asmr_area_room)
                 if state == 1:
                     return [asmr_area_room, "娱乐分区"]
@@ -30,7 +30,7 @@ class MultiRoom:
                 response = await bilibili().bili_section_get(url)
                 json_response = await response.json(content_type=None)
                 checklen = len(json_response['data'])
-                game_area_room = json_response['data'][random.randint(0, checklen)]['roomid']
+                game_area_room = json_response['data'][random.randint(0, checklen-1)]['roomid']
                 state = await bilibili().check_room_state(game_area_room)
                 if state == 1:
                     return [game_area_room, "游戏分区"]
@@ -47,7 +47,7 @@ class MultiRoom:
                 response = await bilibili().bili_section_get(url)
                 json_response = await response.json(content_type=None)
                 checklen = len(json_response['data'])
-                mobile_area_room = json_response['data'][random.randint(0, checklen)]['roomid']
+                mobile_area_room = json_response['data'][random.randint(0, checklen-1)]['roomid']
                 state = await bilibili().check_room_state(mobile_area_room)
                 if state == 1:
                     return [mobile_area_room, "手游分区"]
@@ -64,7 +64,7 @@ class MultiRoom:
                 response = await bilibili().bili_section_get(url)
                 json_response = await response.json(content_type=None)
                 checklen = len(json_response['data'])
-                draw_area_room = json_response['data'][random.randint(0, checklen)]['roomid']
+                draw_area_room = json_response['data'][random.randint(0, checklen-1)]['roomid']
                 state = await bilibili().check_room_state(draw_area_room)
                 if state == 1:
                     return [draw_area_room, "绘画分区"]

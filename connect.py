@@ -33,7 +33,7 @@ class connect():
             connect.area_name.remove(area_name)
             del connect.tasks[roomid]
 
-            new_roomid, new_area_name = await MultiRoom().check_state(area=area_name)
+            [new_roomid, new_area_name] = await MultiRoom().check_state(area=area_name)
             connect.roomids.append(new_roomid)
             connect.area_name.append(new_area_name)
             Printer().printer(f"更新四个分区房间{connect.roomids} {connect.area_name}","Info","green")
@@ -70,7 +70,7 @@ class connect():
                         task2.cancel()
 
                     area_name = connect.area_name[connect.roomids.index(roomid)]
-                    ckd_roomid, ckd_area_name = await MultiRoom().check_state(roomid=roomid, area=area_name)
+                    [ckd_roomid, ckd_area_name] = await MultiRoom().check_state(roomid=roomid, area=area_name)
                     if not ckd_roomid == roomid:
                         connect.roomids.remove(roomid)
                         connect.area_name.remove(area_name)
