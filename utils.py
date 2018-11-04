@@ -248,15 +248,16 @@ async def check_up_name(name):
 async def reconnect(area=None):
     if area is not None:
         await connect().recreate(area)
-        return
     # print('connect类属性:', connect.roomids, connect.area_name)
     if not len(connect.roomids):
         # 说明程序刚启动还没获取监控房间，此时也不需要检查
-        return
+        pass
     else:
         for roomid,area_name in zip(connect.roomids,connect.area_name):
-            state = await bilibili().check_room_state(roomid)
-            if state == 1:
+            if (area is not None) and (area == area_name):
                 continue
             else:
-                await connect().recreate(area_name)
+                state = await bilibili().check_room_state(roomid)
+                if state == 1:
+                    continue
+            await connect().recreate(area_name)
