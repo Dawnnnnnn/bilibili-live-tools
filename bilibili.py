@@ -91,6 +91,7 @@ class bilibili():
             except:
                 # print('当前网络不好，正在重试，请反馈开发者!!!!')
                 # print(sys.exc_info()[0], sys.exc_info()[1])
+                await asyncio.sleep(1)
                 continue
 
     async def bili_section_get(self, url, headers=None, data=None, params=None):
@@ -104,6 +105,7 @@ class bilibili():
             except:
                 # print('当前网络不好，正在重试，请反馈开发者!!!!')
                 # print(sys.exc_info()[0], sys.exc_info()[1])
+                await asyncio.sleep(1)
                 continue
 
     # 1:900兑换

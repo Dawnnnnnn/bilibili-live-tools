@@ -135,6 +135,7 @@ class Tasks:
                 await self.sliver2coin()
                 await self.doublegain_coin2silver()
                 await self.auto_send_gift()
+                await utils.reconnect()
                 await asyncio.sleep(21600)
             except:
                 await asyncio.sleep(10)
