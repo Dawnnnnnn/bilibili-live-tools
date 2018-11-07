@@ -84,6 +84,9 @@ class bilibili():
         while True:
             try:
                 response = await self.bili_section.post(url, headers=headers, data=data)
+                if response.status == 403:
+                    await asyncio.sleep(5)
+                    continue
                 tag = await self.replay_request(response)
                 if tag:
                     continue
@@ -98,6 +101,9 @@ class bilibili():
         while True:
             try:
                 response = await self.bili_section.get(url, headers=headers, data=data, params=params)
+                if response.status == 403:
+                    await asyncio.sleep(5)
+                    continue
                 tag = await self.replay_request(response)
                 if tag:
                     continue

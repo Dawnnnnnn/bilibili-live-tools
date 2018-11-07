@@ -41,7 +41,7 @@ class connect():
             self.danmuji = bilibiliClient(new_roomid, new_area_name)
             task11 = asyncio.ensure_future(self.danmuji.connectServer())
             task21 = asyncio.ensure_future(self.danmuji.HeartbeatLoop())
-            connect.tasks[roomid] = [task11, task21]
+            connect.tasks[new_roomid] = [task11, task21]
         except Exception:
                 traceback.print_exc()
 
@@ -64,12 +64,13 @@ class connect():
                 task1 = item[0]
                 task2 = item[1]
                 if task1.done() == True or task2.done() == True:
+                    area_name = connect.area_name[connect.roomids.index(roomid)]
+                    Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 任务出现异常", "Info", "green")
                     if task1.done() == False:
                         task1.cancel()
                     if task2.done() == False:
                         task2.cancel()
 
-                    area_name = connect.area_name[connect.roomids.index(roomid)]
                     [ckd_roomid, ckd_area_name] = await MultiRoom().check_state(roomid=roomid, area=area_name)
                     if not ckd_roomid == roomid:
                         connect.roomids.remove(roomid)
@@ -83,3 +84,6 @@ class connect():
                     task11 = asyncio.ensure_future(danmuji.connectServer())
                     task22 = asyncio.ensure_future(danmuji.HeartbeatLoop())
                     connect.tasks[ckd_roomid] = [task11, task22]
+                else:
+                    # Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 任务保持正常", "Info", "green")
+                    pass
