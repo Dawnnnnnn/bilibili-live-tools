@@ -41,24 +41,26 @@ class Tasks:
 
     # 应援团签到
     async def link_sign(self):
-        response = bilibili().get_grouplist()
-        check = len(response.json()['data']['list'])
+        response = await bilibili().get_grouplist()
+        json_response = await response.json(content_type=None)
+        check = len(json_response['data']['list'])
         group_id_list = []
         owner_uid_list = []
         for i in range(0, check):
-            group_id = response.json()['data']['list'][i]['group_id']
-            owner_uid = response.json()['data']['list'][i]['owner_uid']
+            group_id = json_response['data']['list'][i]['group_id']
+            owner_uid = json_response['data']['list'][i]['owner_uid']
             group_id_list.append(group_id)
             owner_uid_list.append(owner_uid)
         for (i1, i2) in zip(group_id_list, owner_uid_list):
-            response = bilibili().assign_group(i1, i2)
-            if response.json()['code'] == 0:
-                if (response.json()['data']['status']) == 1:
+            response = await bilibili().assign_group(i1, i2)
+            json_response = await response.json(content_type=None)
+            if json_response['code'] == 0:
+                if (json_response['data']['status']) == 1:
                     Printer().printer(f"应援团{i1}已应援过", "Info", "green")
-                if (response.json()['data']['status']) == 0:
-                    Printer().printer(f"应援团{i1}应援成功,获得{response.json()['data']['add_num']}点亲密度", "Info", "green")
+                if (json_response['data']['status']) == 0:
+                    Printer().printer(f"应援团{i1}应援成功,获得{json_response['data']['add_num']}点亲密度", "Info", "green")
             else:
-                Printer().printer(f"应援团{i1}应援失败,{response.json()}", "Error", "red")
+                Printer().printer(f"应援团{i1}应援失败,{json_response}", "Error", "red")
 
     async def send_gift(self):
         if self.dic_user['gift']['on/off'] == '1':
@@ -133,6 +135,7 @@ class Tasks:
                 await self.sliver2coin()
                 await self.doublegain_coin2silver()
                 await self.auto_send_gift()
+                await utils.reconnect()
                 await asyncio.sleep(21600)
             except:
                 await asyncio.sleep(10)

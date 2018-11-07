@@ -70,7 +70,7 @@ class OnlineHeart:
                         ts = CurrentTime()
                         if int(join_end_time) > int(ts) > int(join_start_time):
                             response1 = await bilibili().get_gift_of_lottery(i, g)
-                            json_response1 = await response1.json()
+                            json_response1 = await response1.json(content_type=None)
                             Printer().printer(f"参与实物抽奖回显:{json_response1}", "Lottery","cyan")
                         else:
                             pass

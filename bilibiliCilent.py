@@ -68,7 +68,7 @@ class bilibiliClient():
 
     def close_connection(self):
         self._writer.close()
-        self._connected = False
+        self.connected = False
 
     async def connectServer(self):
         try:
@@ -109,10 +109,14 @@ class bilibiliClient():
         try:
             self._writer.write(sendbytes)
         except:
-            print(sys.exc_info()[0], sys.exc_info()[1])
+            Printer().printer(f"Error when self._writer.write(sendbytes): {sys.exc_info()[0]}, {sys.exc_info()[1]}","Error","red")
             self.connected = False
-
-        await self._writer.drain()
+        try:
+            await self._writer.drain()
+        except ConnectionError:
+            pass
+        except Exception:
+            Printer().printer(f"Error when self._writer.drain(): {sys.exc_info()[0]}, {sys.exc_info()[1]}","Error","red")
 
     async def ReadSocketData(self, len_wanted):
         bytes_data = b''
@@ -123,31 +127,28 @@ class bilibiliClient():
             try:
                 tmp = await asyncio.wait_for(self._reader.read(len_remain), timeout=35.0)
             except asyncio.TimeoutError:
-                Printer().printer(f'由于心跳包30s一次，但是发现35内没有收到任何包，说明已经悄悄失联了，主动断开 {self._roomId}',"Error","red")
-                self._writer.close()
-                self.connected = False
+                # 由于心跳包30s一次，但是发现35s内没有收到任何包，说明已经悄悄失联了，主动断开
+                Printer().printer(f'心跳失联，主动断开 @[{self.area_name}]{self._roomId}',"Error","red")
+                self.close_connection()
                 await asyncio.sleep(1)
                 return None
             except ConnectionResetError:
-                Printer().printer(f'RESET，网络不稳定或者远端不正常断开 {self._roomId}',"Error","red")
-                self._writer.close()
-                self.connected = False
+                Printer().printer(f'RESET，网络不稳定或者远端不正常断开 @[{self.area_name}]{self._roomId}',"Error","red")
+                self.close_connection()
                 await asyncio.sleep(5)
                 return None
             except asyncio.CancelledError:
 
                 return None
             except:
-                Printer().printer(f"{sys.exc_info()[0]}, {sys.exc_info()[1]}","Error","red")
+                Printer().printer(f"{sys.exc_info()[0]}, {sys.exc_info()[1]} @[{self.area_name}]{self._roomId}","Error","red")
                 Printer().printer(f'请联系开发者',"Error","red")
-                self._writer.close()
-                self.connected = False
+                self.close_connection()
                 return None
 
             if not tmp:
-                Printer().printer(f"主动关闭或者远端主动发来FIN {self._roomId}","Error","red")
-                self._writer.close()
-                self.connected = False
+                Printer().printer(f"主动关闭或者远端主动发来FIN @[{self.area_name}]{self._roomId}","Error","red")
+                self.close_connection()
                 await asyncio.sleep(1)
                 return None
             else:
@@ -203,6 +204,7 @@ class bilibiliClient():
 
         if cmd == 'PREPARING':
             Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
+            self.close_connection()
             await utils.reconnect(self.area_name)
         elif cmd == 'DANMU_MSG':
             Printer().printer(f"{dic}", "Message", "cyan", printable=False)
@@ -219,7 +221,7 @@ class bilibiliClient():
             else:
                 try:
                     real_roomid = dic['real_roomid']
-                    Printer().printer(f"检测到房间 {real_roomid} 的广播抽奖", "Lottery", "cyan")
+                    Printer().printer(f"检测到房间 {real_roomid} 的广播抽奖 @[{self.area_name}]{self._roomId}", "Lottery", "cyan")
                     Rafflehandler().append2list_TV(real_roomid)
                     Statistics().append2pushed_TVlist()
                 except:
@@ -256,6 +258,8 @@ class bilibiliClient():
         elif cmd == "GUARD_LOTTERY_START":
             pass
         elif cmd == "PK_INVITE_INIT":
+            pass
+        elif cmd == "PK_INVITE_CANCEL":
             pass
         elif cmd == "PK_CLICK_AGAIN":
             pass

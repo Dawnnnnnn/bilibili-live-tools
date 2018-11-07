@@ -19,9 +19,9 @@ class connect():
             cls.instance.tag_reconnect = False
         return cls.instance
 
-    async def recreate(self, area):
+    async def recreate(self, area_name):
         try:
-            roomid = connect.roomids[connect.area_name.index(area)]
+            roomid = connect.roomids[connect.area_name.index(area_name)]
 
             item = connect.tasks[roomid]
             task1 = item[0]
@@ -30,24 +30,19 @@ class connect():
             task2.cancel()
 
             connect.roomids.remove(roomid)
-            connect.area_name.remove(area)
+            connect.area_name.remove(area_name)
             del connect.tasks[roomid]
 
-            tmp = await MultiRoom().get_all(area)
-            for i in range(len(tmp)):
-                connect.roomids.append(tmp[i][0])
-            for n in range(len(tmp)):
-                connect.area_name.append(tmp[n][1])
-            Printer().printer(f"更新四个分区房间{connect.roomids}[{connect.area_name}]","Info","green")
+            [new_roomid, new_area_name] = await MultiRoom().check_state(area=area_name)
+            connect.roomids.append(new_roomid)
+            connect.area_name.append(new_area_name)
+            Printer().printer(f"更新四个分区房间{connect.roomids} {connect.area_name}","Info","green")
 
-            roomid = tmp[0][0]
-            area_name = tmp[0][1]
-            self.danmuji = bilibiliClient(roomid,area_name)
+            self.danmuji = bilibiliClient(new_roomid, new_area_name)
             task11 = asyncio.ensure_future(self.danmuji.connectServer())
             task21 = asyncio.ensure_future(self.danmuji.HeartbeatLoop())
-            connect.tasks[roomid] = [task11, task21]
-        except Exception as e:
-                print(e)
+            connect.tasks[new_roomid] = [task11, task21]
+        except Exception:
                 traceback.print_exc()
 
     async def create(self):
@@ -69,12 +64,26 @@ class connect():
                 task1 = item[0]
                 task2 = item[1]
                 if task1.done() == True or task2.done() == True:
+                    area_name = connect.area_name[connect.roomids.index(roomid)]
+                    Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 任务出现异常", "Info", "green")
                     if task1.done() == False:
                         task1.cancel()
                     if task2.done() == False:
                         task2.cancel()
-                    danmuji = bilibiliClient(roomid,connect.area_name[connect.roomids.index(roomid)])
+
+                    [ckd_roomid, ckd_area_name] = await MultiRoom().check_state(roomid=roomid, area=area_name)
+                    if not ckd_roomid == roomid:
+                        connect.roomids.remove(roomid)
+                        connect.area_name.remove(area_name)
+                        del connect.tasks[roomid]
+                        connect.roomids.append(ckd_roomid)
+                        connect.area_name.append(ckd_area_name)
+                        Printer().printer(f"更新四个分区房间{connect.roomids}[{connect.area_name}]","Info","green")
+
+                    danmuji = bilibiliClient(ckd_roomid, ckd_area_name)
                     task11 = asyncio.ensure_future(danmuji.connectServer())
                     task22 = asyncio.ensure_future(danmuji.HeartbeatLoop())
-                    connect.tasks[roomid] = [task11, task22]
-
+                    connect.tasks[ckd_roomid] = [task11, task22]
+                else:
+                    # Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 任务保持正常", "Info", "green")
+                    pass

@@ -13,6 +13,7 @@ def guide_of_console():
     print('|4 查看持有勋章状态          |')
     print('|5 获取直播个人的基本信息     |')
     print('|6 检查今日任务的完成情况     |')
+    print('|7 检查监控房间的开播情况     |')
     print('￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣')
 
 
@@ -26,6 +27,7 @@ options = {
     '4': utils.fetch_medal,  # async
     '5': utils.fetch_user_info,  # async
     '6': utils.check_taskinfo,  # async
+    '7': utils.reconnect,  # async
     'help': guide_of_console
 }
 
@@ -38,7 +40,7 @@ def controler():
     while True:
         x = input('')
         # input and async
-        if x in ['3', '4', '5', '6']:
+        if x in ['3', '4', '5', '6', '7']:
             answer = options.get(x, return_error)
             Biliconsole().append2list_console(answer)
         # normal
