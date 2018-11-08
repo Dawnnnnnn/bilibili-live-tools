@@ -259,7 +259,7 @@ async def reconnect(area=None):
             else:
                 state = await bilibili().check_room_state(roomid)
                 if state == 1:
-                    # Printer().printer(f'[{area_name}] 房间 {roomid} 仍在直播', "Info", "green")
+                    Printer().printer(f'[{area_name}] 房间 {roomid} 仍在直播', "Info", "green")
                     continue
                 else:
                     Printer().printer(f"检测到[{area_name}] 房间 {roomid} 未直播！将切换监听房间", "Info", "green")

@@ -16,7 +16,7 @@ class Printer():
         ctm = self.current_time()
         tmp = "[" + str(info) + "]"
         if printable:
-            msg = ("{:<22}{:<15}{:<20}".format(str(ctm), str(tmp), str(string)))
+            msg = ("{:<22}{:<10}{:<20}".format(str(ctm), str(tmp), str(string)))
             print(colored(msg, color), flush=True)
             with open("log.txt","a+",encoding="utf-8")as f:
                 f.write(msg+"\n")

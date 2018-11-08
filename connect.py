@@ -65,7 +65,7 @@ class connect():
                 task2 = item[1]
                 if task1.done() == True or task2.done() == True:
                     area_name = connect.area_name[connect.roomids.index(roomid)]
-                    Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 任务出现异常", "Info", "green")
+                    Printer().printer(f"[{area_name}] 房间 {roomid} 任务出现异常", "Info", "green")
                     if task1.done() == False:
                         task1.cancel()
                     if task2.done() == False:
