@@ -459,9 +459,14 @@ class bilibili():
         response = await self.bili_section_get(search_url)
         return response
 
-    async def check_room_state(self,roomid):
-        init_url = "https://api.live.bilibili.com/room/v1/Room/room_init?id="+str(roomid)
+    async def check_room_state(self, roomid):
+        init_url = "https://api.live.bilibili.com/room/v1/Room/room_init?id=" + str(roomid)
         response = await self.bili_section_get(init_url)
-        json_response = await response.json()
+        json_response = await response.json(content_type=None)
         state = json_response['data']['live_status']
         return state
+
+    async def check_room_info(self, roomid):
+        url = "https://api.live.bilibili.com/room/v1/Room/get_info?room_id=" + str(roomid)
+        response = await self.bili_section_get(url)
+        return response

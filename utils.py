@@ -234,7 +234,7 @@ async def check_up_name(name):
         temp = random.randint(0, len(name) - 1)
         split_str = name[temp:min(temp + 2, len(name))]
         response = await bilibili().query_guard(split_str)
-        json_response = await response.json
+        json_response = await response.json()
     for i in range(0, len(json_response['result'])):
         uname = str(json_response['result'][i]['uname'])
         temp = re.compile(r'<[^>]+>', re.S)
@@ -248,19 +248,4 @@ async def check_up_name(name):
 async def reconnect(area=None):
     if area is not None:
         await connect().recreate(area)
-    # print('connect类属性:', connect.roomids, connect.area_name)
-    if not len(connect.roomids):
-        # 说明程序刚启动还没获取监控房间，此时也不需要检查
-        pass
-    else:
-        for roomid,area_name in zip(connect.roomids,connect.area_name):
-            if (area is not None) and (area == area_name):
-                continue
-            else:
-                state = await bilibili().check_room_state(roomid)
-                if state == 1:
-                    Printer().printer(f'[{area_name}] 房间 {roomid} 仍在直播', "Info", "green")
-                    continue
-                else:
-                    Printer().printer(f"检测到[{area_name}] 房间 {roomid} 未直播！将切换监听房间", "Info", "green")
-                    await connect().recreate(area_name)
+    await connect().check_connect(area)

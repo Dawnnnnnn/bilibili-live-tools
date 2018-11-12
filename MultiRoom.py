@@ -74,14 +74,20 @@ class MultiRoom:
                 Printer().printer(f"获取 [绘画分区] 房间列表失败，5s后进行下次尝试 {repr(e)}", "Error", "red")
                 await asyncio.sleep(5)
 
-    async def check_state(self, roomid=None, area=None):
+    async def check_state(self, area, roomid=None):
         if roomid is not None:
-            state = await bilibili().check_room_state(roomid)
-            if state == 1:
-                # Printer().printer(f'[{area}] 断线房间 {roomid} 仍在直播', "Info", "green")
+            response = await bilibili().check_room_info(roomid)
+            json_response = await response.json()
+            live_status = json_response['data']['live_status']
+            curr_area_name = json_response['data']['parent_area_name']
+            if live_status == 1 and curr_area_name in area:
+                Printer().printer(f'[{area}] 房间 {roomid} 直播状态正常', "Info", "green")
                 return [roomid, area]
+            elif live_status != 1:
+                Printer().printer(f"[{area}] 房间 {roomid} 已未直播！将切换监听房间", "Info", "green")
             else:
-                Printer().printer(f"检测到[{area}] 断线房间 {roomid} 未直播！将切换监听房间", "Info", "green")
+                print(type(live_status), live_status, curr_area_name)
+                Printer().printer(f"[{area}] 房间 {roomid} 已切换分区[{curr_area_name}]！将切换监听房间", "Info", "green")
         if area == "娱乐分区":
             asmr = await self.asmr_area()
             return asmr
