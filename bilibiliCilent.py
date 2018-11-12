@@ -205,7 +205,7 @@ class bilibiliClient():
         if cmd == 'PREPARING':
             Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
             self.close_connection()
-            await utils.reconnect(s elf.area_name)
+            await utils.reconnect(self.area_name)
         elif cmd == 'DANMU_MSG':
             Printer().printer(f"{dic}", "Message", "cyan", printable=False)
             return

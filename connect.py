@@ -10,7 +10,7 @@ class connect():
     area_name = []
     roomids = []
     tasks = {}
-..
+
     def __new__(cls, *args, **kw):
         if not cls.instance:
             cls.instance = super(connect, cls).__new__(cls, *args, **kw)
@@ -49,7 +49,7 @@ class connect():
                 connect.tasks[new_roomid] = []
                 Printer().printer(f"更新四个分区房间{connect.roomids} {connect.area_name}","Info","green")
 
-            self.danmuji = bilibiliClient(new_roomid, area_name)
+            self.danmuji = bilibiliClient(new_roomid, new_area_name)
             task11 = asyncio.ensure_future(self.danmuji.connectServer())
             task21 = asyncio.ensure_future(self.danmuji.HeartbeatLoop())
             connect.tasks[new_roomid] = [task11, task21]
