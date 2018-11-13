@@ -39,6 +39,8 @@ class connect():
 
             if new_roomid is None:
                 [new_roomid, new_area_name] = await MultiRoom().check_state(area_name)
+            else:
+                new_area_name = area_name
 
             if not new_roomid == old_roomid:
                 connect.roomids.remove(old_roomid)
@@ -47,7 +49,7 @@ class connect():
                 connect.roomids.append(new_roomid)
                 connect.area_name.append(area_name)
                 connect.tasks[new_roomid] = []
-                Printer().printer(f"更新四个分区房间{connect.roomids} {connect.area_name}","Info","green")
+                Printer().printer(f"更新监听房间列表{connect.roomids} {connect.area_name}","Info","green")
 
             self.danmuji = bilibiliClient(new_roomid, new_area_name)
             task11 = asyncio.ensure_future(self.danmuji.connectServer())
