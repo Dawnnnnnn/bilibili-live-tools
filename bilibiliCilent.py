@@ -261,6 +261,8 @@ class bilibiliClient():
             pass
         elif cmd == "PK_INVITE_CANCEL":
             pass
+        elif cmd == "PK_INVITE_FAIL":
+            pass
         elif cmd == "PK_CLICK_AGAIN":
             pass
         elif cmd == "PK_AGAIN":
