@@ -94,7 +94,7 @@ class MultiRoom:
     async def check_state(self, area, roomid=None):
         if roomid is not None:
             response = await bilibili().check_room_info(roomid)
-            json_response = await response.json()
+            json_response = await response.json(content_type=None)
             live_status = json_response['data']['live_status']
             curr_area_name = json_response['data']['parent_area_name']
             if live_status == 1 and curr_area_name in area:
