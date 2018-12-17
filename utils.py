@@ -224,6 +224,9 @@ async def check_room_true(roomid):
         param2 = data['is_locked']
         param3 = data['encrypted']
         return param1, param2, param3
+    else:
+        Printer().printer(f"获取房间信息出错: {json_response}", "Error", "red")
+        return [None]
 
 
 async def check_up_name(name):

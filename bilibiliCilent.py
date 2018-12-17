@@ -248,8 +248,8 @@ class bilibiliClient():
         # 抽奖相关
         elif cmd in ["RAFFLE_START", "RAFFLE_END", "TV_START", "TV_END", "GUARD_LOTTERY_START"]:
             pass
-        # 房间管理相关 [屏蔽关键词，用户被加入黑名单，禁言开启，禁言关闭，房管变更]
-        elif cmd in ["ROOM_SHIELD", "ROOM_BLOCK_MSG", "ROOM_SILENT_ON", "ROOM_SILENT_OFF", "ROOM_ADMINS"]:
+        # 房间管理相关 [屏蔽关键词，用户被加入黑名单，禁言开启，禁言关闭，新设房管，房管变更]
+        elif cmd in ["ROOM_SHIELD", "ROOM_BLOCK_MSG", "ROOM_SILENT_ON", "ROOM_SILENT_OFF", "room_admin_entrance", "ROOM_ADMINS"]:
             pass
         # 舰队相关 [本房间购买舰长，船票购买，本房间舰队消息（登船），船员进房间，进房间特效]
         elif cmd in ["USER_TOAST_MSG", "GUARD_BUY", "GUARD_MSG", "WELCOME_GUARD", "ENTRY_EFFECT"]:
@@ -263,8 +263,8 @@ class bilibiliClient():
         # 活动相关 [活动获得的直播间入场特效，活动事件（如充能值信息），以前的高能消息]
         elif cmd in ["WELCOME_ACTIVITY", "ACTIVITY_EVENT", "EVENT_CMD"]:
             pass
-        # 直播间信息相关 [直播间更换壁纸，许愿瓶进度变化]
-        elif cmd in ["CHANGE_ROOM_INFO", "WISH_BOTTLE"]:
+        # 直播间信息相关 [直播间更换壁纸，许愿瓶进度变化，实物抽奖宝箱提醒]
+        elif cmd in ["CHANGE_ROOM_INFO", "WISH_BOTTLE", "BOX_ACTIVITY_START"]:
             pass
         else:
             Printer().printer(f"出现一个未知msg @[{self.area_name}]{self._roomId} {dic}", "Info", "red")
