@@ -11,11 +11,11 @@ import sys
 
 
 async def handle_1_TV_raffle(type, num, real_roomid, raffleid):
-    await asyncio.sleep(random.uniform(1, 2))
+    await asyncio.sleep(random.uniform(0, min(num, 30)))
     response2 = await bilibili().get_gift_of_TV(type, real_roomid, raffleid)
     Printer().printer(f"参与了房间 {real_roomid} 的广播抽奖", "Lottery", "cyan")
     json_response2 = await response2.json(content_type=None)
-    Printer().printer(f"房间 {real_roomid} 广播道具抽奖状态:{json_response2['msg']}", "Lottery", "cyan")
+    Printer().printer(f"房间 {real_roomid} 广播道具抽奖状态: {json_response2['msg']}", "Lottery", "cyan")
     if json_response2['code'] == 0:
         Statistics().append_to_TVlist(raffleid, real_roomid)
     else:
@@ -23,7 +23,7 @@ async def handle_1_TV_raffle(type, num, real_roomid, raffleid):
 
 
 async def handle_1_room_TV(real_roomid):
-    await asyncio.sleep(random.uniform(1, 2))
+    await asyncio.sleep(random.uniform(0, 1))
     result = await utils.check_room_true(real_roomid)
     if True in result:
         Printer().printer(f"检测到房间 {real_roomid} 的钓鱼操作", "Warning", "red")
@@ -50,7 +50,7 @@ async def handle_1_room_TV(real_roomid):
 
 class bilibiliClient():
 
-    def __init__(self, roomid, area_name):
+    def __init__(self, roomid, area):
         self.bilibili = bilibili()
         self._reader = None
         self._writer = None
@@ -64,7 +64,7 @@ class bilibiliClient():
             'url': 'str'
         }
         self._roomId = roomid
-        self.area_name = area_name
+        self.area = area
 
     def close_connection(self):
         self._writer.close()
@@ -82,7 +82,7 @@ class bilibiliClient():
         self._writer = writer
         if (await self.SendJoinChannel(self._roomId) == True):
             self.connected = True
-            Printer().printer(f'连接 {self._roomId} [{self.area_name}]弹幕服务器成功', "Info", "green")
+            Printer().printer(f'[{self.area}分区] 连接 {self._roomId} 弹幕服务器成功', "Info", "green")
             await self.ReceiveMessageLoop()
 
     async def HeartbeatLoop(self):
@@ -128,12 +128,12 @@ class bilibiliClient():
                 tmp = await asyncio.wait_for(self._reader.read(len_remain), timeout=35.0)
             except asyncio.TimeoutError:
                 # 由于心跳包30s一次，但是发现35s内没有收到任何包，说明已经悄悄失联了，主动断开
-                Printer().printer(f'心跳失联，主动断开 @[{self.area_name}]{self._roomId}',"Error","red")
+                Printer().printer(f'心跳失联，主动断开 @[{self.area}分区]{self._roomId}',"Error","red")
                 self.close_connection()
                 await asyncio.sleep(1)
                 return None
             except ConnectionResetError:
-                Printer().printer(f'RESET，网络不稳定或者远端不正常断开 @[{self.area_name}]{self._roomId}',"Error","red")
+                Printer().printer(f'RESET，网络不稳定或者远端不正常断开 @[{self.area}分区]{self._roomId}',"Error","red")
                 self.close_connection()
                 await asyncio.sleep(5)
                 return None
@@ -141,13 +141,13 @@ class bilibiliClient():
 
                 return None
             except:
-                Printer().printer(f"{sys.exc_info()[0]}, {sys.exc_info()[1]} @[{self.area_name}]{self._roomId}","Error","red")
-                Printer().printer(f'请联系开发者',"Error","red")
+                Printer().printer(f"{sys.exc_info()[0]}, {sys.exc_info()[1]} @[{self.area}分区]{self._roomId}","Error","red")
+                Printer().printer(f'请联系开发者',"Warning","red")
                 self.close_connection()
                 return None
 
             if not tmp:
-                Printer().printer(f"主动关闭或者远端主动发来FIN @[{self.area_name}]{self._roomId}","Error","red")
+                Printer().printer(f"主动关闭或者远端主动发来FIN @[{self.area}分区]{self._roomId}","Error","red")
                 self.close_connection()
                 await asyncio.sleep(1)
                 return None
@@ -202,31 +202,31 @@ class bilibiliClient():
             return
         cmd = dic['cmd']
 
-        if cmd == 'PREPARING':
-            Printer().printer(f"[{self.area_name}] 房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
+        if cmd == 'LIVE':
+            # Printer().printer(f"[{self.area}分区] 房间 {self._roomId} 疑似切换分区！启动分区检查", "Info", "green")
+            # await utils.check_area_list([self.area], mandatory_check=True)
+            pass
+        elif cmd == 'PREPARING':
+            Printer().printer(f"[{self.area}分区] 房间 {self._roomId} 下播！将切换监听房间", "Info", "green")
             self.close_connection()
-            await utils.reconnect(self.area_name)
+            await utils.reconnect(self.area)
         elif cmd == 'DANMU_MSG':
-            Printer().printer(f"{dic}", "Message", "cyan", printable=False)
-            return
+            # Printer().printer(f"{dic}", "Message", "cyan", printable=False)
+            pass
         elif cmd == 'SYS_GIFT':
-            try:
-                Printer().printer(f"出现了远古的SYS_GIFT,请尽快联系开发者{dic}", "Warning", "red")
-            except:
-                pass
-            return
+            # Printer().printer(f"出现了远古的SYS_GIFT,请尽快联系开发者{dic}", "Warning", "red")
+            pass
         elif cmd == 'SYS_MSG':
-            if set(self.dic_bulletin) == set(dic):
-                Printer().printer(dic['msg'], "Info", "green")
+            if set(dic) in [set(self.dic_bulletin), {'cmd', 'msg', 'msg_text'}, {'cmd', 'msg', 'url'}]:
+                Printer().printer(f"{dic['msg']} @[{self.area}分区]{self._roomId}", "Info", "green")
             else:
                 try:
                     real_roomid = dic['real_roomid']
-                    Printer().printer(f"检测到房间 {real_roomid} 的广播抽奖 @[{self.area_name}]{self._roomId}", "Lottery", "cyan")
+                    Printer().printer(f"检测到房间 {real_roomid} 的广播抽奖 @[{self.area}分区]{self._roomId}", "Lottery", "cyan")
                     Rafflehandler().append2list_TV(real_roomid)
-                    Statistics().append2pushed_TVlist()
+                    Statistics().append2pushed_TVlist(real_roomid, self.area[0])
                 except:
-                    print('SYS_MSG出错，请联系开发者', dic)
-            return
+                    Printer().printer(f"SYS_MSG出错，请联系开发者 {dic}", "Warning", "red")
 
         # 观众相关 [欢迎入场，送礼，发弹幕]
         elif cmd in ["WELCOME", "SEND_GIFT", "DANMU_MSG"]:
@@ -267,5 +267,5 @@ class bilibiliClient():
         elif cmd in ["CHANGE_ROOM_INFO", "WISH_BOTTLE", "BOX_ACTIVITY_START"]:
             pass
         else:
-            Printer().printer(f"出现一个未知msg @[{self.area_name}]{self._roomId} {dic}", "Info", "red")
+            Printer().printer(f"出现一个未知msg @[{self.area}分区]{self._roomId} {dic}", "Warning", "red")
             pass

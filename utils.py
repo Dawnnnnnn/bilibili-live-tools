@@ -252,3 +252,8 @@ async def reconnect(area=None):
     if area is not None:
         await connect().recreate(area)
     await connect().check_connect(area)
+
+
+async def check_area_list(area_list, **kwargs):
+    for area_id in area_list:
+        await connect().check_area(area_id, **kwargs)
