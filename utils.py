@@ -224,6 +224,9 @@ async def check_room_true(roomid):
         param2 = data['is_locked']
         param3 = data['encrypted']
         return param1, param2, param3
+    else:
+        Printer().printer(f"获取房间信息出错: {json_response}", "Error", "red")
+        return [None]
 
 
 async def check_up_name(name):
@@ -249,3 +252,8 @@ async def reconnect(area=None):
     if area is not None:
         await connect().recreate(area)
     await connect().check_connect(area)
+
+
+async def check_area_list(area_list, **kwargs):
+    for area_id in area_list:
+        await connect().check_area(area_id, **kwargs)
