@@ -18,8 +18,8 @@ class connect():
             cls.instance.danmuji = None
             cls.instance.tag_reconnect = False
             init_time = time.time()
-            cls.instance.check_time = {'1娱乐': init_time, '2游戏': init_time, '3手游': init_time,
-                                       '4绘画': init_time, '5电台': init_time}
+            cls.instance.check_time = {'1': init_time, '2': init_time, '3': init_time,
+                                       '4': init_time, '5': init_time, '6': init_time}
             cls.instance.handle_area = []
         return cls.instance
 
@@ -81,14 +81,14 @@ class connect():
         if roomid is None:
             roomid = connect.roomids[connect.areas.index(area)]
 
-        if not mandatory_check and time.time() - self.check_time[area] < 60:
+        if not mandatory_check and time.time() - self.check_time[area[:1]] < 60:
             Printer().printer(f"[{area}分区] 近已检查，跳过", "Info", "green")
             [ckd_roomid, ckd_area] = [roomid, area]
         else:
             # Printer().printer(f"[{area}分区] {roomid} 检查开始", "Info", "green")
-            self.check_time[area] = time.time()
+            self.check_time[area[:1]] = time.time()
             [ckd_roomid, ckd_area] = await MultiRoom.check_state(roomid=roomid, area=area)
-            self.check_time[area] = time.time()
+            self.check_time[area[:1]] = time.time()
         if mandatory_recreate or ckd_roomid != roomid:
             await self.recreate(new_roomid=ckd_roomid, area=ckd_area)
 
@@ -111,9 +111,9 @@ class connect():
             connect.tasks[old_roomid] = []
 
             if new_roomid is None:
-                self.check_time[area] = time.time()
+                self.check_time[area[:1]] = time.time()
                 [new_roomid, new_area] = await MultiRoom.check_state(area)
-                self.check_time[area] = time.time()
+                self.check_time[area[:1]] = time.time()
             else:
                 new_area = area
 
