@@ -47,4 +47,4 @@ async def check_state(area, roomid=None):
 
 
 async def get_all():
-    return [await area2room(i+1) for i in range(5)]
+    return [await area2room(i+1) for i in range(6)]

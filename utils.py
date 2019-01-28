@@ -150,7 +150,7 @@ async def fetch_bag_list(verbose=False, bagid=None, printer=True):
 
 async def check_taskinfo():
     response = await bilibili().request_check_taskinfo()
-    json_response = await response.json()
+    json_response = await response.json(content_type=None)
     # print(json_response)
     if json_response['code'] == 0:
         data = json_response['data']
