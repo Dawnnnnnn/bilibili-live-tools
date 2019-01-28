@@ -19,7 +19,7 @@ class connect():
             cls.instance.tag_reconnect = False
             init_time = time.time()
             cls.instance.check_time = {'1娱乐': init_time, '2网游': init_time, '3手游': init_time,
-                                       '4绘画': init_time, '5电台': init_time,'6单机': init_time'}
+                                       '4绘画': init_time, '5电台': init_time, '6单机': init_time}
             cls.instance.handle_area = []
         return cls.instance
 
