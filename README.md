@@ -1,5 +1,7 @@
 # bilibili-live-tools
 
+群开放一下,用于问题反馈和交流：473195880 最近比较忙,没什么时间维护...
+-----
 
 所有详情请移步[Wiki](https://github.com/Dawnnnnnn/bilibili-live-tools/wiki)
 ----
