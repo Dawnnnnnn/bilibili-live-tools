@@ -29,6 +29,7 @@ class Statistics:
 
             cls.instance.joined_event = []
             cls.instance.joined_TV = []
+            cls.instance.total_area = 1
             cls.instance.result = {}
 
         return cls.instance
@@ -84,21 +85,24 @@ class Statistics:
             check_list = list(self.monitor)
             await asyncio.sleep(3)
 
-            total_area = 5
             for roomid in check_list:
-                check_str = bin(self.monitor[roomid]).replace('0b', '').rjust(total_area, '0')
+                check_str = bin(self.monitor[roomid]).replace('0b', '')
+                if len(check_str) < self.total_area:
+                    check_str = check_str.rjust(self.total_area, '0')
+                elif len(check_str) > self.total_area:
+                    self.total_area = len(check_str)
                 # print(roomid, check_str)
                 check_int = [int(check) for check in check_str]
                 area_sum = sum(check_int)
                 try:
-                    if area_sum in [1, total_area]:
+                    if area_sum in [1, self.total_area]:
                         pass
                     elif area_sum == 2:
-                        to_check = [total_area-index for index in range(total_area) if check_int[index] == 1]
+                        to_check = [self.total_area-index for index in range(self.total_area) if check_int[index] == 1]
                         Printer().printer(f"发现监控重复 {to_check}", "Info", "green")
                         await utils.check_area_list(to_check)
-                    elif area_sum == total_area-1:
-                        to_check = [total_area-index for index in range(total_area) if check_int[index] == 0]
+                    elif area_sum == self.total_area-1:
+                        to_check = [self.total_area-index for index in range(self.total_area) if check_int[index] == 0]
                         Printer().printer(f"发现监控缺失 {to_check}", "Info", "green")
                         await utils.check_area_list(to_check)
                     else:

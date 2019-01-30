@@ -17,14 +17,16 @@ class connect():
             cls.instance = super(connect, cls).__new__(cls, *args, **kw)
             cls.instance.danmuji = None
             cls.instance.tag_reconnect = False
-            init_time = time.time()
-            cls.instance.check_time = {'1': init_time, '2': init_time, '3': init_time,
-                                       '4': init_time, '5': init_time, '6': init_time}
+            cls.instance.check_time = {}
             cls.instance.handle_area = []
         return cls.instance
 
     async def create(self):
-        tmp = await MultiRoom.get_all()
+        area_list = await MultiRoom.get_area_list()
+        tmp = await MultiRoom.get_all(area_list)
+        init_time = time.time()
+        for area_id in area_list:
+            self.check_time[str(area_id)] = init_time
         for i in range(len(tmp)):
             connect.roomids.append(tmp[i][0])
         for n in range(len(tmp)):

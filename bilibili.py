@@ -470,3 +470,8 @@ class bilibili():
         url = "https://api.live.bilibili.com/room/v1/Room/get_info?room_id=" + str(roomid)
         response = await self.bili_section_get(url)
         return response
+
+    async def req_area_list(self):
+        url = "http://api.live.bilibili.com/room/v1/Area/getList"
+        response = await self.bili_section_get(url)
+        return response

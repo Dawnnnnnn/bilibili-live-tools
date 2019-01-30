@@ -4,6 +4,12 @@ from bilibili import bilibili
 from printer import Printer
 
 
+async def get_area_list():
+    response = await bilibili().req_area_list()
+    json_response = await response.json(content_type=None)
+    return [ area_info['id'] for area_info in json_response['data'] ]
+
+
 async def area2room(area_id):
     while True:
         try:
@@ -46,5 +52,5 @@ async def check_state(area, roomid=None):
     return await area2room(area[0])
 
 
-async def get_all():
-    return [await area2room(i+1) for i in range(6)]
+async def get_all(area_list):
+    return [await area2room(i) for i in area_list]
