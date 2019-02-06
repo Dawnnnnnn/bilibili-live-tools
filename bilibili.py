@@ -57,12 +57,13 @@ class bilibili():
         return sign
 
     def cnn_captcha(self, img):
-        url = "http://47.95.255.188:5000/code"
-        data = {"image": img}
-        ressponse = requests.post(url, data=data)
-        captcha = ressponse.text
-        Printer().printer(f"此次登录出现验证码,识别结果为{captcha}","Info","green")
-        return captcha
+        url = "http://zerozhushou.com:11001/captcha/v1"
+        img = str(img, encoding='utf-8')
+        json = {"image": img}
+        ressponse = requests.post(url, json=json)
+        captcha = ressponse.json()
+        Printer().printer(f"此次登录出现验证码,识别结果为{captcha['message']}","Info","green")
+        return captcha['message']
 
     def calc_name_passw(self, key, Hash, username, password):
         pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode())
