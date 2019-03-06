@@ -77,7 +77,7 @@ class OnlineHeart:
         black_list = ["123", "1111", "测试", "測試", "测一测", "ce-shi", "test", "T-E-S-T", "lala",  # 已经出现
                       "測一測", "TEST", "Test", "t-e-s-t"]  # 合理猜想
         last_lottery = 0
-        for i in range(247, 300):
+        for i in range(295, 400):
             response = await bilibili().get_lotterylist(i)
             json_response = await response.json()
             if json_response['code'] == 0:

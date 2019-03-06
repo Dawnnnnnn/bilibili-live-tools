@@ -137,6 +137,11 @@ class bilibiliClient():
                 self.close_connection()
                 await asyncio.sleep(5)
                 return None
+            except ConnectionAbortedError:
+                Printer().printer(f'你的主机中的软件中止了一个已建立的连接 @[{self.area}分区]{self._roomId}',"Error","red")
+                self.close_connection()
+                await asyncio.sleep(5)
+                return None
             except asyncio.CancelledError:
 
                 return None
@@ -237,16 +242,16 @@ class bilibiliClient():
         # 各种高能 [节奏风暴（开始 结束），高能广播（无抽奖 活动高能 全频风暴），抽奖通知（现在广播全在这里了），总督广播]
         elif cmd in ["SPECIAL_GIFT", "SYS_GIFT", "SYS_MSG", "GUARD_MSG"]:
             pass
-        # 礼物连击
-        elif cmd in ["COMBO_SEND", "COMBO_END"]:
+        # 礼物效果 [连击开始，连击结束，使用积分加成卡]
+        elif cmd in ["COMBO_SEND", "COMBO_END", "SCORE_CARD"]:
             pass
         # PK相关
         elif cmd in ["PK_INVITE_INIT", "PK_INVITE_FAIL", "PK_INVITE_CANCEL", "PK_INVITE_SWITCH_OPEN", "PK_INVITE_SWITCH_CLOSE",
                      "PK_PRE", "PK_START", "PK_PROCESS", "PK_SETTLE", "PK_END", "PK_MIC_END",
                      "PK_MATCH", "PK_CLICK_AGAIN", "PK_AGAIN"]:
             pass
-        # 抽奖相关
-        elif cmd in ["RAFFLE_START", "RAFFLE_END", "TV_START", "TV_END", "GUARD_LOTTERY_START"]:
+        # 当前房间抽奖相关
+        elif cmd in ["RAFFLE_START", "RAFFLE_END", "TV_START", "TV_END", "GUARD_LOTTERY_START", "LOTTERY_START"]:
             pass
         # 房间管理相关 [屏蔽关键词，用户被加入黑名单，禁言开启，禁言关闭，新设房管，房管变更]
         elif cmd in ["ROOM_SHIELD", "ROOM_BLOCK_MSG", "ROOM_SILENT_ON", "ROOM_SILENT_OFF", "room_admin_entrance", "ROOM_ADMINS"]:
@@ -260,11 +265,11 @@ class bilibiliClient():
         # 活动榜单相关 [进入小时榜，未知，获小时榜第一道具奖励]
         elif cmd in ["ROOM_RANK", "new_anchor_reward", "HOUR_RANK_AWARDS"]:
             pass
-        # 活动相关 [活动获得的直播间入场特效，活动事件（如充能值信息），以前的高能消息]
-        elif cmd in ["WELCOME_ACTIVITY", "ACTIVITY_EVENT", "EVENT_CMD"]:
+        # 活动相关 [活动获得的直播间入场特效，活动事件（如充能值信息），以前的高能事件，送礼抽奖活动开奖，LOL竞猜活动]
+        elif cmd in ["WELCOME_ACTIVITY", "ACTIVITY_EVENT", "EVENT_CMD", "BOX_LOTTERY_WIN", "LOL_ACTIVITY"]:
             pass
-        # 直播间信息相关 [直播间更换壁纸，许愿瓶进度变化，实物抽奖宝箱提醒]
-        elif cmd in ["CHANGE_ROOM_INFO", "WISH_BOTTLE", "BOX_ACTIVITY_START"]:
+        # 直播间信息相关 [直播间更换壁纸，直播间界面皮肤变化，许愿瓶进度变化，实物抽奖宝箱提醒，实物抽奖宝箱开奖]
+        elif cmd in ["CHANGE_ROOM_INFO", "ROOM_SKIN_MSG", "WISH_BOTTLE", "BOX_ACTIVITY_START", "WIN_ACTIVITY"]:
             pass
         else:
             Printer().printer(f"出现一个未知msg @[{self.area}分区]{self._roomId} {dic}", "Warning", "red")

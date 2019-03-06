@@ -89,6 +89,7 @@ class bilibili():
             try:
                 response = await self.bili_section.post(url, headers=headers, data=data)
                 if response.status == 403:
+                    Printer().printer('403频繁，5s后重试',"Error","red")
                     await asyncio.sleep(5)
                     continue
                 tag = await self.replay_request(response)
@@ -106,6 +107,7 @@ class bilibili():
             try:
                 response = await self.bili_section.get(url, headers=headers, data=data, params=params)
                 if response.status == 403:
+                    Printer().printer('403频繁，5s后重试',"Error","red")
                     await asyncio.sleep(5)
                     continue
                 tag = await self.replay_request(response)
