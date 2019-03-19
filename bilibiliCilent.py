@@ -268,8 +268,8 @@ class bilibiliClient():
         # 活动相关 [活动获得的直播间入场特效，活动事件（如充能值信息），以前的高能事件，送礼抽奖活动开奖，LOL竞猜活动]
         elif cmd in ["WELCOME_ACTIVITY", "ACTIVITY_EVENT", "EVENT_CMD", "BOX_LOTTERY_WIN", "LOL_ACTIVITY"]:
             pass
-        # 直播间信息相关 [直播间更换壁纸，直播间界面皮肤变化，许愿瓶进度变化，实物抽奖宝箱提醒，实物抽奖宝箱开奖]
-        elif cmd in ["CHANGE_ROOM_INFO", "ROOM_SKIN_MSG", "WISH_BOTTLE", "BOX_ACTIVITY_START", "WIN_ACTIVITY"]:
+        # 直播间信息相关 [直播间更换壁纸，直播间界面皮肤变化，许愿瓶进度变化，关注数变化，实物抽奖宝箱提醒，实物抽奖宝箱开奖]
+        elif cmd in ["CHANGE_ROOM_INFO", "ROOM_SKIN_MSG", "WISH_BOTTLE", "ROOM_REAL_TIME_MESSAGE_UPDATE", "BOX_ACTIVITY_START", "WIN_ACTIVITY"]:
             pass
         else:
             Printer().printer(f"出现一个未知msg @[{self.area}分区]{self._roomId} {dic}", "Warning", "red")
