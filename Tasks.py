@@ -139,4 +139,4 @@ class Tasks:
                 await asyncio.sleep(21600)
             except:
                 await asyncio.sleep(10)
-                traceback.print_exc()
+                Printer().printer(traceback.format_exc(), "Error", "red")

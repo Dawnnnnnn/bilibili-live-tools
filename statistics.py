@@ -56,30 +56,31 @@ class Statistics:
         del self.TV_raffleid_list[0]
 
     async def clean_TV(self):
-        printlist = []
+        while len(self.TV_raffleid_list):
+            await asyncio.sleep(0.2)
 
-        if self.TV_raffleid_list:
-            for i in range(0, len(self.TV_roomid_list)):
+            response = await bilibili().get_TV_result(self.TV_roomid_list[0], self.TV_raffleid_list[0])
+            json_response = await response.json()
+            try:
+                if json_response['msg'] == '正在抽奖中..':
+                    break
+                data = json_response['data']
+                if not len(data):
+                    # Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖 {self.TV_raffleid_list[0]} 结果: {json_response['msg']}",
+                    #                   "Lottery", "cyan")
+                    # print('B站错误返回，报已错过')
+                    continue
+                if data['gift_id'] != '-1':
+                    Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖 {self.TV_raffleid_list[0]} 结果: {data['gift_name']}X{data['gift_num']}",
+                                      "Lottery", "cyan")
+                    self.add_to_result(data['gift_name'], int(data['gift_num']))
+                else:
+                    Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖 {self.TV_raffleid_list[0]} 结果: {json_response['msg']}",
+                                      "Lottery", "cyan")
 
-                response = await  bilibili().get_TV_result(self.TV_roomid_list[0], self.TV_raffleid_list[0])
-                json_response = await response.json()
-                try:
-
-                    if json_response['data']['gift_id'] == '-1':
-                        if json_response['msg'] == '正在抽奖中..':
-                            break
-                        else:
-                            Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖结果: {json_response['msg']}",
-                                              "Lottery", "cyan")
-                    else:
-                        data = json_response['data']
-                        Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖结果: {data['gift_name']}X{data['gift_num']}",
-                                          "Lottery", "cyan")
-                        self.add_to_result(data['gift_name'], int(data['gift_num']))
-
-                    self.delete_0st_TVlist()
-                except:
-                    print(json_response)
+                self.delete_0st_TVlist()
+            except Exception:
+                Printer().printer(f'获取到异常抽奖结果: {json_response}', "Warning", "red")
 
         if self.monitor:
             check_list = list(self.monitor)
@@ -109,7 +110,7 @@ class Statistics:
                         Printer().printer(f"出现意外的监控情况，启动分区检查 {check_str}", "Info", "green")
                         await utils.reconnect()
                 except Exception:
-                    traceback.print_exc()
+                    Printer().printer(traceback.format_exc(), "Error", "red")
                 finally:
                     del self.monitor[roomid]
 

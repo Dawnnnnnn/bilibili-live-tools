@@ -55,7 +55,7 @@ class connect():
                         # Printer().printer(f"[{area}分区] 房间 {roomid} 任务保持正常", "Info", "green")
                         pass
             except Exception:
-                traceback.print_exc()
+                Printer().printer(traceback.format_exc(), "Error", "red")
 
     async def check_connect(self, skip_area=None):
         if self.tag_reconnect:
@@ -133,6 +133,6 @@ class connect():
             task21 = asyncio.ensure_future(self.danmuji.HeartbeatLoop())
             connect.tasks[new_roomid] = [task11, task21]
         except Exception:
-            traceback.print_exc()
+            Printer().printer(traceback.format_exc(), "Error", "red")
         # Printer().printer(f"[{area}分区] 重连任务处理完毕", "Info", "green")
         self.handle_area.remove(area)

@@ -13,9 +13,9 @@ import sys
 async def handle_1_TV_raffle(type, num, real_roomid, raffleid):
     await asyncio.sleep(random.uniform(0, min(num, 30)))
     response2 = await bilibili().get_gift_of_TV(type, real_roomid, raffleid)
-    Printer().printer(f"参与了房间 {real_roomid} 的广播抽奖", "Lottery", "cyan")
+    # Printer().printer(f"参与了房间 {real_roomid} 的广播抽奖 {raffleid}", "Lottery", "cyan")
     json_response2 = await response2.json(content_type=None)
-    Printer().printer(f"房间 {real_roomid} 广播道具抽奖状态: {json_response2['msg']}", "Lottery", "cyan")
+    Printer().printer(f"参与房间 {real_roomid} 广播道具抽奖 {raffleid} 状态: {json_response2['msg']}", "Lottery", "cyan")
     if json_response2['code'] == 0:
         Statistics().append_to_TVlist(raffleid, real_roomid)
     else:
