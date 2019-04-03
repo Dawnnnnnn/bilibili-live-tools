@@ -212,7 +212,7 @@ class bilibili():
 
     async def request_fetchmedal(self):
         url = 'https://api.live.bilibili.com/i/api/medal?page=1&pageSize=50'
-        response = await self.bili_section_post(url, headers=self.dic_bilibili['pcheaders'])
+        response = await self.bili_section_get(url, headers=self.dic_bilibili['pcheaders'])
         return response
 
     def request_getkey(self):

@@ -111,7 +111,7 @@ class OnlineHeart:
             try:
                 Printer().printer("心跳", "Info","green")
                 response = await self.pcpost_heartbeat()
-                json_response = await response.json()
+                json_response = await response.json(content_type=None)
                 if json_response['code'] == 3:
                     Printer().printer(f"cookie过期,将重新登录","Error","red")
                     login().login()
@@ -122,4 +122,4 @@ class OnlineHeart:
                 await asyncio.sleep(300)
             except:
                 await asyncio.sleep(10)
-                traceback.print_exc()
+                Printer().printer(traceback.format_exc(), "Error", "red")

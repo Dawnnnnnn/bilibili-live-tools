@@ -45,7 +45,7 @@ async def fetch_medal(printer=True):
                                                    adjust_for_chinese('排名'), '勋章状态'))
     dic_worn = {'1': '正在佩戴', '0': '待机状态'}
     response = await bilibili().request_fetchmedal()
-    json_response = await response.json()
+    json_response = await response.json(content_type=None)
     roomid = 0
     today_feed = 0
     day_limit = 0
