@@ -359,7 +359,11 @@ class bilibili():
 
     async def pcpost_heartbeat(self):
         url = 'https://api.live.bilibili.com/User/userOnlineHeart'
-        response = await self.bili_section_post(url, headers=self.dic_bilibili['pcheaders'])
+        data = {
+            "csrf_token": self.dic_bilibili['csrf'],
+            "csrf": self.dic_bilibili['csrf']
+        }
+        response = await self.bili_section_post(url, data=data, headers=self.dic_bilibili['pcheaders'])
         return response
 
     # 发送app心跳包
