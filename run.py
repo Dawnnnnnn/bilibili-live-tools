@@ -11,6 +11,7 @@ from statistics import Statistics
 from bilibili import bilibili
 import threading
 import biliconsole
+from pkLottery import PKLottery
 
 loop = asyncio.get_event_loop()
 loop1 = asyncio.get_event_loop()
@@ -25,6 +26,7 @@ task1 = Silver()
 task2 = Tasks()
 task3 = LotteryResult()
 task4 = connect()
+task5 = PKLottery()
 
 console_thread = threading.Thread(target=biliconsole.controler)
 
@@ -42,8 +44,8 @@ tasks = [
     biliconsole.Biliconsole().run(),
     task4.create(),
     task3.query(),
-    rafflehandler.run()
-
+    rafflehandler.run(),
+    task5.run()
 ]
 
 loop.run_until_complete(asyncio.wait(tasks))

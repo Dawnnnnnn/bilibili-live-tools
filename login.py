@@ -78,7 +78,7 @@ class login():
                 configloader.write2bilibili(dic_saved_session)
                 Printer().printer(f"登录成功", "Info","green")
             except:
-                Printer().printer(f"登录失败,错误信息为:{response.json()['message']}","Error","red")
+                Printer().printer(f"登录失败,错误信息为:{response.json()}","Error","red")
 
     async def login_new(self):
         if bilibili().dic_bilibili['saved-session']['cookie']:

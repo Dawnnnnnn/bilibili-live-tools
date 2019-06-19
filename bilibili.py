@@ -274,6 +274,13 @@ class bilibili():
         response2 = await self.bili_section_post(join_url, data=payload, headers=self.dic_bilibili['pcheaders'])
         return response2
 
+    async def get_gift_of_pk(self, roomid, id):
+        join_url = "https://api.live.bilibili.com/xlive/lottery-interface/v1/pk/join"
+        payload = {"roomid": roomid, "id": id, "csrf": self.dic_bilibili['csrf'],
+                   "csrf_token": self.dic_bilibili['csrf']}
+        response2 = await self.bili_section_post(join_url, data=payload, headers=self.dic_bilibili['pcheaders'])
+        return response2
+
     async def get_giftlist_of_events(self, text1):
         headers = {
             'Accept': 'application/json, text/plain, */*',
@@ -322,6 +329,11 @@ class bilibili():
         }
         response1 = await self.bili_section_get(true_url, headers=headers)
         return response1
+
+    async def get_lotterylist_of_pk(self, roomid):
+        url = 'http://api.live.bilibili.com/xlive/lottery-interface/v1/pk/check?roomid=' + str(roomid)
+        response = await self.bili_section_get(url, headers=self.dic_bilibili['pcheaders'])
+        return response
 
     def get_giftids_raffle(self, str):
         return self.dic_bilibili['giftids_raffle'][str]
@@ -388,6 +400,14 @@ class bilibili():
 
     async def guard_list(self):
         url = "http://118.25.108.153:8080/guard"
+        headers = {
+            "User-Agent": "bilibili-live-tools/" + str(self.dic_bilibili['uid'])
+        }
+        response = requests.get(url, headers=headers)
+        return response
+
+    async def pk_list(self):
+        url = "http://118.25.108.153:8080/pk"
         headers = {
             "User-Agent": "bilibili-live-tools/" + str(self.dic_bilibili['uid'])
         }
