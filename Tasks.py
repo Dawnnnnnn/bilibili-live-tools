@@ -77,13 +77,14 @@ class Tasks:
     async def auto_send_gift(self):
         if self.dic_user['auto-gift']['on/off'] == "1":
             a = await utils.fetch_medal(printer=False)
-            res = await bilibili().gift_list()
-            json_res = await res.json()
-            temp_dic = {}
-            for j in range(0, len(json_res['data'])):
-                price = json_res['data'][j]['price']
-                id = json_res['data'][j]['id']
-                temp_dic[id] = price
+            # res = await bilibili().gift_list()
+            # json_res = await res.json()
+            # temp_dic = {}
+            # for j in range(0, len(json_res['data'])):
+            #     price = json_res['data'][j]['price']
+            #     id = json_res['data'][j]['id']
+            #     temp_dic[id] = price
+            temp_dic = {1: 100, 6: 1000}
             x, temp = await utils.fetch_bag_list(printer=False)
             roomid = a[0]
             today_feed = a[1]
@@ -95,7 +96,7 @@ class Tasks:
                 gift_num = int(temp[i][1])
                 bag_id = int(temp[i][2])
                 expire = int(temp[i][3])
-                if (gift_id != 4 and gift_id != 3 and gift_id != 9 and gift_id != 10) and expire != 0:
+                if gift_id in [1, 6] and expire != 0:
                     if (gift_num * (temp_dic[gift_id] / 100) < left_num):
                         calculate = calculate + temp_dic[gift_id] / 100 * gift_num
                         tmp2 = temp_dic[gift_id] / 100 * gift_num
