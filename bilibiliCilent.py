@@ -240,7 +240,7 @@ class bilibiliClient():
         elif cmd in ["NOTICE_MSG", "SYS_MSG"]:
             pass
         # 各种高能 [节奏风暴（开始 结束），高能广播（无抽奖 活动高能 全频风暴），抽奖通知（现在广播全在这里了），总督广播]
-        elif cmd in ["SPECIAL_GIFT", "SYS_GIFT", "SYS_MSG", "GUARD_MSG"]:
+        elif cmd in ["SPECIAL_GIFT", "SYS_GIFT", "SYS_MSG", "GUARD_MSG", "GUIARD_MSG"]:
             pass
         # 礼物效果 [连击开始，连击结束，使用积分加成卡]
         elif cmd in ["COMBO_SEND", "COMBO_END", "SCORE_CARD"]:
@@ -265,15 +265,20 @@ class bilibiliClient():
         # 活动榜单相关 [进入小时榜，未知，获小时榜第一道具奖励]
         elif cmd in ["ROOM_RANK", "new_anchor_reward", "HOUR_RANK_AWARDS"]:
             pass
-        # 活动相关 [活动获得的直播间入场特效，活动事件（如充能值信息），以前的高能事件，送礼抽奖活动开奖，LOL竞猜活动，LOL助力活动]
-        elif cmd in ["WELCOME_ACTIVITY", "ACTIVITY_EVENT", "EVENT_CMD", "BOX_LOTTERY_WIN", "LOL_ACTIVITY", "ACTIVITY_MATCH_GIFT"]:
+        # 活动相关 [活动获得的直播间入场特效，活动事件（如充能值信息），以前的高能事件，送礼抽奖活动开奖，LOL竞猜活动，LOL助力活动，？（不知道是啥，每个直播间都有，无论开播，每分钟发一次），？，？，冲鸭！机甲大作战相关，周星活动相关]
+        elif cmd in ["WELCOME_ACTIVITY", "ACTIVITY_EVENT", "EVENT_CMD", "BOX_LOTTERY_WIN", "LOL_ACTIVITY", "ACTIVITY_MATCH_GIFT",
+                     "ACTIVITY_BANNER_RED_NOTICE_CLOSE", "ACTIVITY_BANNER_CLOSE", "DAILY_QUEST_NEWDAY",
+                     "BOSS_ENERGY", "NOTICE_MSG_H5", "BOSS_INJURY", "BOSS_BATTLE", "ANIMATION", "BOSS_INFO",
+                     "WEEK_STAR_CLOCK", "ROOM_BOX_MASTER", "ROOM_BOX_USER"]:
             pass
-        # 直播间信息相关 [直播间更换壁纸，直播间界面皮肤变化，许愿瓶进度变化，关注数变化，实物抽奖宝箱提醒，实物抽奖宝箱开奖]
-        elif cmd in ["CHANGE_ROOM_INFO", "ROOM_SKIN_MSG", "WISH_BOTTLE", "ROOM_REAL_TIME_MESSAGE_UPDATE", "BOX_ACTIVITY_START", "WIN_ACTIVITY"]:
+        # 直播间信息相关 [直播间更换壁纸，直播间界面皮肤变化，许愿瓶进度变化，关注数变化，直播间更名，实物抽奖宝箱提醒，实物抽奖宝箱开奖，弹幕抽奖结束]
+        elif cmd in ["CHANGE_ROOM_INFO", "ROOM_SKIN_MSG", "WISH_BOTTLE", "ROOM_REAL_TIME_MESSAGE_UPDATE", "ROOM_CHANGE", "BOX_ACTIVITY_START", "WIN_ACTIVITY", "DANMU_LOTTERY_END"]:
             pass
         # 大乱斗活动
-        elif cmd in ["PK_BATTLE_PRE", "PK_BATTLE_START", "PK_BATTLE_PROCESS", "PK_BATTLE_PRO_TYPE", "PK_BATTLE_END", "PK_BATTLE_SETTLE_USER", "PK_BATTLE_SETTLE", "PK_LOTTERY_START"]:
+        elif cmd in ["PK_BATTLE_ENTRANCE", "PK_BATTLE_PRE", "PK_BATTLE_MATCH_TIMEOUT", "PK_BATTLE_START", "PK_BATTLE_VOTES_ADD",
+                     "PK_BATTLE_PROCESS", "PK_BATTLE_PRO_TYPE", "PK_BATTLE_GIFT", "PK_BATTLE_END", "PK_BATTLE_RANK_CHANGE",
+                     "PK_BATTLE_SETTLE_USER", "PK_BATTLE_SETTLE", "PK_LOTTERY_START", "ACTIVITY_BANNER_UPDATE"]:
             pass
         else:
-            Printer().printer(f"出现一个未知msg @[{self.area}分区]{self._roomId} {dic}", "Warning", "red")
+            # Printer().printer(f"出现一个未知msg @[{self.area}分区]{self._roomId} {dic}", "Warning", "red")
             pass

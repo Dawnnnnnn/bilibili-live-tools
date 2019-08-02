@@ -6,6 +6,7 @@ import requests
 
 
 class login():
+    auto_captcha_times = 3
 
     def normal_login(self, username, password):
         # url = 'https://passport.bilibili.com/api/oauth2/login'   //旧接口
@@ -29,7 +30,22 @@ class login():
         url = "https://passport.bilibili.com/captcha"
         res = s.get(url, headers=headers)
         tmp1 = base64.b64encode(res.content)
-        captcha = bilibili().cnn_captcha(tmp1)
+        for _ in range(login.auto_captcha_times):
+            try:
+                captcha = bilibili().cnn_captcha(tmp1)
+                break
+            except Exception:
+                Printer().printer("验证码识别服务器连接失败","Error","red")
+                login.auto_captcha_times -= 1
+        else:
+            try:
+                from PIL import Image
+                from io import BytesIO
+                img = Image.open(BytesIO(res.content))
+                img.show()
+                captcha = input('输入验证码\n').strip()
+            except ImportError:
+                Printer().printer("安装 Pillow 库后重启，以弹出验证码图片","Error","red")
         temp_params = 'actionKey=' + bilibili().dic_bilibili[
             'actionKey'] + '&appkey=' + bilibili().dic_bilibili['appkey'] + '&build=' + bilibili().dic_bilibili[
                           'build'] + '&captcha=' + captcha + '&device=' + bilibili().dic_bilibili[
@@ -49,14 +65,19 @@ class login():
         username = str(bilibili().dic_bilibili['account']['username'])
         password = str(bilibili().dic_bilibili['account']['password'])
         if username != "":
-            response = bilibili().request_getkey()
-            value = response.json()['data']
-            key = value['key']
-            Hash = str(value['hash'])
-            username, password = bilibili().calc_name_passw(key, Hash, username, password)
-            response = self.normal_login(username, password)
-            while response.json()['code'] == -105:
-                response = self.login_with_captcha(username, password)
+            while True:
+                response = bilibili().request_getkey()
+                value = response.json()['data']
+                key = value['key']
+                Hash = str(value['hash'])
+                username, password = bilibili().calc_name_passw(key, Hash, username, password)
+                response = self.normal_login(username, password)
+                while response.json()['code'] == -105:
+                    response = self.login_with_captcha(username, password)
+                if response.json()['code'] == -662: # "can't decrypt rsa password~"
+                    Printer().printer("打码时间太长key失效，重试", "Error", "red")
+                    continue
+                break
             try:
                 access_key = response.json()['data']['token_info']['access_token']
                 cookie = (response.json()['data']['cookie_info']['cookies'])

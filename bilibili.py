@@ -92,6 +92,10 @@ class bilibili():
                     Printer().printer('403频繁，5s后重试',"Error","red")
                     await asyncio.sleep(5)
                     continue
+                elif response.status == 412:
+                    Printer().printer('412触发风控被拒绝，60s后重试',"Error","red")
+                    await asyncio.sleep(60)
+                    continue
                 tag = await self.replay_request(response)
                 if tag:
                     continue
@@ -109,6 +113,10 @@ class bilibili():
                 if response.status == 403:
                     Printer().printer('403频繁，5s后重试',"Error","red")
                     await asyncio.sleep(5)
+                    continue
+                elif response.status == 412:
+                    Printer().printer('412触发风控被拒绝，60s后重试',"Error","red")
+                    await asyncio.sleep(60)
                     continue
                 tag = await self.replay_request(response)
                 if tag:
