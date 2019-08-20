@@ -28,14 +28,13 @@ task3 = LotteryResult()
 task4 = connect()
 task5 = PKLottery()
 
-console_thread = threading.Thread(target=biliconsole.controler)
-
-console_thread.start()
-
 tasks1 = [
     login().login_new()
 ]
 loop.run_until_complete(asyncio.wait(tasks1))
+
+console_thread = threading.Thread(target=biliconsole.controler)
+console_thread.start()
 
 tasks = [
     task.run(),
@@ -48,7 +47,7 @@ tasks = [
     task5.run()
 ]
 
-loop.run_until_complete(asyncio.wait(tasks))
-console_thread.join()
-
+loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION))
 loop.close()
+
+console_thread.join()
