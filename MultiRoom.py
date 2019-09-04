@@ -18,6 +18,10 @@ async def area2room(area_id):
             response = await bilibili().bili_section_get(url)
             json_response = await response.json(content_type=None)
             checklen = len(json_response['data'])
+            if not checklen:
+                Printer().printer(f"{area_id}号分区当前无开播房间，5分钟后重新获取", "Error", "red")
+                await asyncio.sleep(300)
+                continue
             rand_num = random.randint(0, checklen-1)
             new_area_id = json_response['data'][rand_num]['parent_id']
             if not new_area_id == int(area_id):
@@ -28,7 +32,8 @@ async def area2room(area_id):
                 new_area = str(new_area_id) + json_response['data'][rand_num]['parent_name']
                 return [area_room, new_area]
             else:
-                Printer().printer("检测到获取房间未开播，立即尝试重新获取", "Error", "red")
+                Printer().printer("检测到获取房间未开播，1秒后尝试重新获取", "Error", "red")
+                await asyncio.sleep(1)
         except Exception as e:
             Printer().printer(f"获取房间列表失败，5s后进行下次尝试 {repr(e)}", "Error", "red")
             await asyncio.sleep(5)
