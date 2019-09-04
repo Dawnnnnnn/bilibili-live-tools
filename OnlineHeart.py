@@ -5,6 +5,7 @@ import time
 import traceback
 import datetime
 import asyncio
+import queue
 from printer import Printer
 
 
@@ -68,17 +69,19 @@ class OnlineHeart:
                     Printer().printer(
                         f"房间 {OriginRoomId} 编号 {GuardId}  的上船亲密度领取出错: {json_response2}",
                         "Error", "red")
-
+                await asyncio.sleep(0.2)
 
     async def draw_lottery(self):
         black_list = ["123", "1111", "测试", "測試", "测一测", "ce-shi", "test", "T-E-S-T", "lala",  # 已经出现
                       "測一測", "TEST", "Test", "t-e-s-t"]  # 合理猜想
-        last_lottery = 0
+        former_lottery = queue.Queue(maxsize=4)
+        [former_lottery.put(True) for _ in range(4)]
         for i in range(390, 600):
             response = await bilibili().get_lotterylist(i)
             json_response = await response.json()
+            former_lottery.get()
+            former_lottery.put(not json_response['code'])
             if json_response['code'] == 0:
-                last_lottery = 0
                 title = json_response['data']['title']
                 check = len(json_response['data']['typeB'])
                 for g in range(check):
@@ -98,10 +101,9 @@ class OnlineHeart:
                             json_response1 = await response1.json(content_type=None)
                             Printer().printer(f"参与『{title}>>>{jp_list}』抽奖回显: {json_response1}", "Lottery", "cyan")
             else:
-                if not last_lottery == 0:  # 因为有中途暂时空一个-400的情况
+                if not any(former_lottery.queue):  # 检查最近4个活动id是否都-400
                     break
-                else:
-                    last_lottery = json_response['code']
+            await asyncio.sleep(0.2)
 
     async def run(self):
         while 1:
