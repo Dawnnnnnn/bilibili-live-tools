@@ -6,6 +6,7 @@ import traceback
 import datetime
 import asyncio
 import queue
+from statistics import Statistics
 from printer import Printer
 
 
@@ -71,8 +72,18 @@ class OnlineHeart:
                         "Error", "red")
                 await asyncio.sleep(0.2)
 
+    async def check_winner(self, i, g, start_time):
+        # 开奖5s后检查是否中奖
+        await asyncio.sleep(time.mktime(time.strptime(start_time, '%Y-%m-%d %H:%M:%S')) - time.time() + 5)
+        response2 = await bilibili().get_winner_info(i, g)
+        json_response2 = await response2.json(content_type=None)
+        for winner in json_response2["data"]["winnerList"]:
+            if winner["uid"] == bilibili().dic_bilibili['uid']:
+                Printer().printer(f'实物抽奖中中奖: {winner["giftTitle"]}', "Lottery", "cyan")
+                Statistics().add_to_result(winner["giftTitle"], 1)
+
     async def draw_lottery(self):
-        black_list = ["123", "1111", "测试", "測試", "测一测", "ce-shi", "test", "T-E-S-T", "lala",  # 已经出现
+        black_list = ["123", "1111", "测试", "測試", "测一测", "ce-shi", "test", "T-E-S-T", "lala", "我是抽奖标题", # 已经出现
                       "測一測", "TEST", "Test", "t-e-s-t"]  # 合理猜想
         former_lottery = queue.Queue(maxsize=4)
         [former_lottery.put(True) for _ in range(4)]
@@ -100,10 +111,13 @@ class OnlineHeart:
                             response1 = await bilibili().get_gift_of_lottery(i, g)
                             json_response1 = await response1.json(content_type=None)
                             Printer().printer(f"参与『{title}>>>{jp_list}』抽奖回显: {json_response1}", "Lottery", "cyan")
+                            start_time = json_response['data']['typeB'][g]["startTime"]
+                            asyncio.ensure_future(self.check_winner(i, g, start_time))
             else:
                 if not any(former_lottery.queue):  # 检查最近4个活动id是否都-400
                     break
             await asyncio.sleep(0.2)
+        del former_lottery
 
     async def run(self):
         while 1:
