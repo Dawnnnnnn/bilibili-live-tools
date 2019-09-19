@@ -434,6 +434,12 @@ class bilibili():
         response1 = await self.bili_section_get(url1, headers=self.dic_bilibili['pcheaders'])
         return response1
 
+    async def get_winner_info(self, i, g):
+        url2 = 'https://api.live.bilibili.com/lottery/v1/box/getWinnerGroupInfo?aid=' + \
+            str(i) + '&number=' + str(g + 1)
+        response2 = await self.bili_section_get(url2, headers=self.dic_bilibili['pcheaders'])
+        return response2
+
     async def get_time_about_silver(self):
         time = CurrentTime()
         temp_params = 'access_key=' + self.dic_bilibili['access_key'] + '&actionKey=' + self.dic_bilibili[
