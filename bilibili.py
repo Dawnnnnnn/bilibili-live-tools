@@ -58,7 +58,7 @@ class bilibili():
         return sign
 
     def cnn_captcha(self, img):
-        url = "http://115.159.205.242:19951/captcha/v1"
+        url = "http://106.75.36.27:19951/captcha/v1"
         img = str(img, encoding='utf-8')
         json = {"image": img}
         ressponse = requests.post(url, json=json)
@@ -224,7 +224,7 @@ class bilibili():
         return response
 
     def request_getkey(self):
-        url = 'https://passport.bilibili.com/api/oauth2/getKey'
+        url = 'https://passport.snm0516.aisee.tv/api/oauth2/getKey'
         temp_params = 'appkey=' + self.dic_bilibili['appkey']
         sign = self.calc_sign(temp_params)
         params = {'appkey': self.dic_bilibili['appkey'], 'sign': sign}
