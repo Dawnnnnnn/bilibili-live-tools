@@ -28,11 +28,11 @@ class login():
         headers = {
             'Accept': 'application/json, text/plain, */*',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
-            'Host': 'passport.bilibili.com',
+            'Host': 'passport.snm0516.aisee.tv',
             'cookie': "sid=hxt5szbb"
         }
         s = requests.session()
-        url = "https://passport.bilibili.com/captcha"
+        url = "https://passport.snm0516.aisee.tv/api/captcha?token=5598158bcd8511e2"
         res = s.get(url, headers=headers)
         tmp1 = base64.b64encode(res.content)
         for _ in range(login.auto_captcha_times):
