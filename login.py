@@ -5,14 +5,21 @@ import configloader
 import requests
 
 
+# temporary app parameter
+appkey = '4409e2ce8ffd12b8'
+build = '101800'
+# device = 'android_tv_yst'
+mobi_app = 'android_tv_yst'
+app_secret = '59b43e04ad6965f34319062b478f83dd'
+
 class login():
     auto_captcha_times = 3
 
     def normal_login(self, username, password):
         # url = 'https://passport.bilibili.com/api/oauth2/login'   //旧接口
         url = "https://passport.snm0516.aisee.tv/api/tv/login"
-        temp_params = f"appkey={bilibili().dic_bilibili['appkey']}&build={bilibili().dic_bilibili['build']}&captcha=&channel=master&guid=XYEBAA3E54D502E37BD606F0589A356902FCF&mobi_app=android_tv_yst&password={password}&platform=android&token=5598158bcd8511e2&ts=0&username={username}"
-        data = f"{temp_params}&sign={bilibili().calc_sign(temp_params)}"
+        temp_params = f"appkey={appkey}&build={build}&captcha=&channel=master&guid=XYEBAA3E54D502E37BD606F0589A356902FCF&mobi_app={mobi_app}&password={password}&platform={bilibili().dic_bilibili['platform']}&token=5598158bcd8511e2&ts=0&username={username}"
+        data = f"{temp_params}&sign={bilibili().calc_sign(temp_params, app_secret)}"
         headers = {"Content-type": "application/x-www-form-urlencoded"}
         response = requests.post(url, data=data, headers=headers)
         return response
@@ -46,8 +53,8 @@ class login():
                 Printer().printer("安装 Pillow 库后重启，以弹出验证码图片", "Error", "red")
                 exit()
 
-        temp_params = f"appkey={bilibili().dic_bilibili['appkey']}&build={bilibili().dic_bilibili['build']}&captcha={captcha}&channel=master&guid=XYEBAA3E54D502E37BD606F0589A356902FCF&mobi_app=android_tv_yst&password={password}&platform=android&token=5598158bcd8511e2&ts=0&username={username}"
-        data = f"{temp_params}&sign={bilibili().calc_sign(temp_params)}"
+        temp_params = f"appkey={appkey}&build={build}&captcha={captcha}&channel=master&guid=XYEBAA3E54D502E37BD606F0589A356902FCF&mobi_app={mobi_app}&password={password}&platform={bilibili().dic_bilibili['platform']}&token=5598158bcd8511e2&ts=0&username={username}"
+        data = f"{temp_params}&sign={bilibili().calc_sign(temp_params, app_secret)}"
         headers['Content-type'] = "application/x-www-form-urlencoded"
         headers['cookie'] = "sid=hxt5szbb"
         url = "https://passport.snm0516.aisee.tv/api/tv/login"
@@ -55,8 +62,8 @@ class login():
         return response
 
     def access_token_2_cookies(self, access_token):
-        params = f"access_key={access_token}&appkey={bilibili().dic_bilibili['appkey']}&gourl=https%3A%2F%2Faccount.bilibili.com%2Faccount%2Fhome"
-        url = f"https://passport.bilibili.com/api/login/sso?{params}&sign={bilibili().calc_sign(params)}"
+        params = f"access_key={access_token}&appkey={appkey}&gourl=https%3A%2F%2Faccount.bilibili.com%2Faccount%2Fhome"
+        url = f"https://passport.bilibili.com/api/login/sso?{params}&sign={bilibili().calc_sign(params, app_secret)}"
         response = requests.get(url, allow_redirects=False)
         return response.cookies.get_dict(domain=".bilibili.com")
 
@@ -69,10 +76,10 @@ class login():
                 value = response.json()['data']
                 key = value['key']
                 Hash = str(value['hash'])
-                username, password = bilibili().calc_name_passw(key, Hash, username, password)
-                response = self.normal_login(username, password)
+                calcd_username, calcd_password = bilibili().calc_name_passw(key, Hash, username, password)
+                response = self.normal_login(calcd_username, calcd_password)
                 while response.json()['code'] == -105:
-                    response = self.login_with_captcha(username, password)
+                    response = self.login_with_captcha(calcd_username, calcd_password)
                 if response.json()['code'] == -662:  # "can't decrypt rsa password~"
                     Printer().printer("打码时间太长key失效，重试", "Error", "red")
                     continue

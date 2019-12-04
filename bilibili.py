@@ -50,8 +50,8 @@ class bilibili():
                 inst.dic_bilibili['pcheaders']['cookie'] = dic[i]
                 inst.dic_bilibili['appheaders']['cookie'] = dic[i]
 
-    def calc_sign(self, str):
-        str = str + self.dic_bilibili['app_secret']
+    def calc_sign(self, str, app_secret=None):
+        str += app_secret or self.dic_bilibili['app_secret']
         hash = hashlib.md5()
         hash.update(str.encode('utf-8'))
         sign = hash.hexdigest()
@@ -264,12 +264,13 @@ class bilibili():
         return response1
 
     async def get_gift_of_TV(self, type, real_roomid, raffleid):
-        url = "https://api.live.bilibili.com/gift/v3/smalltv/join"
+        url = "https://api.live.bilibili.com/xlive/lottery-interface/v5/smalltv/join"
         data = {
             "roomid": real_roomid,
-            "raffleId": raffleid,
+            "id": raffleid,
             "type": type,
             "csrf_token": self.dic_bilibili['csrf'],
+            "csrf": self.dic_bilibili['csrf'],
             "visit_id": "8u0aig7b8100"
         }
         response2 = await self.bili_section_post(url, data=data, headers=self.dic_bilibili['pcheaders'])
@@ -312,7 +313,7 @@ class bilibili():
         return response
 
     async def get_giftlist_of_TV(self, real_roomid):
-        url = "https://api.live.bilibili.com/gift/v3/smalltv/check?roomid=" + \
+        url = "https://api.live.bilibili.com/xlive/lottery-interface/v1/lottery/Check?roomid=" + \
             str(real_roomid)
         headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",

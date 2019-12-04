@@ -1,6 +1,7 @@
 import datetime
 import asyncio
 import traceback
+import time
 import utils
 from bilibili import bilibili
 from printer import Printer
@@ -20,14 +21,14 @@ class Statistics:
             cls.instance = super(Statistics, cls).__new__(cls, *args, **kw)
             cls.instance.activity_raffleid_list = []
             cls.instance.activity_roomid_list = []
-            cls.instance.TV_raffleid_list = []
-            cls.instance.TV_roomid_list = []
+            cls.instance.TV_raffleid_dict = {}
+            # cls.instance.TV_roomid_list = []
 
-            cls.instance.pushed_event = []
+            # cls.instance.pushed_event = []
             cls.instance.pushed_TV = []
             cls.instance.monitor = {}
 
-            cls.instance.joined_event = []
+            # cls.instance.joined_event = []
             cls.instance.joined_TV = []
             cls.instance.total_area = 1
             cls.instance.result = {}
@@ -40,11 +41,10 @@ class Statistics:
     def getlist(self):
         # print(self.joined_event)
         # print(self.joined_TV)
-        print('本次推送活动抽奖次数:', len(self.pushed_event))
-        print('本次推送电视抽奖次数:', len(self.pushed_TV))
-        print()
-        print('本次参与活动抽奖次数:', len(self.joined_event))
-        print('本次参与电视抽奖次数:', len(self.joined_TV))
+        # print('本次推送活动抽奖次数:', len(self.pushed_event))
+        print('本次推送广播抽奖次数:', len(self.pushed_TV))
+        # print('本次参与活动抽奖次数:', len(self.joined_event))
+        print('本次参与广播抽奖次数:', len(self.joined_TV))
 
     def getresult(self):
         print('本次参与抽奖结果为：')
@@ -53,34 +53,36 @@ class Statistics:
 
     def delete_0st_TVlist(self):
         del self.TV_roomid_list[0]
-        del self.TV_raffleid_list[0]
+        del self.TV_raffleid_dict[0]
 
     async def clean_TV(self):
-        while len(self.TV_raffleid_list):
+        for raffleid in list(self.TV_raffleid_dict):
             await asyncio.sleep(0.2)
+            if self.TV_raffleid_dict[raffleid] < time.time():
+                del self.TV_raffleid_dict[raffleid]
 
-            response = await bilibili().get_TV_result(self.TV_roomid_list[0], self.TV_raffleid_list[0])
-            json_response = await response.json()
-            try:
-                if json_response['msg'] == '正在抽奖中..':
-                    break
-                data = json_response['data']
-                if not len(data):
-                    # Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖 {self.TV_raffleid_list[0]} 结果: {json_response['msg']}",
-                    #                   "Lottery", "cyan")
-                    # print('B站错误返回，报已错过')
-                    continue
-                if data['gift_id'] != '-1':
-                    Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖 {self.TV_raffleid_list[0]} 结果: {data['gift_name']}X{data['gift_num']}",
-                                      "Lottery", "cyan")
-                    self.add_to_result(data['gift_name'], int(data['gift_num']))
-                else:
-                    Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖 {self.TV_raffleid_list[0]} 结果: {json_response['msg']}",
-                                      "Lottery", "cyan")
-
-                self.delete_0st_TVlist()
-            except Exception:
-                Printer().printer(f'获取到异常抽奖结果: {json_response}', "Warning", "red")
+            # response = await bilibili().get_TV_result(self.TV_roomid_list[0], self.TV_raffleid_list[0])
+            # json_response = await response.json()
+            # try:
+            #     if json_response['msg'] == '正在抽奖中..':
+            #         break
+            #     data = json_response['data']
+            #     if not len(data):
+            #         # Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖 {self.TV_raffleid_list[0]} 结果: {json_response['msg']}",
+            #         #                   "Lottery", "cyan")
+            #         # print('B站错误返回，报已错过')
+            #         continue
+            #     if data['gift_id'] != '-1':
+            #         Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖 {self.TV_raffleid_list[0]} 结果: {data['gift_name']}X{data['gift_num']}",
+            #                           "Lottery", "cyan")
+            #         self.add_to_result(data['gift_name'], int(data['gift_num']))
+            #     else:
+            #         Printer().printer(f"房间 {self.TV_roomid_list[0]} 广播道具抽奖 {self.TV_raffleid_list[0]} 结果: {json_response['msg']}",
+            #                           "Lottery", "cyan")
+            #
+            #     self.delete_0st_TVlist()
+            # except Exception:
+            #     Printer().printer(f'获取到异常抽奖结果: {json_response}', "Warning", "red")
 
         if self.monitor:
             check_list = list(self.monitor)
@@ -114,9 +116,8 @@ class Statistics:
                 finally:
                     del self.monitor[roomid]
 
-    def append_to_TVlist(self, raffleid, real_roomid, time=''):
-        self.TV_raffleid_list.append(raffleid)
-        self.TV_roomid_list.append(real_roomid)
+    def append_to_TVlist(self, raffleid, time_limit):
+        self.TV_raffleid_dict[raffleid] = time.time() + time_limit
         self.joined_TV.append(decimal_time())
 
     def append2pushed_TVlist(self, real_roomid, area_id):
@@ -124,6 +125,6 @@ class Statistics:
         self.monitor[real_roomid] = self.monitor.get(real_roomid, 0) | 2**(int(area_id)-1)
 
     def check_TVlist(self, raffleid):
-        if raffleid not in self.TV_raffleid_list:
+        if self.TV_raffleid_dict.get(raffleid, None) is None:
             return True
         return False

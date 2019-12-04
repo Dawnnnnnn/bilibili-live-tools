@@ -10,15 +10,22 @@ import json
 import sys
 
 
-async def handle_1_TV_raffle(type, num, real_roomid, raffleid):
-    await asyncio.sleep(random.uniform(0, min(num, 30)))
+async def handle_1_TV_raffle(type, raffleid, time_wait, time_limit, num, real_roomid):
+    Statistics().append_to_TVlist(raffleid, time_limit)
+    await asyncio.sleep(min(max(0, time_wait) + random.uniform(0, min(num, 30)), time_limit-1))
     response2 = await bilibili().get_gift_of_TV(type, real_roomid, raffleid)
     # Printer().printer(f"参与了房间 {real_roomid} 的广播抽奖 {raffleid}", "Lottery", "cyan")
     json_response2 = await response2.json(content_type=None)
-    Printer().printer(f"参与房间 {real_roomid} 广播道具抽奖 {raffleid} 状态: {json_response2['msg']}", "Lottery", "cyan")
+    # Printer().printer(f"参与房间 {real_roomid} 广播道具抽奖 {raffleid} 状态: {json_response2['msg']}", "Lottery", "cyan")
     if json_response2['code'] == 0:
-        Statistics().append_to_TVlist(raffleid, real_roomid)
+        data = json_response2["data"]
+        Printer().printer(f"房间 {real_roomid} 广播道具抽奖 {raffleid} 结果: {data['award_name']}X{data['award_num']}",
+                          "Lottery", "cyan")
+        Statistics().add_to_result(data['award_name'], int(data['award_num']))
     else:
+        # {"code":-403,"data":null,"message":"访问被拒绝","msg":"访问被拒绝"}
+        Printer().printer(f"房间 {real_roomid} 广播道具抽奖 {raffleid} 结果: {json_response2['message']}",
+                          "Lottery", "cyan")
         print(json_response2)
 
 
@@ -31,18 +38,20 @@ async def handle_1_room_TV(real_roomid):
         await bilibili().post_watching_history(real_roomid)
         response = await bilibili().get_giftlist_of_TV(real_roomid)
         json_response = await response.json(content_type=None)
-        checklen = json_response['data']['list']
+        checklen = json_response['data']['gift']
         num = len(checklen)
         list_available_raffleid = []
         for j in range(0, num):
-            raffleid = json_response['data']['list'][j]['raffleId']
-            type = json_response['data']['list'][j]['type']
+            raffleid = json_response['data']['gift'][j]['raffleId']
             if Statistics().check_TVlist(raffleid):
-                list_available_raffleid.append([type, raffleid])
+                type = json_response['data']['gift'][j]['type']
+                time_wait = json_response['data']['gift'][j]['time_wait']
+                time_limit = json_response['data']['gift'][j]['time']
+                list_available_raffleid.append([type, raffleid, time_wait, time_limit])
         tasklist = []
         num_available = len(list_available_raffleid)
         for k in list_available_raffleid:
-            task = asyncio.ensure_future(handle_1_TV_raffle(k[0], num_available, real_roomid, k[1]))
+            task = asyncio.ensure_future(handle_1_TV_raffle(*k, num_available, real_roomid))
             tasklist.append(task)
         if tasklist:
             await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
@@ -202,10 +211,12 @@ class bilibiliClient():
     async def parseDanMu(self, messages):
         try:
             dic = json.loads(messages)
-
         except:
             return
-        cmd = dic['cmd']
+
+        cmd = dic.get('cmd')
+        if cmd is None:
+            return
 
         if cmd == 'LIVE':
             # Printer().printer(f"[{self.area}分区] 房间 {self._roomId} 疑似切换分区！启动分区检查", "Info", "green")
