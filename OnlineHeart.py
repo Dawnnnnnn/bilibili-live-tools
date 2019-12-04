@@ -42,10 +42,10 @@ class OnlineHeart:
             Printer().printer("连接舰长服务器失败", "Error", "red")
             return
         for i in range(0, len(json_response)):
-            GuardId = json_response[i]['GuardId']
+            GuardId = json_response[i]['Id']
             if GuardId not in had_gotted_guard and GuardId != 0:
                 had_gotted_guard.append(GuardId)
-                OriginRoomId = json_response[i]['OriginRoomId']
+                OriginRoomId = json_response[i]['RoomId']
                 if not OriginRoomId == OnlineHeart.last_guard_room:
                     result = await utils.check_room_true(OriginRoomId)
                     if True in result:
