@@ -56,20 +56,21 @@ class OnlineHeart:
                 response2 = await bilibili().get_gift_of_captain(OriginRoomId, GuardId)
                 json_response2 = await response2.json(content_type=None)
                 if json_response2['code'] == 0:
-                    Printer().printer(f"获取到房间 {OriginRoomId} 编号 {GuardId} 的上船亲密度: {json_response2['data']['message']}",
+                    Printer().printer(f"获取到房间 {OriginRoomId} 编号 {GuardId} 的上船奖励: "
+                                      f"{json_response2['data']['award_text']}" if json_response2['data']['award_text'] else
+                                      f"获取到房间 {OriginRoomId} 编号 {GuardId} 的上船奖励: "
+                                      f"{json_response2['data']['award_name']}X{json_response2['data']['award_num']}",
                                       "Lottery", "cyan")
-                elif json_response2['code'] == 400 and json_response2['msg'] == "你已经领取过啦":
-                    Printer().printer(
-                        f"房间 {OriginRoomId} 编号 {GuardId} 的上船亲密度已领过",
-                        "Info", "green")
-                elif json_response2['code'] == 400 and json_response2['msg'] == "访问被拒绝":
-                    Printer().printer(f"获取房间 {OriginRoomId} 编号 {GuardId} 的上船亲密度: {json_response2['message']}",
+                elif json_response2['code'] == -403 and json_response2['msg'] == "访问被拒绝":
+                    Printer().printer(f"获取房间 {OriginRoomId} 编号 {GuardId} 的上船奖励: {json_response2['message']}",
                                       "Lottery", "cyan")
                     print(json_response2)
+                elif json_response2['code'] == 400 and json_response2['msg'] == "你已经领取过啦":
+                    Printer().printer(f"房间 {OriginRoomId} 编号 {GuardId} 的上船奖励已领过",
+                                      "Info", "green")
                 else:
-                    Printer().printer(
-                        f"房间 {OriginRoomId} 编号 {GuardId}  的上船亲密度领取出错: {json_response2}",
-                        "Error", "red")
+                    Printer().printer(f"房间 {OriginRoomId} 编号 {GuardId}  的上船奖励领取出错: {json_response2}",
+                                      "Error", "red")
                 await asyncio.sleep(0.2)
 
     async def check_winner(self, i, g, start_time):

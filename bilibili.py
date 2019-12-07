@@ -277,7 +277,7 @@ class bilibili():
         return response2
 
     async def get_gift_of_captain(self, roomid, id):
-        join_url = "https://api.live.bilibili.com/lottery/v2/lottery/join"
+        join_url = "https://api.live.bilibili.com/xlive/lottery-interface/v3/guard/join"
         payload = {"roomid": roomid, "id": id, "type": "guard",
                    "csrf_token": self.dic_bilibili['csrf']}
         response2 = await self.bili_section_post(join_url, data=payload, headers=self.dic_bilibili['pcheaders'])
