@@ -12,6 +12,14 @@ from bilibili import bilibili
 import threading
 import biliconsole
 from pkLottery import PKLottery
+from TCP_monitor import TCP_monitor
+import configloader
+import os
+
+fileDir = os.path.dirname(os.path.realpath('__file__'))
+file_user = fileDir + "/conf/user.conf"
+dic_user = configloader.load_user(file_user)
+
 
 loop = asyncio.get_event_loop()
 loop1 = asyncio.get_event_loop()
@@ -33,8 +41,10 @@ tasks1 = [
 ]
 loop.run_until_complete(asyncio.wait(tasks1))
 
-console_thread = threading.Thread(target=biliconsole.controler)
-console_thread.start()
+# console_thread = threading.Thread(target=biliconsole.controler)
+# console_thread.start()
+
+
 
 tasks = [
     task.run(),
@@ -44,10 +54,20 @@ tasks = [
     task4.create(),
     task3.query(),
     rafflehandler.run(),
-    task5.run()
+    task5.run(),
 ]
 
-loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION))
+
+monitor = TCP_monitor()
+if dic_user['monitoy_server']['on/off'] == "1":
+    task_tcp_conn = asyncio.ensure_future(monitor.connectServer(dic_user['monitoy_server']['host'], dic_user['monitoy_server']['port']))
+    task_tcp_heart = asyncio.ensure_future(monitor.HeartbeatLoop())
+    tasks.append(task_tcp_conn)
+    tasks.append(task_tcp_heart)
+
+
+
+a = loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION))
 loop.close()
 
-console_thread.join()
+# console_thread.join()
