@@ -38,19 +38,17 @@ class TCP_monitor():
         while 1:
             try:
                 reader, writer = await asyncio.open_connection(host, port)
-            except Exception:
-                print("连接无法建立，请检查本地网络状况")
+                self._reader = reader
+                self._writer = writer
+                Printer().printer(f'监控服务器连接成功', "Info", "green")
+                await self.send_bytes(self.Auth_Key(self.dic_user['monitoy_server']['key']))
+                self.connected = True
+                await self.ReceiveMessageLoop()
+                Printer().printer(f'与服务器连接断开,5s后尝试重连', "Error", "red")
                 await asyncio.sleep(5)
-                return
-            self._reader = reader
-            self._writer = writer
-
-            Printer().printer(f'监控服务器连接成功', "Info", "green")
-            await self.send_bytes(self.Auth_Key(self.dic_user['monitoy_server']['key']))
-            self.connected = True
-            await self.ReceiveMessageLoop()
-            Printer().printer(f'与服务器连接断开,5s后尝试重连', "Error", "red")
-            await asyncio.sleep(5)
+            except Exception:
+                Printer().printer(f'连接无法建立，请检查本地网络状况,5s后重连', "Error", "red")
+                await asyncio.sleep(5)
 
     async def HeartbeatLoop(self):
         while not self.connected:
