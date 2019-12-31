@@ -41,8 +41,8 @@ tasks1 = [
 ]
 loop.run_until_complete(asyncio.wait(tasks1))
 
-# console_thread = threading.Thread(target=biliconsole.controler)
-# console_thread.start()
+console_thread = threading.Thread(target=biliconsole.controler)
+console_thread.start()
 
 
 
@@ -70,4 +70,4 @@ if dic_user['monitoy_server']['on/off'] == "1":
 a = loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION))
 loop.close()
 
-# console_thread.join()
+console_thread.join()
