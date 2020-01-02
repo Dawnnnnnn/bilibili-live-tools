@@ -32,6 +32,7 @@ class bilibili():
             cls.instance.dic_bilibili = configloader.load_bilibili(
                 file_bilibili)
             cls.instance.bili_session = None
+            cls.instance.black_status = False
         return cls.instance
 
     @property
@@ -75,27 +76,43 @@ class bilibili():
         username = parse.quote_plus(username)
         return username, password
 
+    async def reset_black_status(self):
+        struct_time = time.localtime(time.time())
+        sleep_min = 40 if 1 <= struct_time.tm_hour <= 17 else 20
+        Printer().printer(f"当前处于小黑屋，休眠 {sleep_min} min", "Info", "green")
+        await asyncio.sleep(sleep_min * 60)
+        Printer().printer(f"黑屋休眠结束，尝试进行抽奖", "Info", "green")
+        self.black_status = False
+
     async def replay_request(self, response):
         json_response = await response.json(content_type=None)
         if json_response['code'] == 1024:
             Printer().printer(f'b站炸了,暂停所有请求5s后重试,请耐心等待', "Error", "red")
             await asyncio.sleep(5)
             return True
+        elif json_response['code'] in [503, -509]:
+            Printer().printer(f'『{json_response["message"]}』5s后重试', "Error", "red")
+            await asyncio.sleep(5)
+            return True
+        elif json_response['code'] == -403 and json_response.get("msg") == '访问被拒绝':
+            self.black_status = True
+            asyncio.ensure_future(self.reset_black_status())
+            return False
         else:
             return False
 
-    async def bili_section_post(self, url, headers=None, data=None):
+    async def bili_section_request(self, method, url, replay=True, **kwargs):
         while True:
             try:
-                response = await self.bili_section.post(url, headers=headers, data=data)
-                if response.status == 403:
-                    Printer().printer('403频繁，5s后重试', "Error", "red")
-                    await asyncio.sleep(5)
-                    continue
-                elif response.status == 412:
-                    Printer().printer('412触发风控被拒绝，60s后重试', "Error", "red")
-                    await asyncio.sleep(60)
-                    continue
+                response = await self.bili_section.request(method, url, **kwargs)
+                if response.status in [403, 412]:
+                    if replay:
+                        Printer().printer(f'<{response.status} {response.reason}>，60s后重试', "Error", "red")
+                        await asyncio.sleep(60)
+                        continue
+                    else:
+                        Printer().printer(f'<{response.status} {response.reason}>，放弃抽奖', "Error", "red")
+                        break
                 tag = await self.replay_request(response)
                 if tag:
                     continue
@@ -106,27 +123,11 @@ class bilibili():
                 await asyncio.sleep(1)
                 continue
 
-    async def bili_section_get(self, url, headers=None, data=None, params=None):
-        while True:
-            try:
-                response = await self.bili_section.get(url, headers=headers, data=data, params=params)
-                if response.status == 403:
-                    Printer().printer('403频繁，5s后重试', "Error", "red")
-                    await asyncio.sleep(5)
-                    continue
-                elif response.status == 412:
-                    Printer().printer('412触发风控被拒绝，60s后重试', "Error", "red")
-                    await asyncio.sleep(60)
-                    continue
-                tag = await self.replay_request(response)
-                if tag:
-                    continue
-                return response
-            except:
-                # print('当前网络不好，正在重试，请反馈开发者!!!!')
-                # print(sys.exc_info()[0], sys.exc_info()[1])
-                await asyncio.sleep(1)
-                continue
+    async def bili_section_post(self, url, **kwargs):
+        return await self.bili_section_request('POST', url, **kwargs)
+
+    async def bili_section_get(self, url, **kwargs):
+        return await self.bili_section_request('GET', url, **kwargs)
 
     # 1:900兑换
     async def request_doublegain_coin2silver(self):
@@ -273,21 +274,21 @@ class bilibili():
             "csrf": self.dic_bilibili['csrf'],
             "visit_id": "8u0aig7b8100"
         }
-        response2 = await self.bili_section_post(url, data=data, headers=self.dic_bilibili['pcheaders'])
+        response2 = await self.bili_section_post(url, replay=False, data=data, headers=self.dic_bilibili['pcheaders'])
         return response2
 
     async def get_gift_of_captain(self, roomid, id):
         join_url = "https://api.live.bilibili.com/xlive/lottery-interface/v3/guard/join"
         payload = {"roomid": roomid, "id": id, "type": "guard",
                    "csrf_token": self.dic_bilibili['csrf']}
-        response2 = await self.bili_section_post(join_url, data=payload, headers=self.dic_bilibili['pcheaders'])
+        response2 = await self.bili_section_post(join_url, replay=False, data=payload, headers=self.dic_bilibili['pcheaders'])
         return response2
 
     async def get_gift_of_pk(self, roomid, id):
         join_url = "https://api.live.bilibili.com/xlive/lottery-interface/v1/pk/join"
         payload = {"roomid": roomid, "id": id, "csrf": self.dic_bilibili['csrf'],
                    "csrf_token": self.dic_bilibili['csrf']}
-        response2 = await self.bili_section_post(join_url, data=payload, headers=self.dic_bilibili['pcheaders'])
+        response2 = await self.bili_section_post(join_url, replay=False, data=payload, headers=self.dic_bilibili['pcheaders'])
         return response2
 
     async def get_giftlist_of_events(self, text1):

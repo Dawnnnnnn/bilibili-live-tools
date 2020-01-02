@@ -2,7 +2,9 @@ from bilibili import bilibili
 from statistics import Statistics
 from printer import Printer
 from rafflehandler import Rafflehandler
+from schedule import Schedule
 import utils
+import traceback
 import asyncio
 import random
 import struct
@@ -12,6 +14,12 @@ import sys
 
 async def handle_1_TV_raffle(type, raffleid, time_wait, time_limit, num, real_roomid):
     Statistics().append_to_TVlist(raffleid, time_limit)
+    if Schedule().scheduled_sleep:
+        Printer().printer(f"定时休眠，跳过房间 {real_roomid} 广播道具抽奖 {raffleid}", "Info", "green")
+        return
+    if bilibili().black_status:
+        Printer().printer(f"黑屋休眠，跳过房间 {real_roomid} 广播道具抽奖 {raffleid}", "Info", "green")
+        return
     await asyncio.sleep(min(max(0, time_wait) + random.uniform(0, min(num, 30)), time_limit-1))
     response2 = await bilibili().get_gift_of_TV(type, real_roomid, raffleid)
     # Printer().printer(f"参与了房间 {real_roomid} 的广播抽奖 {raffleid}", "Lottery", "cyan")
@@ -24,6 +32,8 @@ async def handle_1_TV_raffle(type, raffleid, time_wait, time_limit, num, real_ro
         Statistics().add_to_result(data['award_name'], int(data['award_num']))
     else:
         # {"code":-403,"data":null,"message":"访问被拒绝","msg":"访问被拒绝"}
+        # {'code': 503, 'data': None, 'message': '请求太多了！', 'msg': '请求太多了！'}
+        # {'code': -509, 'message': '请求过于频繁，请稍后再试', 'ttl': 1}
         Printer().printer(f"房间 {real_roomid} 广播道具抽奖 {raffleid} 结果: {json_response2['message']}",
                           "Lottery", "cyan")
         print(json_response2)
@@ -198,7 +208,10 @@ class bilibiliClient():
                         messages = tmp.decode('utf-8')
                     except:
                         continue
-                    await self.parseDanMu(messages)
+                    try:
+                        await self.parseDanMu(messages)
+                    except Exception:
+                        Printer().printer(f'Failed when parsing: {messages}\n{traceback.format_exc()}', "Error", "red")
                     continue
                 elif num == 5 or num == 6 or num == 7:
                     continue

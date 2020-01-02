@@ -1,6 +1,5 @@
 from bilibili import bilibili
 from login import login
-import utils
 import time
 import traceback
 import datetime
@@ -10,7 +9,7 @@ from statistics import Statistics
 from printer import Printer
 
 
-had_gotted_guard = []
+
 
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
@@ -18,7 +17,6 @@ def CurrentTime():
 
 
 class OnlineHeart:
-    last_guard_room = 0
 
     async def apppost_heartbeat(self):
         await bilibili().apppost_heartbeat()
@@ -29,49 +27,6 @@ class OnlineHeart:
 
     async def heart_gift(self):
         await bilibili().heart_gift()
-
-    async def guard_lottery(self):
-        for k in range(3):
-            try:
-                response = await bilibili().guard_list()
-                json_response = response.json()
-                break
-            except Exception:
-                continue
-        else:
-            Printer().printer("连接舰长服务器失败", "Error", "red")
-            return
-        for i in range(0, len(json_response)):
-            GuardId = json_response[i]['Id']
-            if GuardId not in had_gotted_guard and GuardId != 0:
-                had_gotted_guard.append(GuardId)
-                OriginRoomId = json_response[i]['RoomId']
-                if not OriginRoomId == OnlineHeart.last_guard_room:
-                    result = await utils.check_room_true(OriginRoomId)
-                    if True in result:
-                        Printer().printer(f"检测到房间 {OriginRoomId} 的钓鱼操作", "Warning", "red")
-                        continue
-                    await bilibili().post_watching_history(OriginRoomId)
-                    OnlineHeart.last_guard_room = OriginRoomId
-                response2 = await bilibili().get_gift_of_captain(OriginRoomId, GuardId)
-                json_response2 = await response2.json(content_type=None)
-                if json_response2['code'] == 0:
-                    Printer().printer(f"获取到房间 {OriginRoomId} 编号 {GuardId} 的上船奖励: "
-                                      f"{json_response2['data']['award_text']}" if json_response2['data']['award_text'] else
-                                      f"获取到房间 {OriginRoomId} 编号 {GuardId} 的上船奖励: "
-                                      f"{json_response2['data']['award_name']}X{json_response2['data']['award_num']}",
-                                      "Lottery", "cyan")
-                elif json_response2['code'] == -403 and json_response2['msg'] == "访问被拒绝":
-                    Printer().printer(f"获取房间 {OriginRoomId} 编号 {GuardId} 的上船奖励: {json_response2['message']}",
-                                      "Lottery", "cyan")
-                    print(json_response2)
-                elif json_response2['code'] == 400 and json_response2['msg'] == "你已经领取过啦":
-                    Printer().printer(f"房间 {OriginRoomId} 编号 {GuardId} 的上船奖励已领过",
-                                      "Info", "green")
-                else:
-                    Printer().printer(f"房间 {OriginRoomId} 编号 {GuardId}  的上船奖励领取出错: {json_response2}",
-                                      "Error", "red")
-                await asyncio.sleep(0.2)
 
     async def check_winner(self, i, g, start_time):
         # 开奖5s后检查是否中奖
@@ -88,7 +43,7 @@ class OnlineHeart:
                       "測一測", "TEST", "Test", "t-e-s-t"]  # 合理猜想
         former_lottery = queue.Queue(maxsize=4)
         [former_lottery.put(True) for _ in range(4)]
-        for i in range(390, 600):
+        for i in range(450, 600):
             response = await bilibili().get_lotterylist(i)
             json_response = await response.json()
             former_lottery.get()
@@ -109,6 +64,9 @@ class OnlineHeart:
                                                    "，默认不参与，请自行判断抽奖可参与性","Warning","red")
                                 break
                         else:
+                            if bilibili().black_status:
+                                Printer().printer(f"黑屋休眠，跳过『{title}>>>{jp_list}』抽奖", "Info", "green")
+                                continue
                             response1 = await bilibili().get_gift_of_lottery(i, g)
                             json_response1 = await response1.json(content_type=None)
                             Printer().printer(f"参与『{title}>>>{jp_list}』抽奖回显: {json_response1}", "Lottery", "cyan")
@@ -131,7 +89,6 @@ class OnlineHeart:
                     login().login()
                 await self.apppost_heartbeat()
                 await self.heart_gift()
-                await self.guard_lottery()
                 await self.draw_lottery()
                 await asyncio.sleep(300)
             except:

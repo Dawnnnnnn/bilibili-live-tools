@@ -1,3 +1,4 @@
+from TCP_monitor import TCP_monitor
 from OnlineHeart import OnlineHeart
 from Silver import Silver
 from LotteryResult import LotteryResult
@@ -12,7 +13,8 @@ from bilibili import bilibili
 import threading
 import biliconsole
 from pkLottery import PKLottery
-from TCP_monitor import TCP_monitor
+from guardLottery import GuardLottery
+from schedule import Schedule
 import configloader
 import os
 
@@ -22,8 +24,7 @@ dic_user = configloader.load_user(file_user)
 
 
 loop = asyncio.get_event_loop()
-loop1 = asyncio.get_event_loop()
-printer = Printer()
+printer = Printer(dic_user['thoroughly_log']['on/off'])
 bilibili()
 Statistics()
 rafflehandler = Rafflehandler()
@@ -35,6 +36,7 @@ task2 = Tasks()
 task3 = LotteryResult()
 task4 = connect()
 task5 = PKLottery()
+task6 = GuardLottery()
 
 tasks1 = [
     login().login_new()
@@ -55,19 +57,24 @@ tasks = [
     task3.query(),
     rafflehandler.run(),
     task5.run(),
+    task6.run()
 ]
 
 
-monitor = TCP_monitor()
 if dic_user['monitoy_server']['on/off'] == "1":
-    task_tcp_conn = asyncio.ensure_future(monitor.connectServer(dic_user['monitoy_server']['host'], dic_user['monitoy_server']['port']))
-    task_tcp_heart = asyncio.ensure_future(monitor.HeartbeatLoop())
+    monitor = TCP_monitor()
+    task_tcp_conn = monitor.connectServer(
+        dic_user['monitoy_server']['host'], dic_user['monitoy_server']['port'], dic_user['monitoy_server']['key'])
+    task_tcp_heart = monitor.HeartbeatLoop()
     tasks.append(task_tcp_conn)
     tasks.append(task_tcp_heart)
 
+schedule = Schedule()
+if dic_user['regular_sleep']['on/off'] == "1":
+    tasks.append(schedule.run(dic_user['regular_sleep']['schedule']))
 
 
-a = loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION))
+loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION))
 loop.close()
 
 console_thread.join()

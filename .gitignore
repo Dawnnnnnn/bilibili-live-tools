@@ -2,6 +2,6 @@
 .DS_Store
 *.iml
 *.xml
-log.txt
+log*.txt
 __pycache__/
 .idea/
