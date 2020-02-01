@@ -74,7 +74,13 @@ if dic_user['regular_sleep']['on/off'] == "1":
     tasks.append(schedule.run(dic_user['regular_sleep']['schedule']))
 
 
+tasks = list(map(asyncio.ensure_future, tasks))
 loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION))
+Printer().printer('\n'.join(map(repr, asyncio.Task.all_tasks())), "Info", "green")
+for task in tasks:
+    Printer().printer(repr(task._state), "Info", "green")
+    if task._state == 'FINISHED':
+        Printer().printer(f"Task err: {repr(task.exception())}", "Error", "red")
 loop.close()
 
 console_thread.join()

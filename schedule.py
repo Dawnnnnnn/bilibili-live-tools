@@ -33,7 +33,6 @@ class Schedule:
         if not len(second_array):
             Printer().printer("请填入有效时间段", "Warning", "red")
             return
-        print(second_array)
         second_rearrng = [second_array[0]]
         pos = 1
         while pos < len(second_array):
@@ -46,7 +45,6 @@ class Schedule:
                 second_rearrng.append(second_array[pos])
             pos += 1
         sec_sequence = __import__('functools').reduce(lambda x, y: x+y, second_rearrng)
-        print(sec_sequence)
 
         sec_init = sec_now()
         for i in range(len(sec_sequence)):

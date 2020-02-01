@@ -39,7 +39,7 @@ class OnlineHeart:
                 Statistics().add_to_result(winner["giftTitle"], 1)
 
     async def draw_lottery(self):
-        black_list = ["123", "1111", "测试", "測試", "测一测", "ce-shi", "test", "T-E-S-T", "lala", "我是抽奖标题", # 已经出现
+        black_list = ["123", "1111", "测试", "測試", "测一测", "ce-shi", "test", "T-E-S-T", "lala", "我是抽奖标题", "压测", # 已经出现
                       "測一測", "TEST", "Test", "t-e-s-t"]  # 合理猜想
         former_lottery = queue.Queue(maxsize=4)
         [former_lottery.put(True) for _ in range(4)]

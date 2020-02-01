@@ -90,7 +90,7 @@ class TCP_monitor():
     async def ReadSocketData(self):
         try:
             header = await asyncio.wait_for(self._reader.read(4), timeout=35.0)
-        except:
+        except Exception:
             Printer().printer("与服务器连接断开", "Error", "red")
             self.connected = False
             await asyncio.sleep(5)
@@ -100,7 +100,13 @@ class TCP_monitor():
         len_body, = self.header_struct.unpack_from(header)
         if not len_body:
             return True
-        body = await self._reader.read(len_body - 4)
+        try:
+            body = await self._reader.read(len_body - 4)
+        except Exception:
+            Printer().printer("与服务器连接断开", "Error", "red")
+            self.connected = False
+            await asyncio.sleep(5)
+            return False
         body = body.decode('utf-8')
         body = body.replace("True", "true").replace("False", "false").replace("None", "null")
         if body is None:

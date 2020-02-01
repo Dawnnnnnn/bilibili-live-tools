@@ -113,6 +113,9 @@ class bilibili():
                     else:
                         Printer().printer(f'<{response.status} {response.reason}>，放弃抽奖', "Error", "red")
                         break
+                elif response.status == 404:
+                    Printer().printer(f'<{response.status} {response.reason}>，接口疑似已失效，请联系开发者', "Error", "red")
+                    return None
                 tag = await self.replay_request(response)
                 if tag:
                     continue
