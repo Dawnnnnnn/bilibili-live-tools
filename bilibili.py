@@ -202,7 +202,7 @@ class bilibili():
         return response
 
     async def request_fetch_user_info(self):
-        url = "https://api.live.bilibili.com/i/api/liveinfo"
+        url = "https://api.live.bilibili.com/live_user/v1/UserInfo/live_info"
         response = await self.bili_section_get(url, headers=self.dic_bilibili['pcheaders'])
         return response
 

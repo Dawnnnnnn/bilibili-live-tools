@@ -93,7 +93,7 @@ class login():
                 bilibili().dic_bilibili['csrf'] = cookie_info['bili_jct']
                 bilibili().dic_bilibili['access_key'] = access_key
                 bilibili().dic_bilibili['cookie'] = cookie_format
-                bilibili().dic_bilibili['uid'] = cookie_info['DedeUserID']
+                bilibili().dic_bilibili['uid'] = int(cookie_info['DedeUserID'])
                 bilibili().dic_bilibili['pcheaders']['cookie'] = cookie_format
                 bilibili().dic_bilibili['appheaders']['cookie'] = cookie_format
                 dic_saved_session = {

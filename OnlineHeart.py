@@ -43,7 +43,7 @@ class OnlineHeart:
                       "測一測", "TEST", "Test", "t-e-s-t"]  # 合理猜想
         former_lottery = queue.Queue(maxsize=4)
         [former_lottery.put(True) for _ in range(4)]
-        for i in range(450, 600):
+        for i in range(490, 600):
             response = await bilibili().get_lotterylist(i)
             json_response = await response.json()
             former_lottery.get()
@@ -84,7 +84,7 @@ class OnlineHeart:
                 Printer().printer("心跳", "Info","green")
                 response = await self.pcpost_heartbeat()
                 json_response = await response.json(content_type=None)
-                if json_response['code'] == 3:
+                if json_response['code'] in [3, -101]:
                     Printer().printer(f"cookie过期,将重新登录","Error","red")
                     login().login()
                 await self.apppost_heartbeat()

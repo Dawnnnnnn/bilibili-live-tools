@@ -19,6 +19,7 @@ class Statistics:
     def __new__(cls, *args, **kw):
         if not cls.instance:
             cls.instance = super(Statistics, cls).__new__(cls, *args, **kw)
+            cls.instance.init_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             cls.instance.activity_raffleid_list = []
             cls.instance.activity_roomid_list = []
             cls.instance.TV_raffleid_dict = {}
@@ -39,6 +40,7 @@ class Statistics:
         self.result[type] = self.result.get(type, 0) + int(num)
 
     def getlist(self):
+        print('本次运行开始于:', self.init_time)
         # print(self.joined_event)
         # print(self.joined_TV)
         # print('本次推送活动抽奖次数:', len(self.pushed_event))
