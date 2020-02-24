@@ -2,6 +2,7 @@ import time
 import asyncio
 import traceback
 import MultiRoom
+from statistics import Statistics
 from bilibiliCilent import bilibiliClient
 from printer import Printer
 
@@ -24,13 +25,16 @@ class connect():
     async def create(self):
         area_list = await MultiRoom.get_area_list()
         tmp = await MultiRoom.get_all(area_list)
-        init_time = time.time()
-        for area_id in area_list:
-            self.check_time[str(area_id)] = init_time
         for i in range(len(tmp)):
             connect.roomids.append(tmp[i][0])
         for n in range(len(tmp)):
             connect.areas.append(tmp[n][1])
+        Printer().printer(f"获取到分区列表: {connect.areas}", "Info", "green")
+        ckd_area_list = [int(area[:1]) for area in connect.areas]
+        Statistics().adjust_basis(ckd_area_list)
+        init_time = time.time()
+        for area in connect.areas:
+            self.check_time[area] = init_time
         for roomid,area in zip(connect.roomids, connect.areas):
             self.danmuji = bilibiliClient(roomid,area)
             task1 = asyncio.ensure_future(self.danmuji.connectServer())
@@ -83,14 +87,14 @@ class connect():
         if roomid is None:
             roomid = connect.roomids[connect.areas.index(area)]
 
-        if not mandatory_check and time.time() - self.check_time[area[:1]] < 60:
+        if not mandatory_check and time.time() - self.check_time[area] < 60:
             Printer().printer(f"[{area}分区] 近已检查，跳过", "Info", "green")
             [ckd_roomid, ckd_area] = [roomid, area]
         else:
             # Printer().printer(f"[{area}分区] {roomid} 检查开始", "Info", "green")
-            self.check_time[area[:1]] = time.time()
+            self.check_time[area] = time.time()
             [ckd_roomid, ckd_area] = await MultiRoom.check_state(roomid=roomid, area=area)
-            self.check_time[area[:1]] = time.time()
+            self.check_time[area] = time.time()
         if mandatory_recreate or ckd_roomid != roomid:
             await self.recreate(new_roomid=ckd_roomid, area=ckd_area)
 
@@ -113,9 +117,9 @@ class connect():
             connect.tasks[old_roomid] = []
 
             if new_roomid is None:
-                self.check_time[area[:1]] = time.time()
+                self.check_time[area] = time.time()
                 [new_roomid, new_area] = await MultiRoom.check_state(area)
-                self.check_time[area[:1]] = time.time()
+                self.check_time[area] = time.time()
             else:
                 new_area = area
 

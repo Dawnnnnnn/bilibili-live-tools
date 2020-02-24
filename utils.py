@@ -189,10 +189,11 @@ async def check_taskinfo():
         else:
             print('# 该任务未完成')
 
-        if sign_info['signDaysList'] == list(range(1, sign_info['curDay'] + 1)):
-            print('# 当前全勤')
-        else:
-            print('# 出现断签')
+        # sign_info['signDaysList']已永远为空
+        # if sign_info['signDaysList'] == list(range(1, sign_info['curDay'] + 1)):
+        #     print('# 当前全勤')
+        # else:
+        #     print('# 出现断签')
 
         print('直播奖励：')
         if live_time_info['status'] == 1:
