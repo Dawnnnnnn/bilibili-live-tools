@@ -108,11 +108,11 @@ class Statistics:
                         Printer().printer(f"发现监控重复 {to_check}", "Info", "green")
                         await utils.check_area_list(to_check)
                     elif area_sum == self.total_area-1:
-                        to_check = len(bin(self.area_basis-self.monitor[roomid])) - 3
+                        to_check = [len(bin(self.area_basis-self.monitor[roomid]).replace('0b', ''))]
                         Printer().printer(f"发现监控缺失 {to_check}", "Info", "green")
                         await utils.check_area_list(to_check)
                     else:
-                        Printer().printer(f"出现意外的监控情况，启动分区检查 {check_str}", "Info", "green")
+                        Printer().printer(f"对房间 {roomid} 的抽奖出现意外的监控情况({check_str}/{self.area_basis:b})，启动分区检查", "Info", "green")
                         await utils.reconnect()
                 except Exception:
                     Printer().printer(traceback.format_exc(), "Error", "red")

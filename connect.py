@@ -25,6 +25,8 @@ class connect():
     async def create(self):
         area_list = await MultiRoom.get_area_list()
         tmp = await MultiRoom.get_all(area_list)
+        # 新的战疫分区直播间实际上没有弹幕区
+        tmp = [x for x in tmp if '战疫' not in x[1]]
         for i in range(len(tmp)):
             connect.roomids.append(tmp[i][0])
         for n in range(len(tmp)):
