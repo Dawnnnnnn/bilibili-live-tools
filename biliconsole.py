@@ -1,5 +1,7 @@
 import utils
 from statistics import Statistics
+from printer import Printer
+import traceback
 import threading
 import asyncio
 
@@ -75,7 +77,10 @@ class Biliconsole():
                     task = asyncio.ensure_future(i())
                 tasklist.append(task)
             if tasklist:
-                await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
+                try:
+                    await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
+                except Exception:
+                    Printer().printer(traceback.format_exc(), "Error", "red")
                 # print('本批次结束')
             else:
                 # print('本批次轮空')

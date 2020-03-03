@@ -52,7 +52,7 @@ async def fetch_medal(printer=True):
     if json_response['code'] == 0:
         for i in json_response['data']['fansMedalList']:
             if i['status'] == 1:
-                roomid = i['roomid']
+                roomid = i.get('roomid', 0) # 主站获取的勋章没有直播间
                 today_feed = i['today_feed']
                 day_limit = i['day_limit']
             if printer:
@@ -205,6 +205,9 @@ async def check_taskinfo():
 async def send_gift_web(roomid, giftid, giftnum, bagid):
     response = await bilibili().request_check_room(roomid)
     json_response = await response.json()
+    if json_response["code"] != 0:
+        Printer().printer(f"获取送礼房间{roomid}信息出错: {json_response}", "Error", "red")
+        return
     ruid = json_response['data']['uid']
     biz_id = json_response['data']['room_id']
     response1 = await bilibili().request_send_gift_web(giftid, giftnum, bagid, ruid, biz_id)

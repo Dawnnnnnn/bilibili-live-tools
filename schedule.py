@@ -20,18 +20,20 @@ class Schedule:
     def __new__(cls, *args, **kw):
         if not cls.instance:
             cls.instance = super(Schedule, cls).__new__(cls)
-            cls.instance.scheduled_sleep = False
+            cls.instance.scheduled_sleep = True
         return cls.instance
 
     async def run(self, schedule_str):
         if schedule_str == '':
             Printer().printer("请填入定时休眠时间段", "Warning", "red")
+            self.scheduled_sleep = False
             return
         second_array = sorted([[sec_calc(*time_str.split(':')) for time_str in
                                 time_str_pair.split('-')] for time_str_pair in schedule_str.split(';')])
         second_array = [[start, end] for (start, end) in second_array if start != end]
         if not len(second_array):
             Printer().printer("请填入有效时间段", "Warning", "red")
+            self.scheduled_sleep = False
             return
         second_rearrng = [second_array[0]]
         pos = 1
@@ -57,6 +59,9 @@ class Schedule:
         if stage % 2 == 1:
             self.scheduled_sleep = True
             Printer().printer(f"当前处于定时休眠时间段内，下一次取消休眠时间为 {time_str_calc(sec_sequence[stage])}", "Info", "green")
+        else:
+            self.scheduled_sleep = False
+            Printer().printer(f"当前处于定时休眠时间段外，下一次开始休眠时间为 {time_str_calc(sec_sequence[stage])}", "Info", "green")
         while True:
             sleep_time = (sec_sequence[stage] - sec_now()) % 86400
             # 避免因误差刚好过了下个时间点

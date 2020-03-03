@@ -417,7 +417,7 @@ class bilibili():
         headers = {
             "User-Agent": "bilibili-live-tools/" + str(self.dic_bilibili['uid'])
         }
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)
         return response
 
     async def pk_list(self):
@@ -425,7 +425,7 @@ class bilibili():
         headers = {
             "User-Agent": "bilibili-live-tools/" + str(self.dic_bilibili['uid'])
         }
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)
         return response
 
     async def get_lotterylist(self, i):
