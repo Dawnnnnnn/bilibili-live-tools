@@ -72,6 +72,7 @@ if dic_user['monitoy_server']['on/off'] == "1":
 schedule = Schedule()
 if dic_user['regular_sleep']['on/off'] == "1":
     tasks.append(schedule.run(dic_user['regular_sleep']['schedule']))
+    Schedule().scheduled_sleep = True
 
 
 tasks = list(map(asyncio.ensure_future, tasks))

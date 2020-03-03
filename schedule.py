@@ -20,7 +20,7 @@ class Schedule:
     def __new__(cls, *args, **kw):
         if not cls.instance:
             cls.instance = super(Schedule, cls).__new__(cls)
-            cls.instance.scheduled_sleep = True
+            cls.instance.scheduled_sleep = False
         return cls.instance
 
     async def run(self, schedule_str):
