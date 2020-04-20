@@ -18,7 +18,7 @@ class login():
     def normal_login(self, username, password):
         # url = 'https://passport.bilibili.com/api/oauth2/login'   //旧接口
         url = "https://passport.snm0516.aisee.tv/api/tv/login"
-        temp_params = f"appkey={appkey}&build={build}&captcha=&channel=master&guid=XYEBAA3E54D502E37BD606F0589A356902FCF&mobi_app={mobi_app}&password={password}&platform={bilibili().dic_bilibili['platform']}&token=5598158bcd8511e2&ts=0&username={username}"
+        temp_params = f"appkey={appkey}&build={build}&captcha=&channel=master&guid=XYEBAA3E54D502E17BD606F0589A356902FCF&mobi_app={mobi_app}&password={password}&platform={bilibili().dic_bilibili['platform']}&token=5598158bcd8511e1&ts=0&username={username}"
         data = f"{temp_params}&sign={bilibili().calc_sign(temp_params, app_secret)}"
         headers = {"Content-type": "application/x-www-form-urlencoded"}
         response = requests.post(url, data=data, headers=headers)
@@ -26,13 +26,11 @@ class login():
 
     def login_with_captcha(self, username, password):
         headers = {
-            'Accept': 'application/json, text/plain, */*',
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
-            'Host': 'passport.snm0516.aisee.tv',
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
             'cookie': "sid=hxt5szbb"
         }
         s = requests.session()
-        url = "https://passport.snm0516.aisee.tv/api/captcha?token=5598158bcd8511e2"
+        url = "https://passport.snm0516.aisee.tv/api/captcha?token=5598158bcd8511e1"
         res = s.get(url, headers=headers)
         tmp1 = base64.b64encode(res.content)
         for _ in range(login.auto_captcha_times):
@@ -53,7 +51,7 @@ class login():
                 Printer().printer("安装 Pillow 库后重启，以弹出验证码图片", "Error", "red")
                 exit()
 
-        temp_params = f"appkey={appkey}&build={build}&captcha={captcha}&channel=master&guid=XYEBAA3E54D502E37BD606F0589A356902FCF&mobi_app={mobi_app}&password={password}&platform={bilibili().dic_bilibili['platform']}&token=5598158bcd8511e2&ts=0&username={username}"
+        temp_params = f"appkey={appkey}&build={build}&captcha={captcha}&channel=master&guid=XYEBAA3E54D502E17BD606F0589A356902FCF&mobi_app={mobi_app}&password={password}&platform={bilibili().dic_bilibili['platform']}&token=5598158bcd8511e1&ts=0&username={username}"
         data = f"{temp_params}&sign={bilibili().calc_sign(temp_params, app_secret)}"
         headers['Content-type'] = "application/x-www-form-urlencoded"
         headers['cookie'] = "sid=hxt5szbb"

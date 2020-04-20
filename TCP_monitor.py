@@ -45,17 +45,21 @@ class TCP_monitor():
                 self.connected = True
             except Exception:
                 Printer().printer(f'连接无法建立，请检查本地网络状况,5s后重连', "Error", "red")
+                self.connected = False
                 await asyncio.sleep(5)
             await self.ReceiveMessageLoop()
             Printer().printer(f'与服务器连接断开,5s后尝试重连', "Error", "red")
+            self.connected = False
             await asyncio.sleep(5)
 
     async def HeartbeatLoop(self):
-        while not self.connected:
-            await asyncio.sleep(0.5)
-        while self.connected:
-            await self.send_bytes(self.Heartbeat())
-            await asyncio.sleep(25)
+        while True:
+            while not self.connected:
+                await asyncio.sleep(0.5)
+            while self.connected:
+                await self.send_bytes(self.Heartbeat())
+                await asyncio.sleep(25)
+            await asyncio.sleep(1)
 
     def Auth_Key(self, key):
         dict_enter = {

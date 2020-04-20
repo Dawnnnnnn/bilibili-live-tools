@@ -284,14 +284,16 @@ class bilibili():
         join_url = "https://api.live.bilibili.com/xlive/lottery-interface/v3/guard/join"
         payload = {"roomid": roomid, "id": id, "type": "guard",
                    "csrf_token": self.dic_bilibili['csrf']}
-        response2 = await self.bili_section_post(join_url, replay=False, data=payload, headers=self.dic_bilibili['pcheaders'])
+        response2 = await self.bili_section_post(join_url, replay=False, data=payload,
+                                                 headers=self.dic_bilibili['pcheaders'])
         return response2
 
     async def get_gift_of_pk(self, roomid, id):
         join_url = "https://api.live.bilibili.com/xlive/lottery-interface/v1/pk/join"
         payload = {"roomid": roomid, "id": id, "csrf": self.dic_bilibili['csrf'],
                    "csrf_token": self.dic_bilibili['csrf']}
-        response2 = await self.bili_section_post(join_url, replay=False, data=payload, headers=self.dic_bilibili['pcheaders'])
+        response2 = await self.bili_section_post(join_url, replay=False, data=payload,
+                                                 headers=self.dic_bilibili['pcheaders'])
         return response2
 
     async def get_giftlist_of_events(self, text1):
