@@ -20,7 +20,6 @@ class Auto_Run():
         try:
             while 1:
                 time.sleep(sleep_time * 20)
-                self.poll = self.p.poll()
                 if self.p.poll() is None:
                     print("restarting......")
                     self.p.kill()
@@ -30,6 +29,7 @@ class Auto_Run():
                     print("starting......")
                     self.run()
         except KeyboardInterrupt as e:
+            self.p.kill()
             print("exit???")
 
     def run(self):
