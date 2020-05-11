@@ -419,7 +419,12 @@ class bilibili():
         headers = {
             "User-Agent": "bilibili-live-tools/" + str(self.dic_bilibili['uid'])
         }
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=0.01)
+        return response
+
+    async def guard_list_v2(self):
+        url = "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id=465671"
+        response = requests.get(url, headers=self.dic_bilibili['pcheaders'], timeout=3)
         return response
 
     async def pk_list(self):

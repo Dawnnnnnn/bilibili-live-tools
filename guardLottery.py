@@ -5,6 +5,9 @@ from bilibili import bilibili
 from schedule import Schedule
 from printer import Printer
 import utils
+import encrypt
+import json
+import brotli
 
 
 class GuardLottery:
@@ -12,7 +15,7 @@ class GuardLottery:
     had_gotted_guard = []
 
     async def guard_lottery(self):
-        for k in range(3):
+        for k in range(1):
             try:
                 response = await bilibili().guard_list()
                 json_response = response.json()
@@ -20,8 +23,10 @@ class GuardLottery:
             except Exception:
                 continue
         else:
-            Printer().printer("连接舰长服务器失败", "Error", "red")
-            return
+            Printer().printer("连接舰长服务器失败，尝试从CDN拉取数据", "Error", "red")
+            response = await bilibili().guard_list_v2()
+            encrypt_content = response.json()['data']['room_info']['description'].replace('b6','').replace('</p>','').replace('<p>','')
+            json_response = json.loads(brotli.decompress(encrypt.decrypt(encrypt_content)).decode())
         for i in range(0, len(json_response)):
             GuardId = json_response[i]['Id']
             if GuardId not in GuardLottery.had_gotted_guard and GuardId != 0:
@@ -70,7 +75,7 @@ class GuardLottery:
         while True:
             try:
                 await self.guard_lottery()
-                await asyncio.sleep(30)
+                await asyncio.sleep(180)
             except Exception:
                 await asyncio.sleep(10)
                 Printer().printer(traceback.format_exc(), "Error", "red")
