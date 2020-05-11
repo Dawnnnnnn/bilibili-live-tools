@@ -419,7 +419,7 @@ class bilibili():
         headers = {
             "User-Agent": "bilibili-live-tools/" + str(self.dic_bilibili['uid'])
         }
-        response = requests.get(url, headers=headers, timeout=0.01)
+        response = requests.get(url, headers=headers, timeout=3)
         return response
 
     async def guard_list_v2(self):
