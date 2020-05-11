@@ -3,3 +3,5 @@ rsa
 aiohttp
 termcolor
 colorama
+six
+brotli
