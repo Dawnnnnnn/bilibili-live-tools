@@ -246,7 +246,7 @@ class bilibili():
         return response
 
     def request_getkey(self):
-        url = 'https://passport.snm0516.aisee.tv/api/oauth2/getKey'
+        url = 'https://passport.bilibili.com/api/oauth2/getKey'
         temp_params = 'appkey=' + self.dic_bilibili['appkey']
         sign = self.calc_sign(temp_params)
         params = {'appkey': self.dic_bilibili['appkey'], 'sign': sign}
