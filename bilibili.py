@@ -140,10 +140,24 @@ class bilibili():
         response = await self.bili_section_post(url, data=data, headers=self.dic_bilibili['pcheaders'])
         return response
 
+    # 1:450兑换
+    async def coin2silver_web(self, num):
+        url = "https://api.live.bilibili.com/pay/v1/Exchange/coin2silver"
+        data = {
+            "num": int(num),
+            "platform": 'pc',
+            "csrf_token": self.dic_bilibili['csrf'],
+            "csrf": self.dic_bilibili['csrf']
+        }
+        response = await self.bili_section_post(url, data=data, headers=self.dic_bilibili['pcheaders'])
+        return response
+
     async def post_watching_history(self, room_id):
         data = {
             "room_id": room_id,
-            "csrf_token": self.dic_bilibili['csrf']
+            "platform": 'pc',
+            "csrf_token": self.dic_bilibili['csrf'],
+            "csrf": self.dic_bilibili['csrf']
         }
         url = "https://api.live.bilibili.com/room/v1/Room/room_entry_action"
         response = await self.bili_section_post(url, data=data, headers=self.dic_bilibili['pcheaders'])
@@ -151,7 +165,11 @@ class bilibili():
 
     async def silver2coin_web(self):
         url = "https://api.live.bilibili.com/exchange/silver2coin"
-        response = await self.bili_section_post(url, headers=self.dic_bilibili['pcheaders'])
+        data = {
+            "csrf_token": self.dic_bilibili['csrf'],
+            "csrf": self.dic_bilibili['csrf']
+        }
+        response = await self.bili_section_post(url, data=data, headers=self.dic_bilibili['pcheaders'])
         return response
 
     async def silver2coin_app(self):
@@ -442,7 +460,7 @@ class bilibili():
         return response
 
     async def get_gift_of_lottery(self, i, g):
-        url1 = 'https://api.live.bilibili.com/lottery/v1/box/draw?aid=' + \
+        url1 = 'https://api.live.bilibili.com/xlive/lottery-interface/v2/Box/draw?aid=' + \
                str(i) + '&number=' + str(g + 1)
         response1 = await self.bili_section_get(url1, headers=self.dic_bilibili['pcheaders'])
         return response1

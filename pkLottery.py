@@ -72,7 +72,7 @@ class PKLottery:
         while True:
             try:
                 await self.pk_lottery()
-                await asyncio.sleep(30)
+                await asyncio.sleep(60)
             except Exception:
-                await asyncio.sleep(10)
+                await asyncio.sleep(20)
                 Printer().printer(traceback.format_exc(), "Error", "red")

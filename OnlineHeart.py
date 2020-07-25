@@ -43,7 +43,7 @@ class OnlineHeart:
                       "測一測", "TEST", "Test", "t-e-s-t"]  # 合理猜想
         former_lottery = queue.Queue(maxsize=4)
         [former_lottery.put(True) for _ in range(4)]
-        for i in range(490, 600):
+        for i in range(590, 800):
             response = await bilibili().get_lotterylist(i)
             json_response = await response.json()
             former_lottery.get()

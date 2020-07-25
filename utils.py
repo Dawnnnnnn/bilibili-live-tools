@@ -44,8 +44,16 @@ async def fetch_medal(printer=True):
                                                    '今日的亲密度',
                                                    adjust_for_chinese('排名'), '勋章状态'))
     dic_worn = {'1': '正在佩戴', '0': '待机状态'}
-    response = await bilibili().request_fetchmedal()
-    json_response = await response.json(content_type=None)
+    for _ in range(3):
+        response = await bilibili().request_fetchmedal()
+        json_response = await response.json(content_type=None)
+        if json_response['code']:
+            continue
+        # 有时候dict获取不完整，包括最后一项"roomid"的后半部分缺失
+        elif all(["roomid" not in medal for medal in json_response['data']['fansMedalList']]):
+            continue
+        else:
+            break
     roomid = 0
     today_feed = 0
     day_limit = 0
@@ -74,6 +82,9 @@ async def fetch_user_info():
     json_response_ios = await response_ios.json()
     if json_response_ios['code'] == 0:
         gold_ios = json_response_ios['data']['gold']
+    else:
+        # {'code': 3, 'msg': 'user no login', 'message': 'user no login', 'data': []}
+        gold_ios = None
     # print(json_response_ios)
     if (json_response['code'] == 0):
         data = json_response['data']

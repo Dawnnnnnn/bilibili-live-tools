@@ -118,6 +118,12 @@ class Tasks:
             json_response1 = await response1.json()
             print(json_response0['msg'], json_response1['msg'])
 
+    async def coin2silver(self):
+        if self.dic_user['coin2silver']['on/off'] == '1' and int(self.dic_user['coin2silver']['num']) > 0:
+            response = await bilibili().coin2silver_web(self.dic_user['coin2silver']['num'])
+            json_response = await response.json()
+            Printer().printer(f"硬币兑换银瓜子状态:{json_response['msg']}", "Info", "green")
+
     async def sliver2coin(self):
         if self.dic_user['coin']['on/off'] == '1':
             response1 = await bilibili().silver2coin_app()
@@ -134,7 +140,7 @@ class Tasks:
                 await self.link_sign()
                 await self.send_gift()
                 await self.sliver2coin()
-                await self.doublegain_coin2silver()
+                await self.coin2silver()
                 await self.auto_send_gift()
                 await utils.reconnect()
                 await asyncio.sleep(21600)

@@ -35,6 +35,7 @@ class Schedule:
             Printer().printer("请填入有效时间段", "Warning", "red")
             self.scheduled_sleep = False
             return
+        # 按顺序合并有overlap的时间段
         second_rearrng = [second_array[0]]
         pos = 1
         while pos < len(second_array):
@@ -46,6 +47,15 @@ class Schedule:
             else:
                 second_rearrng.append(second_array[pos])
             pos += 1
+        # 考虑最后一个跨0点时间段覆盖最开始几个时间段端点的情况
+        if second_rearrng[-1][1] < second_rearrng[-1][0]:
+            while len(second_rearrng) > 1:
+                if second_rearrng[-1][1] > second_rearrng[0][0]:
+                    if second_rearrng[-1][1] < second_rearrng[0][1]:
+                        second_rearrng[-1][1] = second_rearrng[0][1]
+                    del second_rearrng[0]
+                else:
+                    break
         sec_sequence = __import__('functools').reduce(lambda x, y: x+y, second_rearrng)
 
         sec_init = sec_now()
@@ -55,6 +65,9 @@ class Schedule:
                 break
         else:
             stage = len(sec_sequence)-1 if sec_sequence[-1] < sec_sequence[-2] else 0
+        # 当前时间在0时后且在最后一个包含0时的时间段内
+        if stage == 0 and sec_init < sec_sequence[-1] < sec_sequence[-2]:
+            stage = len(sec_sequence)-1
 
         if stage % 2 == 1:
             self.scheduled_sleep = True

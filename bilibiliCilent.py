@@ -161,6 +161,11 @@ class bilibiliClient():
                 self.close_connection()
                 await asyncio.sleep(5)
                 return None
+            except OSError:
+                Printer().printer(f'[WinError 121] 信号灯超时时间已到 @[{self.area}分区]{self._roomId}',"Error","red")
+                self.close_connection()
+                await asyncio.sleep(5)
+                return None
             except asyncio.CancelledError:
 
                 return None

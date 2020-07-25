@@ -75,7 +75,7 @@ class GuardLottery:
         while True:
             try:
                 await self.guard_lottery()
-                await asyncio.sleep(180)
+                await asyncio.sleep(300)
             except Exception:
-                await asyncio.sleep(10)
+                await asyncio.sleep(30)
                 Printer().printer(traceback.format_exc(), "Error", "red")
