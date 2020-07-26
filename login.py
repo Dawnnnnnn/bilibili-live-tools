@@ -129,12 +129,14 @@ class login():
                 break
             try:
                 access_key = response.json()['data']['token_info']['access_token']
+                refresh_token = response.json()['data']['token_info']['refresh_token']
                 cookie = response.json()['data']['cookie_info']['cookies']
                 cookie_format = ""
                 for i in range(len(cookie)):
                     cookie_format = cookie_format + cookie[i]['name'] + "=" + cookie[i]['value'] + ";"
                 bilibili().dic_bilibili['csrf'] = cookie[0]['value']
                 bilibili().dic_bilibili['access_key'] = access_key
+                bilibili().dic_bilibili['refresh_token'] = refresh_token
                 bilibili().dic_bilibili['cookie'] = cookie_format
                 bilibili().dic_bilibili['uid'] = cookie[1]['value']
                 bilibili().dic_bilibili['pcheaders']['cookie'] = cookie_format
@@ -142,6 +144,7 @@ class login():
                 dic_saved_session = {
                     'csrf': cookie[0]['value'],
                     'access_key': access_key,
+                    'refresh_token': refresh_token,
                     'cookie': cookie_format,
                     'uid': cookie[1]['value']
                 }
@@ -156,3 +159,47 @@ class login():
             bilibili().load_session(bilibili().dic_bilibili['saved-session'])
         else:
             return self.login()
+
+    def refresh_token(self):
+        url = "https://passport.bilibili.com/api/v2/oauth2/refresh_token"
+        params_dic = {
+            "access_token": bilibili().dic_bilibili["access_key"],
+            "actionKey": bilibili().dic_bilibili["actionKey"],
+            "appkey": bilibili().dic_bilibili["appkey"],
+            "build": bilibili().dic_bilibili["build"],
+            "device": bilibili().dic_bilibili["device"],
+            "mobi_app": bilibili().dic_bilibili["mobi_app"],
+            "platform": bilibili().dic_bilibili["platform"],
+            'refresh_token': bilibili().dic_bilibili["refresh_token"],
+        }
+        temp_params = '&'.join([f'{key}={value}' for key, value in params_dic.items()])
+        sign = bilibili().calc_sign(temp_params)
+        payload = f'{temp_params}&sign={sign}'
+        response = requests.post(url, params=payload, headers=app_headers)
+        json_response = response.json()
+        if json_response["code"] == 0:
+            access_key = json_response['data']['token_info']['access_token']
+            refresh_token = json_response['data']['token_info']['refresh_token']
+            cookie = json_response['data']['cookie_info']['cookies']
+            cookie_format = ""
+            for i in range(len(cookie)):
+                cookie_format = cookie_format + cookie[i]['name'] + "=" + cookie[i]['value'] + ";"
+            bilibili().dic_bilibili['csrf'] = cookie[0]['value']
+            bilibili().dic_bilibili['access_key'] = access_key
+            bilibili().dic_bilibili['refresh_token'] = refresh_token
+            bilibili().dic_bilibili['cookie'] = cookie_format
+            bilibili().dic_bilibili['uid'] = cookie[1]['value']
+            bilibili().dic_bilibili['pcheaders']['cookie'] = cookie_format
+            bilibili().dic_bilibili['appheaders']['cookie'] = cookie_format
+            dic_saved_session = {
+                'csrf': cookie[0]['value'],
+                'access_key': access_key,
+                'refresh_token': refresh_token,
+                'cookie': cookie_format,
+                'uid': cookie[1]['value']
+            }
+            configloader.write2bilibili(dic_saved_session)
+            Printer().printer(f"token刷新成功", "Info", "green")
+        else:
+            Printer().printer(f"token刷新失败，将重新登录 {json_response}", "Info", "green")
+            self.login()

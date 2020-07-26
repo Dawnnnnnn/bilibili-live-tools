@@ -19,7 +19,7 @@ def CurrentTime():
 class OnlineHeart:
 
     async def apppost_heartbeat(self):
-        await bilibili().apppost_heartbeat()
+        return await bilibili().apppost_heartbeat()
 
     async def pcpost_heartbeat(self):
         response = await bilibili().pcpost_heartbeat()
@@ -87,7 +87,12 @@ class OnlineHeart:
                 if json_response['code'] in [3, -101]:
                     Printer().printer(f"cookie过期,将重新登录","Error","red")
                     login().login()
-                await self.apppost_heartbeat()
+                response1 = await self.apppost_heartbeat()
+                json_response1 = await response1.json(content_type=None)
+                if json_response1['code'] == -101:
+                    # '{"code":-101,"message":"账号未登录","ttl":1}'
+                    Printer().printer(f"token过期，尝试刷新", "Error", "red")
+                    login().refresh_token()
                 await self.heart_gift()
                 await self.draw_lottery()
                 await asyncio.sleep(300)
