@@ -8,6 +8,7 @@ import time
 import requests
 import rsa
 import base64
+import uuid
 from urllib import parse
 from printer import Printer
 import aiohttp
@@ -241,7 +242,7 @@ class bilibili():
         return requests.get(url)
 
     async def request_fetchmedal(self):
-        url = 'https://api.live.bilibili.com/i/api/medal?page=1&pageSize=50'
+        url = 'https://api.live.bilibili.com/i/api/medal?page=1&pageSize=168'
         response = await self.bili_section_get(url, headers=self.dic_bilibili['pcheaders'])
         return response
 
@@ -432,17 +433,9 @@ class bilibili():
         response = await self.bili_section_get(url, headers=self.dic_bilibili['pcheaders'])
         return response
 
-    async def guard_list(self):
-        url = "http://118.25.108.153:8080/guard"
-        headers = {
-            "User-Agent": "bilibili-live-tools/" + str(self.dic_bilibili['uid'])
-        }
-        response = requests.get(url, headers=headers, timeout=3)
-        return response
-
-    async def guard_list_v2(self):
-        url = "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id=465671"
-        response = requests.get(url, headers=self.dic_bilibili['pcheaders'], timeout=3)
+    async def get_room_info(self, roomid):
+        url = f"https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id={roomid}"
+        response = await self.bili_section_get(url, headers=self.dic_bilibili['pcheaders'], timeout=3)
         return response
 
     async def pk_list(self):
@@ -568,3 +561,88 @@ class bilibili():
         url = "http://api.live.bilibili.com/room/v1/Area/getList"
         response = await self.bili_section_get(url)
         return response
+
+    async def heart_beat_e(self, room_id):
+        response = await self.get_room_info(room_id)
+        json_response = await response.json(content_type=None)
+        parent_area_id = json_response['data']['room_info']['parent_area_id']
+        area_id = json_response['data']['room_info']['area_id']
+
+        url = 'https://live-trace.bilibili.com/xlive/data-interface/v1/x25Kn/E'
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Origin': 'https://live.bilibili.com',
+            'Referer': f'https://live.bilibili.com/{room_id}',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36',
+            'Cookie': self.dic_bilibili['cookie'],
+        }
+        payload = {
+            'id': [parent_area_id, area_id, 0, room_id],
+            'device': f'["{self.calc_sign(str(uuid.uuid4()))}","{uuid.uuid4()}"]',
+            'ts': int(time.time()) * 1000,
+            'is_patch': 0,
+            'heart_beat': [],
+            'ua': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36',
+            'csrf_token': self.dic_bilibili['csrf'],
+            'csrf': self.dic_bilibili['csrf'],
+            'visit_id': ''
+        }
+        data = parse.urlencode(payload)
+        # {"code":0,"message":"0","ttl":1,"data":{"timestamp":1595342828,"heartbeat_interval":300,"secret_key":"seacasdgyijfhofiuxoannn","secret_rule":[2,5,1,4],"patch_status":2}}
+        response = await self.bili_section_post(url, headers=headers, data=data)
+        response = await response.json(content_type=None)
+        payload['ets'] = response['data']['timestamp']
+        payload['secret_key'] = response['data']['secret_key']
+        payload['heartbeat_interval'] = response['data']['heartbeat_interval']
+        payload['secret_rule'] = response['data']['secret_rule']
+        return payload
+
+    async def heart_beat_x(self, index, payload, room_id):
+        response = await self.get_room_info(room_id)
+        json_response = await response.json(content_type=None)
+        parent_area_id = json_response['data']['room_info']['parent_area_id']
+        area_id = json_response['data']['room_info']['area_id']
+        url = 'https://live-trace.bilibili.com/xlive/data-interface/v1/x25Kn/X'
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Origin': 'https://live.bilibili.com',
+            'Referer': f'https://live.bilibili.com/{room_id}',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36',
+            'Cookie': self.dic_bilibili['cookie'],
+        }
+        s_data = {
+            "t": {
+                'id': [parent_area_id, area_id, index, room_id],
+                "device": payload['device'],  # LIVE_BUVID
+                "ets": payload['ets'],
+                "benchmark": payload['secret_key'],
+                "time": payload['heartbeat_interval'],
+                "ts": int(time.time()) * 1000,
+                "ua": payload['ua']
+            },
+            "r": payload['secret_rule']
+        }
+        t = s_data['t']
+        payload = {
+            's': self.generate_s(s_data),
+            'id': t['id'],
+            'device': t['device'],
+            'ets': t['ets'],
+            'benchmark': t['benchmark'],
+            'time': t['time'],
+            'ts': t['ts'],
+            "ua": t['ua'],
+            'csrf_token': self.dic_bilibili['csrf'],
+            'csrf': self.dic_bilibili['csrf'],
+            'visit_id': '',
+        }
+        payload = parse.urlencode(payload)
+        # {"code":0,"message":"0","ttl":1,"data":{"heartbeat_interval":300,"timestamp":1595346846,"secret_rule":[2,5,1,4],"secret_key":"seacasdgyijfhofiuxoannn"}}
+        response = await self.bili_section_post(url, headers=headers, data=payload)
+        return response
+
+    # 加密s
+    def generate_s(self, data):
+        url = 'http://127.0.0.1:3000/enc'
+        response = requests.post(url, json=data).json()
+        return response['s']

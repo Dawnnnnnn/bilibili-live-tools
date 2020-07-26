@@ -13,7 +13,6 @@ from bilibili import bilibili
 import threading
 import biliconsole
 from pkLottery import PKLottery
-from guardLottery import GuardLottery
 from schedule import Schedule
 import configloader
 import os
@@ -36,7 +35,6 @@ task2 = Tasks()
 task3 = LotteryResult()
 task4 = connect()
 task5 = PKLottery()
-task6 = GuardLottery()
 
 tasks1 = [
     login().login_new()
@@ -57,7 +55,6 @@ tasks = [
     task3.query(),
     rafflehandler.run(),
     task5.run(),
-    task6.run()
 ]
 
 

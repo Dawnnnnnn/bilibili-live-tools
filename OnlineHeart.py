@@ -9,8 +9,6 @@ from statistics import Statistics
 from printer import Printer
 
 
-
-
 def CurrentTime():
     currenttime = int(time.mktime(datetime.datetime.now().timetuple()))
     return str(currenttime)
@@ -39,7 +37,7 @@ class OnlineHeart:
                 Statistics().add_to_result(winner["giftTitle"], 1)
 
     async def draw_lottery(self):
-        black_list = ["123", "1111", "测试", "測試", "测一测", "ce-shi", "test", "T-E-S-T", "lala", "我是抽奖标题", "压测", # 已经出现
+        black_list = ["123", "1111", "测试", "測試", "测一测", "ce-shi", "test", "T-E-S-T", "lala", "我是抽奖标题", "压测",  # 已经出现
                       "測一測", "TEST", "Test", "t-e-s-t"]  # 合理猜想
         former_lottery = queue.Queue(maxsize=4)
         [former_lottery.put(True) for _ in range(4)]
@@ -61,7 +59,7 @@ class OnlineHeart:
                         for k in black_list:
                             if k in title or k in jp_list:
                                 Printer().printer(f"检测到 {i} 号疑似钓鱼类测试抽奖『{title}>>>{jp_list}』" + \
-                                                   "，默认不参与，请自行判断抽奖可参与性","Warning","red")
+                                                  "，默认不参与，请自行判断抽奖可参与性", "Warning", "red")
                                 break
                         else:
                             if bilibili().black_status:
@@ -81,11 +79,11 @@ class OnlineHeart:
     async def run(self):
         while 1:
             try:
-                Printer().printer("心跳", "Info","green")
+                Printer().printer("心跳", "Info", "green")
                 response = await self.pcpost_heartbeat()
                 json_response = await response.json(content_type=None)
                 if json_response['code'] in [3, -101]:
-                    Printer().printer(f"cookie过期,将重新登录","Error","red")
+                    Printer().printer(f"cookie过期,将重新登录", "Error", "red")
                     login().login()
                 response1 = await self.apppost_heartbeat()
                 json_response1 = await response1.json(content_type=None)

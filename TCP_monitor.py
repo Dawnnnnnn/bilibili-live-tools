@@ -11,7 +11,6 @@ from struct import Struct
 
 from printer import Printer
 from pkLottery import PKLottery
-from guardLottery import GuardLottery
 from rafflehandler import Rafflehandler
 
 
@@ -153,7 +152,7 @@ class TCP_monitor():
         elif cmd == 'Storm':
             pass
         elif cmd == 'Guard':
-            await GuardLottery().guard_join(dic["data"]["RoomId"], dic["data"]["Id"])
+            pass
         elif cmd == 'PKLottery':
             await PKLottery().pk_join(dic["data"]["RoomId"], dic["data"]["Id"])
         elif cmd == 'Raffle':
