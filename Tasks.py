@@ -178,7 +178,8 @@ class Tasks:
                 coroutine_list = []
                 for room_id in room_ids:
                     coroutine_list.append(self.XE_heartbeat(room_ids, room_id))
-                await asyncio.wait(coroutine_list)
+                if coroutine_list:
+                    await asyncio.wait(coroutine_list)
                 await self.refresh_medals_by_roomid()
                 await self.refresh_medals()
                 await self.Daily_bag()
