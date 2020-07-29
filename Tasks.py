@@ -144,8 +144,17 @@ class Tasks:
 
     async def get_rooms(self):
         room_ids = []
-        response = await bilibili().request_fetchmedal()
-        json_response = await response.json(content_type=None)
+        for _ in range(3):
+            response = await bilibili().request_fetchmedal()
+            json_response = await response.json(content_type=None)
+            if json_response['code']:
+                continue
+            # 有时候dict获取不完整，包括最后一项"roomid"的后半部分缺失
+            elif all(["roomid" not in medal for medal in json_response['data']['fansMedalList']]):
+                continue
+            else:
+                break
+
         for i in range(0, len(json_response['data']['fansMedalList'])):
             short_room_id = json_response['data']['fansMedalList'][i]['roomid']
             response1 = await bilibili().get_room_info(short_room_id)
