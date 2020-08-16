@@ -10,7 +10,6 @@ import traceback
 from struct import Struct
 
 from printer import Printer
-from pkLottery import PKLottery
 from rafflehandler import Rafflehandler
 
 
@@ -154,7 +153,7 @@ class TCP_monitor():
         elif cmd == 'Guard':
             pass
         elif cmd == 'PKLottery':
-            await PKLottery().pk_join(dic["data"]["RoomId"], dic["data"]["Id"])
+            pass
         elif cmd == 'Raffle':
             Rafflehandler().append2list_TV(dic["data"]["RoomId"])
         else:

@@ -192,7 +192,6 @@ class Tasks:
                 await self.refresh_medals_by_roomid()
                 await self.refresh_medals()
                 await self.Daily_bag()
-                await self.Daily_Task()
                 await self.link_sign()
                 await self.send_gift()
                 await self.sliver2coin()
