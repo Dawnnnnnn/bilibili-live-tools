@@ -165,26 +165,10 @@ async def check_taskinfo():
     # print(json_response)
     if json_response['code'] == 0:
         data = json_response['data']
-        double_watch_info = data['double_watch_info']
         box_info = data['box_info']
         sign_info = data['sign_info']
         live_time_info = data['live_time_info']
         print('双端观看直播：')
-        if double_watch_info['status'] == 1:
-            print('# 该任务已完成，但未领取奖励')
-        elif double_watch_info['status'] == 2:
-            print('# 该任务已完成，已经领取奖励')
-        else:
-            print('# 该任务未完成')
-            if double_watch_info['web_watch'] == 1:
-                print('## 网页端观看任务已完成')
-            else:
-                print('## 网页端观看任务未完成')
-
-            if double_watch_info['mobile_watch'] == 1:
-                print('## 移动端观看任务已完成')
-            else:
-                print('## 移动端观看任务未完成')
 
         print('直播在线宝箱：')
         if box_info['status'] == 1:
