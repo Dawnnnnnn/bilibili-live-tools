@@ -34,12 +34,6 @@ class Tasks:
         temp = await response.json(content_type=None)
         Printer().printer(f"签到状态:{temp['message']}", "Info", "green")
 
-    # 领取每日任务奖励
-    async def Daily_Task(self):
-        response2 = await bilibili().get_dailytask()
-        json_response2 = await response2.json()
-        Printer().printer(f"双端观看直播:{json_response2['msg']}", "Info", "green")
-
     # 应援团签到
     async def link_sign(self):
         response = await bilibili().get_grouplist()

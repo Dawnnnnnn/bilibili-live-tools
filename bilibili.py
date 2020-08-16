@@ -499,12 +499,6 @@ class bilibili():
         response = await self.bili_section_get(url, headers=self.dic_bilibili['pcheaders'])
         return response
 
-    async def get_dailytask(self):
-        url = 'https://api.live.bilibili.com/activity/v1/task/receive_award'
-        payload2 = {'task_id': 'double_watch_task'}
-        response2 = await self.bili_section_post(url, data=payload2, headers=self.dic_bilibili['appheaders'])
-        return response2
-
     async def get_grouplist(self):
         url = "https://api.vc.bilibili.com/link_group/v1/member/my_groups"
         pcheaders = self.dic_bilibili['pcheaders'].copy()
