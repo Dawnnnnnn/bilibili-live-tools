@@ -3,7 +3,6 @@ import asyncio
 import traceback
 import time
 import utils
-from bilibili import bilibili
 from printer import Printer
 
 

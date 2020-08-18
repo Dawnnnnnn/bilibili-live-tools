@@ -42,30 +42,31 @@ async def handle_1_TV_raffle(type, raffleid, time_wait, time_limit, num, real_ro
 
 async def handle_1_room_TV(real_roomid):
     await asyncio.sleep(random.uniform(0, 1))
-    result = await utils.check_room_true(real_roomid)
-    if True in result:
-        Printer().printer(f"检测到房间 {real_roomid} 的钓鱼操作", "Warning", "red")
-    else:
-        await bilibili().post_watching_history(real_roomid)
-        response = await bilibili().get_giftlist_of_TV(real_roomid)
-        json_response = await response.json(content_type=None)
-        checklen = json_response['data']['gift']
-        num = len(checklen)
-        list_available_raffleid = []
-        for j in range(0, num):
-            raffleid = json_response['data']['gift'][j]['raffleId']
-            if Statistics().check_TVlist(raffleid):
-                type = json_response['data']['gift'][j]['type']
-                time_wait = json_response['data']['gift'][j]['time_wait']
-                time_limit = json_response['data']['gift'][j]['time']
-                list_available_raffleid.append([type, raffleid, time_wait, time_limit])
-        tasklist = []
-        num_available = len(list_available_raffleid)
-        for k in list_available_raffleid:
-            task = asyncio.ensure_future(handle_1_TV_raffle(*k, num_available, real_roomid))
-            tasklist.append(task)
-        if tasklist:
-            await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
+    response = await bilibili().get_giftlist_of_TV(real_roomid)
+    json_response = await response.json(content_type=None)
+    checklen = json_response['data']['gift']
+    num = len(checklen)
+    if num:
+        result = await utils.check_room_true(real_roomid)
+        if True in result:
+            Printer().printer(f"检测到房间 {real_roomid} 的钓鱼操作", "Warning", "red")
+        else:
+            await bilibili().post_watching_history(real_roomid)
+            list_available_raffleid = []
+            for j in range(0, num):
+                raffleid = json_response['data']['gift'][j]['raffleId']
+                if Statistics().check_TVlist(raffleid):
+                    type = json_response['data']['gift'][j]['type']
+                    time_wait = json_response['data']['gift'][j]['time_wait']
+                    time_limit = json_response['data']['gift'][j]['time']
+                    list_available_raffleid.append([type, raffleid, time_wait, time_limit])
+            tasklist = []
+            num_available = len(list_available_raffleid)
+            for k in list_available_raffleid:
+                task = asyncio.ensure_future(handle_1_TV_raffle(*k, num_available, real_roomid))
+                tasklist.append(task)
+            if tasklist:
+                await asyncio.wait(tasklist, return_when=asyncio.ALL_COMPLETED)
 
 
 class bilibiliClient():
