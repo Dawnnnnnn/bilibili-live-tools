@@ -150,7 +150,9 @@ class Tasks:
                 break
 
         for i in range(0, len(json_response['data']['fansMedalList'])):
-            short_room_id = json_response['data']['fansMedalList'][i]['roomid']
+            short_room_id = json_response['data']['fansMedalList'][i].get('roomid', None)
+            if short_room_id is None:
+                continue
             response1 = await bilibili().get_room_info(short_room_id)
             json_response1 = await response1.json(content_type=None)
             long_room_id = json_response1['data']['room_info']['room_id']
@@ -158,7 +160,8 @@ class Tasks:
         return room_ids
 
     async def XE_heartbeat(self, room_ids, room_id):
-        index_num = round(24 / len(room_ids))
+        index_num = 24 // len(room_ids)
+        index_num += 1 if 24 % len(room_ids) else 0
         data = await bilibili().heart_beat_e(room_id)
         for index in range(1, index_num + 1):
             try:

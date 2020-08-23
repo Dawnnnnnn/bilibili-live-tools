@@ -108,7 +108,7 @@ class bilibili():
                 response = await self.bili_section.request(method, url, **kwargs)
                 if response.status in [403, 412]:
                     if replay:
-                        Printer().printer(f'<{response.status} {response.reason}>，60s后重试', "Error", "red")
+                        Printer().printer(f'<{response.status} {response.reason}>，60s后重试: {url}', "Error", "red")
                         await asyncio.sleep(60)
                         continue
                     else:
