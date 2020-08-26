@@ -168,16 +168,6 @@ async def check_taskinfo():
         box_info = data['box_info']
         sign_info = data['sign_info']
         live_time_info = data['live_time_info']
-        print('双端观看直播：')
-
-        print('直播在线宝箱：')
-        if box_info['status'] == 1:
-            print('# 该任务已完成')
-        else:
-            print('# 该任务未完成')
-            print('## 一共{}次重置次数，当前为第{}次第{}个礼包(每次3个礼包)'.format(box_info['max_times'], box_info['freeSilverTimes'],
-                                                              box_info['type']))
-
         print('每日签到：')
         if sign_info['status'] == 1:
             print('# 该任务已完成')

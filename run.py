@@ -1,7 +1,6 @@
 import utils
 from TCP_monitor import TCP_monitor
 from OnlineHeart import OnlineHeart
-from Silver import Silver
 from LotteryResult import LotteryResult
 from Tasks import Tasks
 from connect import connect
@@ -30,7 +29,6 @@ rafflehandler = Rafflehandler()
 biliconsole.Biliconsole()
 
 task = OnlineHeart()
-task1 = Silver()
 task2 = Tasks()
 task3 = LotteryResult()
 task4 = connect()
@@ -47,7 +45,6 @@ console_thread.start()
 
 tasks = [
     task.run(),
-    task1.run(),
     task2.run(),
     biliconsole.Biliconsole().run(),
     task4.create(),
